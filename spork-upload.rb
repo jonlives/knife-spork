@@ -5,7 +5,7 @@
 #
 # Modified cookbook upload to always freeze, and disable --force option
 # Based on the knife cookbook upload plugin by:
-
+#
 # Author:: Adam Jacob (<adam@opscode.com>)
 # Author:: Christopher Walters (<cw@opscode.com>)
 # Author:: Nuo Yan (<yan.nuo@gmail.com>)
