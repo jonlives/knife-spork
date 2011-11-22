@@ -31,9 +31,6 @@ require 'json'
 module Jonlives
   class SporkPromote < Chef::Knife
 
-      CHECKSUM = "checksum"
-      MATCH_CHECKSUM = /[0-9a-f]{32,}/
-
       deps do
         require 'chef/exceptions'
         require 'chef/cookbook_loader'
@@ -50,10 +47,6 @@ module Jonlives
 
       def run
         config[:cookbook_path] ||= Chef::Config[:cookbook_path]
-        
-        
-        # Get a list of cookbooks and their versions from the server
-        # for checking existence of dependending cookbooks.
 
         if @name_args.empty?
           show_usage
@@ -69,7 +62,7 @@ module Jonlives
         @environment = loader.load_from("environments", @name_args[0] + ".json")
         
         if @cookbook == "all"
-          ui.msg "Promoting ALL cookbooks to #{@environment} environment"
+          ui.msg "Promoting ALL cookbooks to environment #{@environment}\n\n"
           cookbook_names = get_all_cookbooks
           cookbook_names.each do |c|
             promote(@environment,c)
@@ -78,14 +71,7 @@ module Jonlives
           promote(@environment,@cookbook)
         end
         
-        ui.info "Promotion complete! Please remember to upload your changed Environment file to the Chef Server."
-      end
-
-      def cookbook_repo
-        @cookbook_loader ||= begin
-          Chef::Cookbook::FileVendor.on_create { |manifest| Chef::Cookbook::FileSystemFileVendor.new(manifest, config[:cookbook_path]) }
-          Chef::CookbookLoader.new(config[:cookbook_path])
-        end
+        ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
       end
 
       def update_version_constraints(environment,cookbook,version_constraint)
@@ -162,7 +148,7 @@ module Jonlives
         end
         
         new_environment_json = update_version_constraints(environment,cookbook,@version)
-        ui.msg "Adding new version constraint for #{cookbook} into #{environment}.json"
+        ui.msg "Adding version constraint #{cookbook} = #{@version} into #{environment}.json"
         save_environment_changes(@name_args[0],new_environment_json)
       end
       
