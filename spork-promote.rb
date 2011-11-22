@@ -65,19 +65,22 @@ module Jonlives
           ui.msg "Promoting ALL cookbooks to environment #{@environment}\n\n"
           cookbook_names = get_all_cookbooks
           cookbook_names.each do |c|
-            promote(@environment,c)
+            @environment = promote(@environment, c)
           end
         else
-          promote(@environment,@cookbook)
+          @environment = promote(@environment, @cookbook)
         end
+        
+        ui.msg "\nSaving changes into #{@name_args[0]}.json"
+        new_environment_json = pretty_print(@environment)
+        save_environment_changes(@name_args[0],new_environment_json)
         
         ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
       end
 
       def update_version_constraints(environment,cookbook,version_constraint)
-        @environment.cookbook_versions[cookbook] = "= #{version_constraint}"
-        ejson =  JSON.pretty_generate(JSON.parse(@environment.to_json))
-        return ejson
+        environment.cookbook_versions[cookbook] = "= #{version_constraint}"
+        return environment
       end
 
       def get_version(cookbook_path, cookbook)
@@ -147,9 +150,8 @@ module Jonlives
            @version = get_version(config[:cookbook_path], cookbook)
         end
         
-        new_environment_json = update_version_constraints(environment,cookbook,@version)
-        ui.msg "Adding version constraint #{cookbook} = #{@version} into #{environment}.json"
-        save_environment_changes(@name_args[0],new_environment_json)
+        ui.msg "Adding version constraint #{cookbook} = #{@version}"
+        return update_version_constraints(environment,cookbook,@version)
       end
       
       def get_all_cookbooks
@@ -159,6 +161,10 @@ module Jonlives
             results << c
           end
           return results
+     end
+     
+     def pretty_print(environment)
+       return JSON.pretty_generate(JSON.parse(environment.to_json))
      end
     end
   end
