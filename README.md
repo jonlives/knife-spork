@@ -6,13 +6,13 @@ A workflow plugin for Chef::Knife which helps multiple devs work on the same che
 
 This function is designed to help you avoid trampling on other people's cookbook versions, and to make sure that when you come to version your own work it's easy to see what version numbers have already been used and if the one you're using will overwrite anything.
 
-## Usage: 
+## Usage 
 
 ````
 knife spork check COOKBOOK
 ````
 
-## Example (Checking an Unfrozen Cookbook with version clash):
+## Example (Checking an Unfrozen Cookbook with version clash)
 
 ````
 $ knife spork check apache
@@ -29,7 +29,7 @@ DANGER: Your local cookbook version number clashes with an unfrozen remote versi
 If you upload now, you'll overwrite it.
 ````
 
-## Example (Checking a Frozen Cookbook with version clash):
+## Example (Checking a Frozen Cookbook with version clash)
 
 ````
 $ knife spork check apache2
@@ -51,7 +51,7 @@ DANGER: Your local cookbook has same version number as the starred version above
 Please bump your local version or you won't be able to upload.
 ````
 
-## Example (No version clashes):
+## Example (No version clashes)
 
 ````
 $ knife spork check apache2
@@ -75,16 +75,21 @@ Everything looks fine, no version clashes. You can upload!
 
 This function lets you easily version your cookbooks without having to manually edit the cookbook's metadata.rb file. You can either specify the version level you'd like to bump (major, minor or patch), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number.
 
-Usage: knife bump COOKBOOK <MAJOR | MINOR | PATCH | MANUAL x.x.x>
+## Usage
 
-Example (Bumping patch level):
+````
+knife bump COOKBOOK <MAJOR | MINOR | PATCH | MANUAL x.x.x>
+
+````
+
+## Example (Bumping patch level)
 
 ````
 $ knife spork bump apache2 patch
 Bumping patch level of the apache2 cookbook from 1.0.6 to 1.0.7
 ````
 
-Example (Manually setting version):
+## Example (Manually setting version)
 
 ````
 $ knife spork bump apache2 manual 1.0.13
@@ -95,9 +100,13 @@ Manually bumped version of the apache2 cookbook from 1.0.7 to 1.0.13
 
 This function works mostly the same as normal "knife cookbook upload" except that this version automatically freezes cookbooks when you upload them. If you don't want to have to remember to add "--freeze" to your "knife cookbook upload" commands, then use this version.
 
-Usage: knife spork upload COOKBOOK
+## Usage
 
-Example:
+````
+knife spork upload COOKBOOK
+````
+
+## Example
 
 ````
 $ knife spork upload apache
@@ -110,9 +119,13 @@ upload complete
 
 This function lets you easily set a version constraint in an environment for a particular cookbook. By default it will set the version constraint to whatever the local version of the specified cookbook is. Optionally, you can include a --version option which will set the version constraint for the specified cookbook to whatever version number you provide. You might want to use this if, for example, you pushed a version constraint for a cookbook version you don't want your nodes to use anymore, so you want to "roll back" the environment to a previous version.
 
-Usage: knife spork promote ENVIRONMENT COOKBOOK (OPTIONS: --version)
+## Usage
 
-Example (Using local Cookbook version number, into environment "foo"): 
+```` 
+knife spork promote ENVIRONMENT COOKBOOK (OPTIONS: --version)
+````
+
+## Example (Using local Cookbook version number, into environment "foo")
 
 ````
 $ knife spork promote foo php
@@ -123,7 +136,7 @@ Saving changes into foo.json
 Promotion complete! Please remember to upload your changed Environment file to the Chef Server.
 ````
 
-Example: (Using manual version, into environment "foo"):
+## Example (Using manual version, into environment "foo")
 
 ````
 $ knife spork promote foo php -v 1.0.6
