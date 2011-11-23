@@ -24,7 +24,8 @@ DANGER: Your local cookbook version number clashes with an unfrozen remote versi
 If you upload now, you'll overwrite it.
 ````
 
-Example (Checking a Frozen Cookbook with version clash) :
+Example (Checking a Frozen Cookbook with version clash):
+
 ````
 $ knife spork check apache2
 Checking versions for cookbook apache2...
@@ -45,7 +46,8 @@ DANGER: Your local cookbook has same version number as the starred version above
 Please bump your local version or you won't be able to upload.
 ````
 
-Example (No version clashes)
+Example (No version clashes):
+
 ````
 $ knife spork check apache2
 Checking versions for cookbook apache2...
@@ -70,14 +72,14 @@ This function lets you easily version your cookbooks without having to manually 
 
 Usage: knife bump COOKBOOK <MAJOR | MINOR | PATCH | MANUAL x.x.x>
 
-Example (Bumping patch level)
+Example (Bumping patch level):
 
 ````
 $ knife spork bump apache2 patch
 Bumping patch level of the apache2 cookbook from 1.0.6 to 1.0.7
 ````
 
-Example (Manually setting version)
+Example (Manually setting version):
 
 ````
 $ knife spork bump apache2 manual 1.0.13
@@ -91,6 +93,7 @@ This function works mostly the same as normal "knife cookbook upload" except tha
 Usage: knife spork upload COOKBOOK
 
 Example:
+
 ````
 $ knife spork upload apache
  
