@@ -6,9 +6,14 @@ A workflow plugin for Chef::Knife which helps multiple devs work on the same che
 
 This function is designed to help you avoid trampling on other people's cookbook versions, and to make sure that when you come to version your own work it's easy to see what version numbers have already been used and if the one you're using will overwrite anything.
 
-Usage: knife spork check COOKBOOK
+## Usage: 
 
-Example (Checking an Unfrozen Cookbook with version clash):
+````
+knife spork check COOKBOOK
+````
+
+## Example (Checking an Unfrozen Cookbook with version clash):
+
 ````
 $ knife spork check apache
 Checking versions for cookbook apache...
@@ -24,7 +29,7 @@ DANGER: Your local cookbook version number clashes with an unfrozen remote versi
 If you upload now, you'll overwrite it.
 ````
 
-Example (Checking a Frozen Cookbook with version clash):
+## Example (Checking a Frozen Cookbook with version clash):
 
 ````
 $ knife spork check apache2
@@ -46,7 +51,7 @@ DANGER: Your local cookbook has same version number as the starred version above
 Please bump your local version or you won't be able to upload.
 ````
 
-Example (No version clashes):
+## Example (No version clashes):
 
 ````
 $ knife spork check apache2
