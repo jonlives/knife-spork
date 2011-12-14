@@ -44,6 +44,11 @@ module Jonlives
         :long  => '--version VERSION',
         :description => "Set the environment's version constraint to the specified version",
         :default => nil
+        
+      option :remote,
+        :long  => '--remote',
+        :description => "Save the environment to the chef server in addition to the local JSON file",
+        :default => nil
 
       def run
         config[:cookbook_path] ||= Chef::Config[:cookbook_path]
@@ -74,6 +79,11 @@ module Jonlives
         ui.msg "\nSaving changes into #{@name_args[0]}.json"
         new_environment_json = pretty_print(@environment)
         save_environment_changes(@name_args[0],new_environment_json)
+        
+        if config[:remote]
+          ui.msg "\nUploading #{@name_args[0]} to server"
+          save_environment_changes_remote(@name_args[0] + ".json")
+        end
         
         ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
       end
@@ -118,6 +128,12 @@ module Jonlives
       
       def loader
         @loader ||= Chef::Knife::Core::ObjectLoader.new(Chef::Environment, ui)
+      end
+      
+      def save_environment_changes_remote(environment)
+          @loader ||= Knife::Core::ObjectLoader.new(Chef::Environment, ui)
+          updated = loader.load_from("environments", environment)
+          updated.save
       end
       
       def save_environment_changes(environment,envjson)
