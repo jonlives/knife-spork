@@ -117,26 +117,28 @@ upload complete
 
 # Spork Promote
 
-This function lets you easily set a version constraint in an environment for a particular cookbook. By default it will set the version constraint to whatever the local version of the specified cookbook is. Optionally, you can include a --version option which will set the version constraint for the specified cookbook to whatever version number you provide. You might want to use this if, for example, you pushed a version constraint for a cookbook version you don't want your nodes to use anymore, so you want to "roll back" the environment to a previous version.
+This function lets you easily set a version constraint in an environment for a particular cookbook. By default it will set the version constraint to whatever the local version of the specified cookbook is. Optionally, you can include a --version option which will set the version constraint for the specified cookbook to whatever version number you provide. You might want to use this if, for example, you pushed a version constraint for a cookbook version you don't want your nodes to use anymore, so you want to "roll back" the environment to a previous version. You can also specify the --remote option if you'd like to automatically upload your changed local environment file to the server.
 
 ## Usage
 
 ```` 
-knife spork promote ENVIRONMENT COOKBOOK (OPTIONS: --version)
+knife spork promote ENVIRONMENT COOKBOOK (OPTIONS: --version, --remote)
 ````
 
-## Example (Using local Cookbook version number, into environment "foo")
+## Example (Using local Cookbook version number, into environment "foo", uploading to chef server)
 
 ````
-$ knife spork promote foo php
+$ knife spork promote foo php --remote
 Adding version constraint php = 0.1.0
  
 Saving changes into foo.json
+
+Uploading foo to server
  
 Promotion complete! Please remember to upload your changed Environment file to the Chef Server.
 ````
 
-## Example (Using manual version, into environment "foo")
+## Example (Using manual version, into environment "foo", saving to local environment file only)
 
 ````
 $ knife spork promote foo php -v 1.0.6
