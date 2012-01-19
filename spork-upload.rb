@@ -156,14 +156,14 @@ WARNING
         check_for_broken_links(cookbook)
         check_dependencies(cookbook)
         Chef::CookbookUploader.new(cookbook, config[:cookbook_path]).upload_cookbook
-      #rescue Net::HTTPServerException => e
-      #  case e.response.code
-      #  when "409"
-      #    ui.error "Version #{cookbook.version} of cookbook #{cookbook.name} is frozen. Please bump your version number."
-      #    Chef::Log.debug(e)
-      #  else
-      #    raise
-      #  end
+      rescue Net::HTTPServerException => e
+        case e.response.code
+        when "409"
+          ui.error "Version #{cookbook.version} of cookbook #{cookbook.name} is frozen. Please bump your version number."
+          Chef::Log.debug(e)
+        else
+          raise
+        end
       end
 
       # if only you people wouldn't put broken symlinks in your cookbooks in
