@@ -87,6 +87,8 @@ module Jonlives
                 @name_args.push dep
               end
             end
+            ui.info("Uploading and freezing #{cookbook.name.to_s.ljust(justify_width + 10)} [#{cookbook.version}]")
+            upload(cookbook, justify_width)
             cookbook.freeze_version
             upload(cookbook, justify_width)
             version_constraints_to_update[cookbook_name] = cookbook.version
@@ -150,19 +152,18 @@ WARNING
       end
 
       def upload(cookbook, justify_width)
-        ui.info("Uploading and freezing #{cookbook.name.to_s.ljust(justify_width + 10)} [#{cookbook.version}]")
 
         check_for_broken_links(cookbook)
         check_dependencies(cookbook)
         Chef::CookbookUploader.new(cookbook, config[:cookbook_path]).upload_cookbook
-      rescue Net::HTTPServerException => e
-        case e.response.code
-        when "409"
-          ui.error "Version #{cookbook.version} of cookbook #{cookbook.name} is frozen. Please bump your version number."
-          Chef::Log.debug(e)
-        else
-          raise
-        end
+      #rescue Net::HTTPServerException => e
+      #  case e.response.code
+      #  when "409"
+      #    ui.error "Version #{cookbook.version} of cookbook #{cookbook.name} is frozen. Please bump your version number."
+      #    Chef::Log.debug(e)
+      #  else
+      #    raise
+      #  end
       end
 
       # if only you people wouldn't put broken symlinks in your cookbooks in
