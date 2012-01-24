@@ -85,7 +85,12 @@ module Jonlives
           save_environment_changes_remote(@name_args[0] + ".json")
         end
         
-        ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
+        if !config[:remote]
+          ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
+        else
+          ui.info "\nPromotion complete, and environment uploaded."
+        end
+          
       end
 
       def update_version_constraints(environment,cookbook,version_constraint)
