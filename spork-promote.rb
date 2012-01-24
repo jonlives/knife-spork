@@ -86,8 +86,6 @@ module Jonlives
           ui.info "\nPromotion complete, and environment uploaded."
         else
           ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
-        else
-          
         end
           
       end
