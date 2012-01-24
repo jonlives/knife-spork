@@ -83,12 +83,11 @@ module Jonlives
         if config[:remote]
           ui.msg "\nUploading #{@name_args[0]} to server"
           save_environment_changes_remote(@name_args[0] + ".json")
-        end
-        
-        if !config[:remote]
+          ui.info "\nPromotion complete, and environment uploaded."
+        else
           ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
         else
-          ui.info "\nPromotion complete, and environment uploaded."
+          
         end
           
       end
