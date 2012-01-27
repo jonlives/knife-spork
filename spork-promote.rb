@@ -31,10 +31,16 @@ require 'json'
 module Jonlives
   class SporkPromote < Chef::Knife
 
+      @@gitavail = true
       deps do
         require 'chef/exceptions'
         require 'chef/cookbook_loader'
         require 'chef/knife/core/object_loader'
+        begin
+          require "git"
+        rescue LoadError
+            @@gitavail = false
+        end
       end
 
       banner "knife spork promote ENVIRONMENT COOKBOOK (options)"
@@ -61,6 +67,12 @@ module Jonlives
           show_usage
           ui.error("You must specify a cookbook name and an environment")
           exit 1
+        end
+        
+        if !@@gitavail
+            ui.msg "Git gem not available, skipping git pull.\n\n"
+        else
+            git_pull_if_repo
         end
         
         @cookbook = @name_args[1]
@@ -183,6 +195,28 @@ module Jonlives
      
      def pretty_print(environment)
        return JSON.pretty_generate(JSON.parse(environment.to_json))
+     end
+     
+     def git_pull_if_repo
+        strio = StringIO.new
+        l = Logger.new strio
+        cookbook_path = config[:cookbook_path]
+        if cookbook_path.size > 1
+          ui.warn "It looks like you have multiple cookbook paths defined so I can't tell if you're running inside a git repo.\n\n"
+        else
+          begin
+            path = cookbook_path[0].gsub("cookbooks","")
+            ui.msg "Opening git repo #{path}\n\n"
+            g = Git.open(path, :log => Logger.new(strio))
+            ui.msg "Pulling latest changes from git\n\n"
+            g.pull
+          rescue ArgumentError => e
+            puts "Git Error: The root of your chef directory doesn't look like it's a git repo. Skipping git pull...\n\n"
+          rescue
+            puts "Git Error: Something went wrong, Dumping log info..."
+            puts "#{strio.string}"
+          end
+        end
      end
     end
   end
