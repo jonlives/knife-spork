@@ -211,7 +211,7 @@ module Jonlives
             ui.msg "Pulling latest changes from git\n\n"
             g.pull
           rescue ArgumentError => e
-            puts "Git Error: The root of your chef directory doesn't look like it's a git repo. Skipping git pull...\n\n"
+            puts "Git Error: The root of your chef repo doesn't look like it's a git repo. Skipping git pull...\n\n"
           rescue
             puts "Git Error: Something went wrong, Dumping log info..."
             puts "#{strio.string}"

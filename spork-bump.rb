@@ -16,7 +16,15 @@ module Jonlives
     TYPE_INDEX = { "major" => 0, "minor" => 1, "patch" => 2, "manual" => 3 }
 
     banner "knife spork bump COOKBOOK [MAJOR|MINOR|PATCH|MANUAL]"
-
+    
+      @@gitavail = true
+      deps do
+        begin
+          require "git"
+        rescue LoadError
+            @@gitavail = false
+        end
+      end
 
     def run
   
@@ -64,6 +72,12 @@ module Jonlives
           cookbook_path = Array(config[:cookbook_path]).first
           patch(cookbook_path, cookbook, patch_type)
       end
+      
+      if !@@gitavail
+          ui.msg "Git gem not available, skipping git add.\n\n"
+      else
+          git_add(cookbook)
+      end
 
     end
 
@@ -77,7 +91,7 @@ module Jonlives
       old_version = current_version.join('.')
       new_version = bumped_version.join('.') 
       update_metadata(old_version, new_version, metadata_file)
-      ui.msg("Bumping #{type} level of the #{cookbook} cookbook from #{old_version} to #{new_version}")
+      ui.msg("Bumping #{type} level of the #{cookbook} cookbook from #{old_version} to #{new_version}\n\n")
     end
     
     def patch_manual(cookbook_path, cookbook, version)
@@ -112,6 +126,28 @@ module Jonlives
       loader = ::Chef::CookbookLoader.new(cookbook_path)
       return loader[cookbook].version
     end
+    
+    def git_add(cookbook)
+      strio = StringIO.new
+      l = Logger.new strio
+      cookbook_path = config[:cookbook_path]
+      if cookbook_path.size > 1
+        ui.warn "It looks like you have multiple cookbook paths defined so I can't tell if you're running inside a git repo.\n\n"
+      else
+        begin
+          path = cookbook_path[0].gsub("cookbooks","")
+          ui.msg "Opening git repo #{path}\n\n"
+          g = Git.open(path, :log => Logger.new(strio))
+          ui.msg "Git add'ing #{path}cookbooks/#{cookbook}/metadata.rb\n\n"
+          g.add("#{path}cookbooks/#{cookbook}/metadata.rb")
+        rescue ArgumentError => e
+          puts "Git Error: The root of your chef repo doesn't look like it's a git repo. Skipping git add...\n\n"
+        rescue
+          puts "Git Error: Something went wrong, Dumping log info..."
+          puts "#{strio.string}"
+        end
+      end
+     end
   end
   
 end
