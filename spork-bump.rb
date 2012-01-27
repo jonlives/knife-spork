@@ -87,6 +87,11 @@ module Jonlives
       current_version = get_version(cookbook_path, cookbook).split(".").map{|i| i.to_i}
       bumped_version = current_version.clone
       bumped_version[t] = bumped_version[t] + 1
+      while t < 2
+        puts t
+        t+=1
+        bumped_version[t] = 0
+      end
       metadata_file = File.join(cookbook_path, cookbook, "metadata.rb")
       old_version = current_version.join('.')
       new_version = bumped_version.join('.') 
