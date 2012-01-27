@@ -88,7 +88,6 @@ module Jonlives
       bumped_version = current_version.clone
       bumped_version[t] = bumped_version[t] + 1
       while t < 2
-        puts t
         t+=1
         bumped_version[t] = 0
       end
