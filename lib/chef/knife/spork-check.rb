@@ -8,18 +8,18 @@ require 'json'
 require 'chef/knife'
 require 'chef/cookbook_loader'
 
-module Jonlives
+module KnifeSpork
   class SporkCheck < Chef::Knife
-    
+
     deps do
          require 'chef/json_compat'
          require 'uri'
          require 'chef/cookbook_version'
     end
     banner "knife spork check COOKBOOK"
-          
+
     def run
-  
+
       self.config = Chef::Config.merge!(config)
 
       if config.has_key?(:cookbook_path)
@@ -29,7 +29,7 @@ module Jonlives
         show_usage
         exit 1
       end
-      
+
       if name_args.size == 0
         show_usage
         exit 0
@@ -40,13 +40,13 @@ module Jonlives
         show_usage
         exit 1
       end
-    
+
       cookbook = name_args.first
       cookbook_path = Array(config[:cookbook_path]).first
-      
+
       local_version = get_local_cookbook_version(cookbook_path, cookbook)
       remote_versions = get_remote_cookbook_versions(cookbook)
-      
+
       check_versions(cookbook, local_version, remote_versions)
     end
 
@@ -57,17 +57,17 @@ module Jonlives
       local_version = current_version.join('.')
       return local_version
     end
-    
-    def get_remote_cookbook_versions(cookbook)  
+
+    def get_remote_cookbook_versions(cookbook)
       env           = config[:environment]
       api_endpoint  = env ? "environments/#{env}/cookbooks/#{cookbook}" : "cookbooks/#{cookbook}"
       cookbooks = rest.get_rest(api_endpoint)
       versions = cookbooks[cookbook]["versions"]
       return versions
     end
-    
+
     def check_versions(cookbook, local_version, remote_versions)
-      
+
       conflict = false
       frozen = false
       ui.msg "Checking versions for cookbook #{cookbook}..."
@@ -76,15 +76,15 @@ module Jonlives
       ui.msg ""
       ui.msg "Remote versions:"
       remote_versions.each do |v|
-        
+
         version_frozen = check_frozen(cookbook,v["version"])
-        
+
         if version_frozen then
           pretty_frozen = "frozen"
         else
           pretty_frozen = "unfrozen"
         end
-        
+
         if v["version"] == local_version then
           ui.msg "*" + v["version"] + ", " + pretty_frozen
           conflict = true
@@ -94,25 +94,25 @@ module Jonlives
         else
           ui.msg v["version"] + ", " + pretty_frozen
         end
-        
+
       end
       ui.msg ""
-      
+
       if conflict && frozen
         ui.msg "DANGER: Your local cookbook has same version number as the starred version above!\n\nPlease bump your local version or you won't be able to upload."
       elsif conflict && !frozen
           ui.msg "DANGER: Your local cookbook version number clashes with an unfrozen remote version.\n\nIf you upload now, you'll overwrite it."
-      else 
+      else
         ui.msg "Everything looks fine, no version clashes. You can upload!"
       end
     end
-    
+
     def get_version(cookbook_path, cookbook)
       loader = ::Chef::CookbookLoader.new(cookbook_path)
       return loader[cookbook].version
     end
-    
-    def check_frozen(cookbook,version)  
+
+    def check_frozen(cookbook,version)
       env           = config[:environment]
       api_endpoint  = env ? "environments/#{env}/cookbooks/#{cookbook}" : "cookbooks/#{cookbook}/#{version}"
       cookbooks = rest.get_rest(api_endpoint)
