@@ -49,10 +49,13 @@ Gem::Specification.new do |s|
   # = MANIFEST =
   s.files = %w[
     README.md
-    spork-bump.rb
-    spork-check.rb
-    spork-promote.rb
-    spork-upload.rb
+    Rakefile
+    knife-spork.gemspec
+    lib/chef/knife/spork-bump.rb
+    lib/chef/knife/spork-check.rb
+    lib/chef/knife/spork-promote.rb
+    lib/chef/knife/spork-upload.rb
+    lib/knife-spork.rb
   ]
   # = MANIFEST =
 
