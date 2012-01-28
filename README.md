@@ -2,6 +2,17 @@
 
 A workflow plugin for Chef::Knife which helps multiple devs work on the same chef server and repo without treading on eachothers toes. This plugin was designed around the workflow we have here at Etsy, where several people are working on the chef repo and chef server at the same time. It contains several functions, documented below:
 
+# Installation
+
+## SCRIPT INSTALL
+
+Copy spork-* script from lib/chef/knife/spork-*.rb to your ~/.chef/plugins/knife directory.
+
+## GEM INSTALL
+knife-spork is available on rubygems.org - if you have that source in your gemrc, you can simply use:
+
+gem install knife-spork
+
 # Spork Check
 
 This function is designed to help you avoid trampling on other people's cookbook versions, and to make sure that when you come to version your own work it's easy to see what version numbers have already been used and if the one you're using will overwrite anything.
