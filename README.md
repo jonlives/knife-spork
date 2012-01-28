@@ -11,7 +11,9 @@ Copy spork-* script from lib/chef/knife/spork-*.rb to your ~/.chef/plugins/knife
 ## GEM INSTALL
 knife-spork is available on rubygems.org - if you have that source in your gemrc, you can simply use:
 
+````
 gem install knife-spork
+````
 
 # Spork Check
 
