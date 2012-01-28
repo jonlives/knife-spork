@@ -10,13 +10,13 @@ require 'chef/knife'
 require 'chef/cookbook_loader'
 require 'chef/cookbook_uploader'
 
-module Jonlives
+module KnifeSpork
   class SporkBump < Chef::Knife
 
     TYPE_INDEX = { "major" => 0, "minor" => 1, "patch" => 2, "manual" => 3 }
 
     banner "knife spork bump COOKBOOK [MAJOR|MINOR|PATCH|MANUAL]"
-    
+
       @@gitavail = true
       deps do
         begin
@@ -27,9 +27,9 @@ module Jonlives
       end
 
     def run
-  
+
       bump_type=""
-      
+
       self.config = Chef::Config.merge!(config)
       if config.has_key?(:cookbook_path)
         cookbook_path = config["cookbook_path"]
@@ -38,7 +38,7 @@ module Jonlives
         show_usage
         exit 1
       end
-      
+
       if name_args.size == 0
         show_usage
         exit 0
@@ -47,13 +47,13 @@ module Jonlives
       if name_args.size == 3
         bump_type = name_args[1]
       elsif name_args.size == 2
-        bump_type = name_args.last        
+        bump_type = name_args.last
       else
         ui.fatal "Please specify the cookbook whose version you which to bump, and the type of bump you wish to apply."
         show_usage
         exit 1
       end
-      
+
       unless TYPE_INDEX.has_key?(bump_type)
         ui.fatal "Sorry, '#{name_args.last}' isn't a valid bump type.  Specify one of 'major', 'minor', 'patch' or 'manual'"
         show_usage
@@ -66,13 +66,13 @@ module Jonlives
         cookbook_path = Array(config[:cookbook_path]).first
         patch_type = "manual"
         patch_manual(cookbook_path, cookbook, manual_version)
-      else       
+      else
           cookbook = name_args.first
           patch_type = name_args.last
           cookbook_path = Array(config[:cookbook_path]).first
           patch(cookbook_path, cookbook, patch_type)
       end
-      
+
       if !@@gitavail
           ui.msg "Git gem not available, skipping git add.\n\n"
       else
@@ -93,11 +93,11 @@ module Jonlives
       end
       metadata_file = File.join(cookbook_path, cookbook, "metadata.rb")
       old_version = current_version.join('.')
-      new_version = bumped_version.join('.') 
+      new_version = bumped_version.join('.')
       update_metadata(old_version, new_version, metadata_file)
       ui.msg("Bumping #{type} level of the #{cookbook} cookbook from #{old_version} to #{new_version}\n\n")
     end
-    
+
     def patch_manual(cookbook_path, cookbook, version)
       current_version = get_version(cookbook_path, cookbook)
       v = version.split(".")
@@ -105,14 +105,14 @@ module Jonlives
         ui.msg "That isn't a valid version number to bump to."
         exit 1
       end
-      
+
       v.each do |v_comp|
          if !v_comp.is_i?
            ui.msg "That isn't a valid version number to bump to."
            exit 1
          end
       end
-      
+
       metadata_file = File.join(cookbook_path, cookbook, "metadata.rb")
       update_metadata(current_version, version, metadata_file)
       ui.msg("Manually bumped version of the #{cookbook} cookbook from #{current_version} to #{version}")
@@ -125,12 +125,12 @@ module Jonlives
       body_of_file.gsub!(old_version, new_version)
       File.open(metadata_file, "w") { |file| file << body_of_file }
     end
-    
+
     def get_version(cookbook_path, cookbook)
       loader = ::Chef::CookbookLoader.new(cookbook_path)
       return loader[cookbook].version
     end
-    
+
     def git_add(cookbook)
       strio = StringIO.new
       l = Logger.new strio
@@ -153,7 +153,7 @@ module Jonlives
       end
      end
   end
-  
+
 end
 
 class String

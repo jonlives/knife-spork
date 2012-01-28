@@ -27,7 +27,7 @@
 
 require 'chef/knife'
 
-module Jonlives
+module KnifeSpork
   class SporkUpload < Chef::Knife
 
       CHECKSUM = "checksum"

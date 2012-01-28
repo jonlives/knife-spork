@@ -28,7 +28,7 @@
 require 'chef/knife'
 require 'json'
 
-module Jonlives
+module KnifeSpork
   class SporkPromote < Chef::Knife
 
       @@gitavail = true
@@ -50,7 +50,7 @@ module Jonlives
         :long  => '--version VERSION',
         :description => "Set the environment's version constraint to the specified version",
         :default => nil
-        
+
       option :remote,
         :long  => '--remote',
         :description => "Save the environment to the chef server in addition to the local JSON file",
@@ -68,16 +68,16 @@ module Jonlives
           ui.error("You must specify a cookbook name and an environment")
           exit 1
         end
-        
+
         if !@@gitavail
             ui.msg "Git gem not available, skipping git pull.\n\n"
         else
             git_pull_if_repo
         end
-        
+
         @cookbook = @name_args[1]
         @environment = loader.load_from("environments", @name_args[0] + ".json")
-        
+
         if @cookbook == "all"
           ui.msg "Promoting ALL cookbooks to environment #{@environment}\n\n"
           cookbook_names = get_all_cookbooks
@@ -87,11 +87,11 @@ module Jonlives
         else
           @environment = promote(@environment, @cookbook)
         end
-        
+
         ui.msg "\nSaving changes into #{@name_args[0]}.json"
         new_environment_json = pretty_print(@environment)
         save_environment_changes(@name_args[0],new_environment_json)
-        
+
         if config[:remote]
           ui.msg "\nUploading #{@name_args[0]} to server"
           save_environment_changes_remote(@name_args[0] + ".json")
@@ -99,7 +99,7 @@ module Jonlives
         else
           ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
         end
-          
+
       end
 
       def update_version_constraints(environment,cookbook,version_constraint)
@@ -111,7 +111,7 @@ module Jonlives
         loader = ::Chef::CookbookLoader.new(cookbook_path)
         return loader[cookbook].version
       end
-      
+
       def load_environment(env)
          e = Chef::Environment.load(env)
          ejson = JSON.parse(e.to_json)
@@ -126,7 +126,7 @@ module Jonlives
              raise
            end
       end
-      
+
        def valid_version(version)
           v = version.split(".")
           if v.size < 3 or v.size > 3
@@ -139,36 +139,36 @@ module Jonlives
           end
           return true
       end
-      
+
       def loader
         @loader ||= Chef::Knife::Core::ObjectLoader.new(Chef::Environment, ui)
       end
-      
+
       def save_environment_changes_remote(environment)
           @loader ||= Knife::Core::ObjectLoader.new(Chef::Environment, ui)
           updated = loader.load_from("environments", environment)
           updated.save
       end
-      
+
       def save_environment_changes(environment,envjson)
         cookbook_path = config[:cookbook_path]
-        
+
         if cookbook_path.size > 1
           ui.warn "It looks like you have multiple cookbook paths defined so I'm not sure where to save your changed environment file.\n\n"
           ui.msg "Here's the JSON for you to paste into #{environment}.json in the environments directory you wish to use.\n\n"
           ui.msg "#{envjson}\n\n"
         else
           path = cookbook_path[0].gsub("cookbooks","environments") + "/#{environment}.json"
-          
-          File.open(path, 'w') do |f2|  
-            # use "\n" for two lines of text  
-            f2.puts envjson  
+
+          File.open(path, 'w') do |f2|
+            # use "\n" for two lines of text
+            f2.puts envjson
           end
         end
       end
-      
+
       def promote(environment,cookbook)
-        
+
         if config[:version]
             if !valid_version(config[:version])
               ui.error("#{config[:version]} isn't a valid version number.")
@@ -179,11 +179,11 @@ module Jonlives
         else
            @version = get_version(config[:cookbook_path], cookbook)
         end
-        
+
         ui.msg "Adding version constraint #{cookbook} = #{@version}"
         return update_version_constraints(environment,cookbook,@version)
       end
-      
+
       def get_all_cookbooks
           results = []
           cookbooks = ::Chef::CookbookLoader.new(config[:cookbook_path])
@@ -192,11 +192,11 @@ module Jonlives
           end
           return results
      end
-     
+
      def pretty_print(environment)
        return JSON.pretty_generate(JSON.parse(environment.to_json))
      end
-     
+
      def git_pull_if_repo
         strio = StringIO.new
         l = Logger.new strio
@@ -220,7 +220,7 @@ module Jonlives
      end
     end
   end
-  
+
   class String
       def is_i?
          !!(self =~ /^[-+]?[0-9]+$/)
