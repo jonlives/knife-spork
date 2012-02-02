@@ -246,10 +246,10 @@ module KnifeSpork
             ui.msg "Pulling latest changes from git\n\n"
             g.pull
           rescue ArgumentError => e
-            puts "Git Error: The root of your chef repo doesn't look like it's a git repo. Skipping git pull...\n\n"
+            ui.warn "Git: The root of your chef repo doesn't look like it's a git repo. Skipping git pull...\n\n"
           rescue
-            puts "Git Error: Something went wrong, Dumping log info..."
-            puts "#{strio.string}"
+            ui.warn "Git: Something went wrong with git pull, Dumping log info..."
+            ui.warn "#{strio.string}"
           end
         end
      end

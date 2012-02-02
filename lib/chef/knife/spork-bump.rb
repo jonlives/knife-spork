@@ -162,10 +162,10 @@ module KnifeSpork
           ui.msg "Git add'ing #{path}cookbooks/#{cookbook}/metadata.rb\n\n"
           g.add("#{path}cookbooks/#{cookbook}/metadata.rb")
         rescue ArgumentError => e
-          puts "Git Error: The root of your chef repo doesn't look like it's a git repo. Skipping git add...\n\n"
+          ui.warn "Git: The root of your chef repo doesn't look like it's a git repo. Skipping git add...\n\n"
         rescue
-          puts "Git Error: Something went wrong, Dumping log info..."
-          puts "#{strio.string}"
+          ui.warn "Git: Cookbook uploaded, but something went wrong with git add metadata.rb, Dumping log info..."
+          ui.warn "#{strio.string}"
         end
       end
     end
