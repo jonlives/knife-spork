@@ -85,11 +85,12 @@ module KnifeSpork
           ui.error("You must specify a cookbook name and an environment")
           exit 1
         end
-
-        if !@@gitavail
-            ui.msg "Git gem not available, skipping git pull.\n\n"
-        else
-            git_pull_if_repo
+        if !AppConf.git.nil? && AppConf.git.enabled
+          if !@@gitavail
+              ui.msg "Git gem not available, skipping git pull.\n\n"
+          else
+              git_pull_if_repo
+          end
         end
 
         @cookbook = @name_args[1]

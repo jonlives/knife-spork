@@ -89,12 +89,13 @@ module KnifeSpork
           patch(cookbook_path, cookbook, patch_type)
       end
 
-      if !@@gitavail
-          ui.msg "Git gem not available, skipping git add.\n\n"
-      else
-          git_add(cookbook)
+      if !AppConf.git.nil? && AppConf.git.enabled
+        if !@@gitavail
+            ui.msg "Git gem not available, skipping git add.\n\n"
+        else
+            git_add(cookbook)
+        end
       end
-
     end
 
 
@@ -167,7 +168,7 @@ module KnifeSpork
           puts "#{strio.string}"
         end
       end
-     end
+    end
   end
 
 end

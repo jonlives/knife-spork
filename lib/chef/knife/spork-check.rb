@@ -35,7 +35,7 @@ module KnifeSpork
         AppConf.load(File.expand_path("~/.chef/spork-config.yml"))
         ui.msg "Loaded config file #{File.expand_path("~/.chef/spork-config.yml")}...\n\n"
       end
-      
+              
       self.config = Chef::Config.merge!(config)
 
       if config.has_key?(:cookbook_path)
