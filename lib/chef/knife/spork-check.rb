@@ -18,7 +18,12 @@ module KnifeSpork
          require 'chef/cookbook_version'
     end
     banner "knife spork check COOKBOOK"
-
+    
+    option :all,
+      :short => "--a",
+      :long => "--all",
+      :description => "Show all uploaded versions of the cookbook"
+    
     def run
 
       if RUBY_VERSION.to_f < 1.9
@@ -79,7 +84,11 @@ module KnifeSpork
       api_endpoint  = env ? "environments/#{env}/cookbooks/#{cookbook}" : "cookbooks/#{cookbook}"
       cookbooks = rest.get_rest(api_endpoint)
       versions = cookbooks[cookbook]["versions"]
-      return versions
+      if config[:all]
+        return versions
+      else
+        return versions[1..5]
+      end
     end
 
     def check_versions(cookbook, local_version, remote_versions)
@@ -90,7 +99,11 @@ module KnifeSpork
       ui.msg ""
       ui.msg "Current local version: #{local_version}"
       ui.msg ""
-      ui.msg "Remote versions:"
+      if config[:all]
+        ui.msg "Remote versions:"
+      else
+        ui.msg "Remote versions (5 most recent only):"
+      end
       remote_versions.each do |v|
 
         version_frozen = check_frozen(cookbook,v["version"])

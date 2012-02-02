@@ -22,8 +22,10 @@ This function is designed to help you avoid trampling on other people's cookbook
 ## Usage 
 
 ````
-knife spork check COOKBOOK
+knife spork check COOKBOOK ( --all)
 ````
+
+By default, spork check only shows the 5 most recent remote cookbook versions. Add the --all option if you want to see everything.
 
 ## Example (Checking an Unfrozen Cookbook with version clash)
 
@@ -33,7 +35,7 @@ Checking versions for cookbook apache...
  
 Current local version: 0.1.0
  
-Remote versions:
+Remote versions (5 most recent only):
 *0.1.0, unfrozen
 0.0.0, unfrozen
  
@@ -50,7 +52,7 @@ Checking versions for cookbook apache2...
  
 Current local version: 1.0.6
  
-Remote versions:
+Remote versions (5 most recent only):
 *1.0.6, frozen
 1.0.5, frozen
 1.0.4, frozen
@@ -72,7 +74,7 @@ Checking versions for cookbook apache2...
  
 Current local version: 1.0.7
  
-Remote versions:
+Remote versions (5 most recent only):
 1.0.6, frozen
 1.0.5, frozen
 1.0.4, frozen
