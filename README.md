@@ -35,7 +35,7 @@ Checking versions for cookbook apache...
  
 Current local version: 0.1.0
  
-Remote versions (5 most recent only):
+Remote versions (Max. 5 most recent only):
 *0.1.0, unfrozen
 0.0.0, unfrozen
  
@@ -52,7 +52,7 @@ Checking versions for cookbook apache2...
  
 Current local version: 1.0.6
  
-Remote versions (5 most recent only):
+Remote versions (Max. 5 most recent only):
 *1.0.6, frozen
 1.0.5, frozen
 1.0.4, frozen
@@ -74,7 +74,7 @@ Checking versions for cookbook apache2...
  
 Current local version: 1.0.7
  
-Remote versions (5 most recent only):
+Remote versions (Max. 5 most recent only):
 1.0.6, frozen
 1.0.5, frozen
 1.0.4, frozen

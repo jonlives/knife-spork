@@ -102,7 +102,7 @@ module KnifeSpork
       if config[:all]
         ui.msg "Remote versions:"
       else
-        ui.msg "Remote versions (5 most recent only):"
+        ui.msg "Remote versions (Max. 5 most recent only):"
       end
       remote_versions.each do |v|
 
