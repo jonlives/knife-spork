@@ -28,6 +28,11 @@ module KnifeSpork
 
     def run
 
+      if RUBY_VERSION.to_f < 1.9
+        ui.fatal "Sorry, knife-spork requires ruby 1.9 or newer."
+        exit 1
+      end
+      
       bump_type=""
 
       self.config = Chef::Config.merge!(config)

@@ -57,6 +57,12 @@ module KnifeSpork
         :default => nil
 
       def run
+        
+        if RUBY_VERSION.to_f < 1.9
+          ui.fatal "Sorry, knife-spork requires ruby 1.9 or newer."
+          exit 1
+        end
+        
         config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 
         if @name_args.empty?
