@@ -25,6 +25,7 @@
 # limitations under the License.
 #
 
+require 'app_conf'
 require 'chef/knife'
 require 'json'
 
@@ -61,6 +62,16 @@ module KnifeSpork
         if RUBY_VERSION.to_f < 1.9
           ui.fatal "Sorry, knife-spork requires ruby 1.9 or newer."
           exit 1
+        end
+        
+        if File.exists?("/etc/spork-config.yml")
+          AppConf.load("/etc/spork-config.yml")
+          ui.msg "Loaded config file /etc/spork-config.yml...\n\n"
+        end
+      
+        if File.exists?(File.expand_path("~/.chef/spork-config.yml"))
+          AppConf.load(File.expand_path("~/.chef/spork-config.yml"))
+          ui.msg "Loaded config file #{File.expand_path("~/.chef/spork-config.yml")}...\n\n"
         end
         
         config[:cookbook_path] ||= Chef::Config[:cookbook_path]

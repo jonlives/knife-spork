@@ -6,6 +6,7 @@
 # Based on the knife-cookbook-bump plugin by:
 # Alalanta (no license specified)
 
+require 'app_conf'
 require 'chef/knife'
 require 'chef/cookbook_loader'
 require 'chef/cookbook_uploader'
@@ -33,6 +34,16 @@ module KnifeSpork
         exit 1
       end
       
+      if File.exists?("/etc/spork-config.yml")
+        AppConf.load("/etc/spork-config.yml")
+        ui.msg "Loaded config file /etc/spork-config.yml...\n\n"
+      end
+    
+      if File.exists?(File.expand_path("~/.chef/spork-config.yml"))
+        AppConf.load(File.expand_path("~/.chef/spork-config.yml"))
+        ui.msg "Loaded config file #{File.expand_path("~/.chef/spork-config.yml")}...\n\n"
+      end
+        
       bump_type=""
 
       self.config = Chef::Config.merge!(config)

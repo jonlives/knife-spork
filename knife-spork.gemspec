@@ -42,6 +42,7 @@ Gem::Specification.new do |s|
   ## that are needed for an end user to actually USE your code.
   s.add_dependency('chef', [">= 0.10.4"])
   s.add_dependency('git', [">= 1.2.5"])
+  s.add_dependency('app_conf', [">= 0.3.0"])
 
   ## Leave this section as-is. It will be automatically generated from the
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
