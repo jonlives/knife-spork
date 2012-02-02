@@ -167,6 +167,15 @@ module KnifeSpork
           @loader ||= Knife::Core::ObjectLoader.new(Chef::Environment, ui)
           updated = loader.load_from("environments", environment)
           updated.save
+          
+          if !AppConf.irccat.nil? && AppConf.irccat.enabled
+            message = "#{AppConf.irccat.channel} CHEF: #{ENV['USER']} uploaded environment #{environment.gsub(".json","")}"
+            s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
+            s.write(message)
+            s.close
+          end
+            
+            
           if !AppConf.graphite.nil? && AppConf.graphite.enabled
             time = Time.now
             message = "deploys.chef.#{environment.gsub(".json","")} 1 #{time.to_i}\n"
