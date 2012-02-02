@@ -28,6 +28,7 @@
 require 'app_conf'
 require 'chef/knife'
 require 'json'
+require 'socket'
 
 module KnifeSpork
   class SporkPromote < Chef::Knife
@@ -166,6 +167,13 @@ module KnifeSpork
           @loader ||= Knife::Core::ObjectLoader.new(Chef::Environment, ui)
           updated = loader.load_from("environments", environment)
           updated.save
+          if !AppConf.graphite.nil? && AppConf.graphite.enabled
+            time = Time.now
+            message = "deploys.chef.#{environment.gsub(".json","")} 1 #{time.to_i}\n"
+            s = TCPSocket.open(AppConf.graphite.server,AppConf.graphite.port)
+            s.write(message)
+            s.close
+          end
       end
 
       def save_environment_changes(environment,envjson)

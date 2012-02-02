@@ -27,6 +27,7 @@
 
 require 'app_conf'
 require 'chef/knife'
+require 'socket'
 
 module KnifeSpork
   class SporkUpload < Chef::Knife
@@ -105,10 +106,19 @@ module KnifeSpork
               end
             end
             ui.info("Uploading and freezing #{cookbook.name.to_s.ljust(justify_width + 10)} [#{cookbook.version}]")
+            
             upload(cookbook, justify_width)
             cookbook.freeze_version
             upload(cookbook, justify_width)
             version_constraints_to_update[cookbook_name] = cookbook.version
+                    
+            if !AppConf.irccat.nil? && AppConf.irccat.enabled
+              message = "#{AppConf.irccat.channel} TESTING: CHEF: #{ENV['USER']} uploaded and froze cookbook #{cookbook_name} version #{cookbook.version}"
+              s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
+              s.write(message)
+              s.close
+            end
+
           rescue Chef::Exceptions::CookbookNotFoundInRepo => e
             ui.error("Could not find cookbook #{cookbook_name} in your cookbook path, skipping it")
             Chef::Log.debug(e)
