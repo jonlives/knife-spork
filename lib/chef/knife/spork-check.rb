@@ -30,7 +30,14 @@ module KnifeSpork
         ui.fatal "Sorry, knife-spork requires ruby 1.9 or newer."
         exit 1
       end
+      
+      self.config = Chef::Config.merge!(config)
 
+      if File.exists?("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
+        AppConf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
+        ui.msg "Loaded config file #{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml...\n\n"
+      end
+      
       if File.exists?("/etc/spork-config.yml")
         AppConf.load("/etc/spork-config.yml")
         ui.msg "Loaded config file /etc/spork-config.yml...\n\n"
@@ -40,8 +47,6 @@ module KnifeSpork
         AppConf.load(File.expand_path("~/.chef/spork-config.yml"))
         ui.msg "Loaded config file #{File.expand_path("~/.chef/spork-config.yml")}...\n\n"
       end
-              
-      self.config = Chef::Config.merge!(config)
 
       if config.has_key?(:cookbook_path)
         cookbook_path = config["cookbook_path"]

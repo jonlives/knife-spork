@@ -72,6 +72,13 @@ module KnifeSpork
           exit 1
         end
       
+        self.config = Chef::Config.merge!(config)
+
+        if File.exists?("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
+          AppConf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
+          ui.msg "Loaded config file #{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml...\n\n"
+        end
+      
         if File.exists?("/etc/spork-config.yml")
           AppConf.load("/etc/spork-config.yml")
           ui.msg "Loaded config file /etc/spork-config.yml...\n\n"
