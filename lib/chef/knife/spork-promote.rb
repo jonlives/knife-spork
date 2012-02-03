@@ -191,8 +191,12 @@ module KnifeSpork
       def save_environment_changes_remote(environment)
           @loader ||= Knife::Core::ObjectLoader.new(Chef::Environment, ui)
           updated = loader.load_from("environments", environment)
+          
+          env_server = Chef::Environment.load(environment.gsub(".json","")).to_hash["cookbook_versions"]
+          env_local = updated.to_hash["cookbook_versions"]
+          eenv_diff = env_server.diff(env_local)
+            
           @updated.save
-
 
           if !AppConf.gist.nil? && AppConf.gist.enabled
             if AppConf.gist.in_chef
@@ -203,7 +207,6 @@ module KnifeSpork
             
             env_server = Chef::Environment.load(environment.gsub(".json","")).to_hash["cookbook_versions"]
             env_local = updated.to_hash["cookbook_versions"]
-
 
             env_diff = env_server.diff(env_local)
             msg = "Environment #{environment.gsub(".json","")} uploaded at #{Time.now.getutc} by #{ENV['USER']}\n\nConstraints updated on server in this version:\n\n#{env_diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
