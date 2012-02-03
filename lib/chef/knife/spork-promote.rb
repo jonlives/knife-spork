@@ -196,7 +196,7 @@ module KnifeSpork
           env_local = updated.to_hash["cookbook_versions"]
           eenv_diff = env_server.diff(env_local)
             
-          @updated.save
+          updated.save
 
           if !AppConf.gist.nil? && AppConf.gist.enabled
             if AppConf.gist.in_chef
