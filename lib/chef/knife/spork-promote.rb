@@ -84,15 +84,20 @@ module KnifeSpork
         
         config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 
-        if @name_args.empty?
+        if @name_args.empty? && AppConf.default_environments.nil?
           show_usage
           ui.error("You must specify a cookbook name and an environment")
           exit 1
-        elsif @name_args.size != 2
+        elsif @name_args.empty? && !AppConf.default_environments.nil?
+          show_usage
+          ui.error("Default environments loaded from config, but you must specify a cookbook name")
+          exit 1
+        elsif @name_args.size != 2 && AppConf.default_environments.nil?
           show_usage
           ui.error("You must specify a cookbook name and an environment")
           exit 1
         end
+        
         if !AppConf.git.nil? && AppConf.git.enabled
           if !@@gitavail
               ui.msg "Git gem not available, skipping git pull.\n\n"
@@ -100,32 +105,45 @@ module KnifeSpork
               git_pull_if_repo
           end
         end
-
-        @cookbook = @name_args[1]
-        @environment = loader.load_from("environments", @name_args[0] + ".json")
-
-        if @cookbook == "all"
-          ui.msg "Promoting ALL cookbooks to environment #{@environment}\n\n"
-          cookbook_names = get_all_cookbooks
-          cookbook_names.each do |c|
-            @environment = promote(@environment, c)
-          end
+        
+        if AppConf.default_environments.nil?
+            environments = [ @name_args[0] ]
+            @cookbook = @name_args[1]
+        elsif !AppConf.default_environments.nil? && @name_args.size == 2
+            environments = [ @name_args[0] ]
+            @cookbook = @name_args[1]
         else
-          @environment = promote(@environment, @cookbook)
+            environments = AppConf.default_environments
+            @cookbook = @name_args[0]
         end
+        
+        environments.each do |e|
+              ui.msg ""
+              ui.msg "Environment: #{e}"
+              @environment = loader.load_from("environments", "#{e}.json")
 
-        ui.msg "\nSaving changes into #{@name_args[0]}.json"
-        new_environment_json = pretty_print(@environment)
-        save_environment_changes(@name_args[0],new_environment_json)
+              if @cookbook == "all"
+                ui.msg "Promoting ALL cookbooks to environment #{@environment}"
+                cookbook_names = get_all_cookbooks
+                cookbook_names.each do |c|
+                  @environment = promote(@environment, c)
+                end
+              else
+                @environment = promote(@environment, @cookbook)
+              end
 
-        if config[:remote]
-          ui.msg "\nUploading #{@name_args[0]} to server"
-          save_environment_changes_remote(@name_args[0] + ".json")
-          ui.info "\nPromotion complete, and environment uploaded."
-        else
-          ui.info "\nPromotion complete! Please remember to upload your changed Environment file to the Chef Server."
+              ui.msg "Saving changes into #{e}.json"
+              new_environment_json = pretty_print(@environment)
+              save_environment_changes(e,new_environment_json)
+
+              if config[:remote]
+                ui.msg "Uploading #{e} to server"
+                save_environment_changes_remote("#{e}.json")
+                ui.info "\nPromotion complete, and environment uploaded."
+              else
+                ui.info "\nPromotion complete! Please remember to upload your changed #{e}.json to the Chef Server."
+              end
         end
-
       end
 
       def update_version_constraints(environment,cookbook,version_constraint)
