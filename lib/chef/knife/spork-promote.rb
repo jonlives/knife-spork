@@ -194,7 +194,7 @@ module KnifeSpork
           
           env_server = Chef::Environment.load(environment.gsub(".json","")).to_hash["cookbook_versions"]
           env_local = updated.to_hash["cookbook_versions"]
-          eenv_diff = env_server.diff(env_local)
+          env_diff = env_server.diff(env_local)
             
           updated.save
 
