@@ -15,6 +15,65 @@ knife-spork is available on rubygems.org - if you have that source in your gemrc
 gem install knife-spork
 ````
 
+# Spork Configuration
+
+Out of the box, knife spork will work with no configuration. However, you can optionally enable several features to enhance it's functionality.
+
+Knife Spork will look for it's config file in the following locations, in ascending order of precedence.
+
+* <chef-repo>/config/spork-config.yml
+* /etc/spork-config.yml
+* ~/.chef/spork-config.yml
+
+Anything set in the config file in your home directory for example, will override options set in your chef repo or /etc.
+
+Below is a sample config file with all supported options enabled below, followed by an explanation of each section.
+
+````
+git:
+  enabled: true
+irccat:
+  enabled: true
+  server: irccat.mycompany.com
+  port: 12345
+  channel: "#chef"
+graphite:
+  enabled: true
+  server: graphite.mycompany.com
+  port: 2003
+gist:
+  enabled: true
+  in_chef: true
+  chef_path: cookbooks/gist/files/default/gist
+  path: /usr/bin/gist
+default_environments: [ production, development ]
+````
+## Git
+
+This section enables a couple of git commands which will run as part of your spork workflow, namely:
+
+* When you bump a cookbook's version, the relevant metadata.rb file will be git added
+* When you promote an environment, git pull will be run before your changes are made.
+
+## Irccat
+
+If you're using the irccat (https://github.com/RJ/irccat) irc bot, this lets you post notifications to the channel of your choice. It currently notifies on
+
+* When a cookbook is uploaded using spork upload
+* When  an environment is promoted to the server using promote --remote
+
+## Graphite
+
+This lets you send to a graphite metric when promote --remote is performed. It send to the metric deploys.chef.<environment>
+	
+## Gist
+
+This allows you to generate an optional gist of environment changes which will be added to irccat notifications on promote --remote. It supports the https://rubygems.org/gems/gist, and contains two parameters to use a version in your chef repo, or a version installed somewhere else locally.
+
+## Default Environments
+
+This allows you to specify a default list of environments you want to promote changes to. If this option is configured and you *ommit* the environment parameter when promoting, ie knife spork promote <cookbook>, then it will promote to all environments in this list.
+
 # Spork Check
 
 This function is designed to help you avoid trampling on other people's cookbook versions, and to make sure that when you come to version your own work it's easy to see what version numbers have already been used and if the one you're using will overwrite anything.
