@@ -191,10 +191,27 @@ module KnifeSpork
       def save_environment_changes_remote(environment)
           @loader ||= Knife::Core::ObjectLoader.new(Chef::Environment, ui)
           updated = loader.load_from("environments", environment)
-          updated.save
+          @updated.save
+
+
+          if !AppConf.gist.nil? && AppConf.gist.enabled
+            if AppConf.gist.in_chef
+              gist_path = AppConf.gist.chef_path
+            else
+              gist_path = AppConf.gist.path
+            end
+            
+            env_server = Chef::Environment.load(environment.gsub(".json","")).to_hash["cookbook_versions"]
+            env_local = updated.to_hash["cookbook_versions"]
+
+
+            env_diff = env_server.diff(env_local)
+            msg = "Environment #{environment.gsub(".json","")} uploaded at #{Time.now.getutc} by #{ENV['USER']}\n\nConstraints updated on server in this version:\n\n#{env_diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
+            @gist = %x[ echo "#{msg}" | #{gist_path}]
+          end
           
           if !AppConf.irccat.nil? && AppConf.irccat.enabled
-            message = "#{AppConf.irccat.channel} CHEF: #{ENV['USER']} uploaded environment #{environment.gsub(".json","")}"
+            message = "#{AppConf.irccat.channel} CHEF: #{ENV['USER']} uploaded environment #{environment.gsub(".json","")} #{@gist}"
             s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
             s.write(message)
             s.close
@@ -286,3 +303,14 @@ module KnifeSpork
          !!(self =~ /^[-+]?[0-9]+$/)
       end
   end
+  
+class Hash
+  def diff(other)
+    self.keys.inject({}) do |memo, key|
+      unless self[key] == other[key]
+        memo[key] = "#{self[key]} changed to #{other[key]}"
+      end
+      memo
+    end
+  end
+end

@@ -92,7 +92,7 @@ module KnifeSpork
       if config[:all]
         return versions
       else
-        return versions[1..5]
+        return versions[0..4]
       end
     end
 
