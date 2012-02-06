@@ -196,7 +196,7 @@ module KnifeSpork
           env_local = updated.to_hash["cookbook_versions"]
           env_diff = env_server.diff(env_local)
             
-          updated.save
+          #updated.save
 
           if !AppConf.gist.nil? && AppConf.gist.enabled
             if AppConf.gist.in_chef
@@ -205,10 +205,6 @@ module KnifeSpork
               gist_path = AppConf.gist.path
             end
             
-            env_server = Chef::Environment.load(environment.gsub(".json","")).to_hash["cookbook_versions"]
-            env_local = updated.to_hash["cookbook_versions"]
-
-            env_diff = env_server.diff(env_local)
             msg = "Environment #{environment.gsub(".json","")} uploaded at #{Time.now.getutc} by #{ENV['USER']}\n\nConstraints updated on server in this version:\n\n#{env_diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
             @gist = %x[ echo "#{msg}" | #{gist_path}]
           end
