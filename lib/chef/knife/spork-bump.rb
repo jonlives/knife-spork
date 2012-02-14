@@ -70,12 +70,14 @@ module KnifeSpork
         bump_type = name_args[1]
       elsif name_args.size == 2
         bump_type = name_args.last
+      elsif name_args.size == 1
+        bump_type = "patch"
       else
         ui.fatal "Please specify the cookbook whose version you which to bump, and the type of bump you wish to apply."
         show_usage
         exit 1
       end
-
+      
       unless TYPE_INDEX.has_key?(bump_type)
         ui.fatal "Sorry, '#{name_args.last}' isn't a valid bump type.  Specify one of 'major', 'minor', 'patch' or 'manual'"
         show_usage
@@ -86,13 +88,11 @@ module KnifeSpork
         manual_version = name_args.last
         cookbook = name_args.first
         cookbook_path = Array(config[:cookbook_path]).first
-        patch_type = "manual"
         patch_manual(cookbook_path, cookbook, manual_version)
       else
           cookbook = name_args.first
-          patch_type = name_args.last
           cookbook_path = Array(config[:cookbook_path]).first
-          patch(cookbook_path, cookbook, patch_type)
+          patch(cookbook_path, cookbook, bump_type)
       end
 
       if !AppConf.git.nil? && AppConf.git.enabled
