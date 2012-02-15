@@ -120,7 +120,15 @@ module KnifeSpork
         environments.each do |e|
               ui.msg ""
               ui.msg "Environment: #{e}"
-              @environment = loader.load_from("environments", "#{e}.json")
+              
+              
+              cookbook_path = config[:cookbook_path]
+              if cookbook_path.size > 1
+                @environment = loader.load_from("environments", "#{e}.json")
+              else
+                path = cookbook_path[0].gsub("cookbooks","environments") + "/#{e}.json"
+                 @environment = loader.object_from_file("#{path}")
+              end
 
               if @cookbook == "all"
                 ui.msg "Promoting ALL cookbooks to environment #{@environment}"
