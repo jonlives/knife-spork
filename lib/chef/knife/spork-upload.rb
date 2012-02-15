@@ -120,7 +120,7 @@ module KnifeSpork
             version_constraints_to_update[cookbook_name] = cookbook.version
                     
             if !AppConf.irccat.nil? && AppConf.irccat.enabled
-              message = "#{AppConf.irccat.channel} CHEF: #{ENV['USER']} uploaded and froze cookbook #{cookbook_name} version #{cookbook.version}"
+              message = "#{AppConf.irccat.channel} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded and froze cookbook #TEAL#{cookbook_name}#NORMAL version #TEAL#{cookbook.version}#NORMAL"
               s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
               s.write(message)
               s.close

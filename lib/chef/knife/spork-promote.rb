@@ -217,8 +217,8 @@ module KnifeSpork
             @gist = %x[ echo "#{msg}" | #{gist_path}]
           end
           
-          if !AppConf.irccat.nil? && AppConf.irccat.enabled
-            message = "#{AppConf.irccat.channel} CHEF: #{ENV['USER']} uploaded environment #{environment.gsub(".json","")} #{@gist}"
+          if !AppConf.irccat.nil? && AppConf.irccat.enabled            
+            message = "#{AppConf.irccat.channel} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded environment #TEAL#{environment.gsub(".json","")}#NORMAL #{@gist}"
             s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
             s.write(message)
             s.close
