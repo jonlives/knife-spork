@@ -224,10 +224,19 @@ module KnifeSpork
           
           if !AppConf.irccat.nil? && AppConf.irccat.enabled   
             begin
-              message = "#{AppConf.irccat.channel} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded environment #TEAL#{environment.gsub(".json","")}#NORMAL #{@gist}"
-              s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
-              s.write(message)
-              s.close
+              
+              if !AppConf.irccat.channel?(String)
+                channels = AppConf.irccat.channel
+              else
+                channels = ["#{AppConf.irccat.channel}"]
+              end
+              
+              channels.each do |c|   
+                message = "#{c} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded environment #TEAL#{environment.gsub(".json","")}#NORMAL #{@gist}"
+                s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
+                s.write(message)
+                s.close
+              end
             rescue Exception => msg  
               puts "Something went wrong with sending to irccat: (#{msg})"  
             end
