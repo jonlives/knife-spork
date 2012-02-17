@@ -120,10 +120,14 @@ module KnifeSpork
             version_constraints_to_update[cookbook_name] = cookbook.version
                     
             if !AppConf.irccat.nil? && AppConf.irccat.enabled
-              message = "#{AppConf.irccat.channel} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded and froze cookbook #TEAL#{cookbook_name}#NORMAL version #TEAL#{cookbook.version}#NORMAL"
-              s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
-              s.write(message)
-              s.close
+                begin
+                  message = "#{AppConf.irccat.channel} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded and froze cookbook #TEAL#{cookbook_name}#NORMAL version #TEAL#{cookbook.version}#NORMAL"
+                  s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
+                  s.write(message)
+                  s.close
+               rescue Exception => msg  
+                puts "Something went wrong with sending to irccat: (#{msg})"  
+               end
             end
 
           rescue Chef::Exceptions::CookbookNotFoundInRepo => e

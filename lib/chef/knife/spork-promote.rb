@@ -222,21 +222,30 @@ module KnifeSpork
             @gist = %x[ echo "#{msg}" | #{gist_path}]
           end
           
-          if !AppConf.irccat.nil? && AppConf.irccat.enabled            
-            message = "#{AppConf.irccat.channel} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded environment #TEAL#{environment.gsub(".json","")}#NORMAL #{@gist}"
-            s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
-            s.write(message)
-            s.close
+          if !AppConf.irccat.nil? && AppConf.irccat.enabled   
+            begin
+              message = "#{AppConf.irccat.channel} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded environment #TEAL#{environment.gsub(".json","")}#NORMAL #{@gist}"
+              s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
+              s.write(message)
+              s.close
+            rescue Exception => msg  
+              puts "Something went wrong with sending to irccat: (#{msg})"  
+            end
           end
             
             
           if !AppConf.graphite.nil? && AppConf.graphite.enabled
-            time = Time.now
-            message = "deploys.chef.#{environment.gsub(".json","")} 1 #{time.to_i}\n"
-            s = TCPSocket.open(AppConf.graphite.server,AppConf.graphite.port)
-            s.write(message)
-            s.close
+            begin
+              time = Time.now
+              message = "deploys.chef.#{environment.gsub(".json","")} 1 #{time.to_i}\n"
+              s = TCPSocket.open(AppConf.graphite.server,AppConf.graphite.port)
+              s.write(message)
+              s.close
+            rescue Exception => msg  
+              puts "Something went wrong with sending to graphite: (#{msg})"  
+            end
           end
+          
       end
 
       def save_environment_changes(environment,envjson)
