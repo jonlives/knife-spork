@@ -170,7 +170,7 @@ module KnifeSpork
         rescue ArgumentError => e
           ui.warn "Git: The root of your chef repo doesn't look like it's a git repo. Skipping git add...\n\n"
         rescue
-          ui.warn "Git: Cookbook uploaded, but something went wrong with git add metadata.rb, Dumping log info..."
+          ui.warn "Git: Cookbook bump succeeded, but something went wrong with git add metadata.rb, so you'll want to manually git add it. Dumping log info..."
           ui.warn "#{strio.string}"
         end
       end
