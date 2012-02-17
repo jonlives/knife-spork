@@ -203,7 +203,12 @@ module KnifeSpork
           env_server = Chef::Environment.load(environment.gsub(".json","")).to_hash["cookbook_versions"]
           env_local = updated.to_hash["cookbook_versions"]
           env_diff = env_server.diff(env_local)
-            
+          
+          if env_diff.size > 1
+            ui.warn "You're about to promote changes to several cookbooks:"
+            ui.warn "\n#{env_diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
+            ui.confirm("Are you sure you want to continue?")
+          end
           updated.save
 
           if !AppConf.gist.nil? && AppConf.gist.enabled
