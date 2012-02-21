@@ -146,7 +146,7 @@ module KnifeSpork
 
               if config[:remote]
                 ui.msg "Uploading #{e} to server"
-                save_environment_changes_remote("#{e}.json")
+                save_environment_changes_remote("#{e}")
                 ui.info "\nPromotion complete, and environment uploaded."
               else
                 ui.info "\nPromotion complete! Please remember to upload your changed #{e}.json to the Chef Server."
@@ -198,7 +198,14 @@ module KnifeSpork
 
       def save_environment_changes_remote(environment)
           @loader ||= Knife::Core::ObjectLoader.new(Chef::Environment, ui)
-          updated = loader.load_from("environments", environment)
+          
+          cookbook_path = config[:cookbook_path]
+          if cookbook_path.size > 1
+              updated = loader.load_from("environments", "#{environment}.json")
+          else
+              path = cookbook_path[0].gsub("cookbooks","environments") + "/#{environment}.json"
+              updated = loader.object_from_file("#{path}")
+          end
           
           env_server = Chef::Environment.load(environment.gsub(".json","")).to_hash["cookbook_versions"]
           env_local = updated.to_hash["cookbook_versions"]
