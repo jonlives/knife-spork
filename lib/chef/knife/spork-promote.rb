@@ -312,16 +312,32 @@ module KnifeSpork
           ui.warn "It looks like you have multiple cookbook paths defined so I can't tell if you're running inside a git repo.\n\n"
         else
           begin
-            path = cookbook_path[0].gsub("cookbooks","")
+            path = cookbook_path[0].gsub("/cookbooks","")
             ui.msg "Opening git repo #{path}\n\n"
             g = Git.open(path, :log => Logger.new(strio))
             ui.msg "Pulling latest changes from git\n\n"
-            g.pull
+            output = IO.popen ("cd #{path} && git pull 2>&1")
+            Process.wait
+            exit_code = $?            
+            if exit_code.exitstatus ==  0
+              ui.msg "#{output.read()}\n"
+            else
+              ui.error "#{output.read()}\n"
+              exit 1
+            end
+
+            ui.msg "Pulling latest changes from git submodules (if any)\n\n"
+            output = IO.popen ("cd #{path} && git submodule foreach git pull 2>&1")
+            Process.wait
+            exit_code = $?
+            if exit_code.exitstatus ==  0
+              ui.msg "#{output.read()}\n"
+            else
+              ui.error "#{output.read()}\n"
+              exit 1
+            end
           rescue ArgumentError => e
             ui.warn "Git: The root of your chef repo doesn't look like it's a git repo. Skipping git pull...\n\n"
-          rescue
-            ui.warn "Git: Something went wrong with git pull, Dumping log info..."
-            ui.warn "#{strio.string}"
           end
         end
      end
