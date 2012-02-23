@@ -117,10 +117,11 @@ module KnifeSpork
             @cookbook = @name_args[0]
         end
         
+        check_cookbook_uploaded(@cookbook)
+        
         environments.each do |e|
               ui.msg ""
               ui.msg "Environment: #{e}"
-              
               
               cookbook_path = config[:cookbook_path]
               if cookbook_path.size > 1
@@ -129,7 +130,7 @@ module KnifeSpork
                 path = cookbook_path[0].gsub("cookbooks","environments") + "/#{e}.json"
                  @environment = loader.object_from_file("#{path}")
               end
-
+              
               if @cookbook == "all"
                 ui.msg "Promoting ALL cookbooks to environment #{@environment}"
                 cookbook_names = get_all_cookbooks
@@ -293,7 +294,7 @@ module KnifeSpork
         else
            @version = get_version(config[:cookbook_path], cookbook)
         end
-
+        
         ui.msg "Adding version constraint #{cookbook} = #{@version}"
         return update_version_constraints(environment,cookbook,@version)
       end
@@ -306,6 +307,24 @@ module KnifeSpork
           end
           return results
      end
+     
+    def check_cookbook_uploaded(cookbook)
+      if config[:version]
+            if !valid_version(config[:version])
+              ui.error("#{config[:version]} isn't a valid version number.")
+              return 1
+            else
+              @version = config[:version]
+            end
+        else
+           @version = get_version(config[:cookbook_path], cookbook)
+        end
+        ui.msg "Checking that #{cookbook} version #{@version} exists on the server before promoting (any error means it hasn't been uploaded yet)...\n\n"
+        env           = config[:environment]
+        api_endpoint  = env ? "environments/#{env}/cookbooks/#{cookbook}/#{@version}" : "cookbooks/#{cookbook}/#{@version}"
+        cookbooks = rest.get_rest(api_endpoint)
+        ui.msg "#{cookbook} version #{@version } found on server!"
+    end
 
      def pretty_print(environment)
        return JSON.pretty_generate(JSON.parse(environment.to_json))
