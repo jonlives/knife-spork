@@ -284,6 +284,8 @@ module KnifeSpork
               end 
             rescue Timeout::Error
               ui.warn("Timed out connecting to #{AppConf.eventinator.url} promote wasn't eventinated")
+            rescue Exception => msg 
+              ui.warn("An unhandled execption occured while eventinating: #{msg}")
             end 
           end
 
