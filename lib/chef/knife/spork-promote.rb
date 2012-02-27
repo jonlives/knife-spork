@@ -250,7 +250,45 @@ module KnifeSpork
             end
           end
             
-            
+          if !AppConf.eventinator.nil? && AppConf.eventinator.enabled
+            metadata = {}
+            metadata[:promoted_cookbooks] = {}
+
+            promoted_cookbooks = []
+            env_diff.collect do |k,v|
+              v =~ /= ([\d\.]+) changed to = ([\d\.]+)/
+              metadata[:promoted_cookbooks][k] = { :previous_version => $1, :new_version => $2 }
+              promoted_cookbooks << "#{k} (#{$2})"
+            end
+
+            event_data = {}
+            event_data[:tag]      = "knife"
+            event_data[:username] = ENV['USER']
+            event_data[:status]   = "#{ENV['USER']} promoted #{promoted_cookbooks.join(", ")} to #{environment.gsub(".json","")}"
+            event_data[:metadata] = metadata.to_json
+
+            uri = URI.parse(AppConf.eventinator.url)
+
+            http = Net::HTTP.new(uri.host, uri.port)
+
+            ## TODO: should make this configurable, timeout after 5 sec
+            http.read_timeout = 5;
+
+            request = Net::HTTP::Post.new(uri.request_uri)
+            request.set_form_data(event_data)
+
+            begin
+              response = http.request(request)
+              if response.code != "200"
+                ui.warn("Got a #{response.code} from #{AppConf.eventinator.url} promote wasn't eventinated")
+              end 
+            rescue Timeout::Error
+              ui.warn("Timed out connecting to #{AppConf.eventinator.url} promote wasn't eventinated")
+            rescue Exception => msg 
+              ui.warn("An unhandled execption occured while eventinating: #{msg}")
+            end 
+          end
+
           if !AppConf.graphite.nil? && AppConf.graphite.enabled
             begin
               time = Time.now
