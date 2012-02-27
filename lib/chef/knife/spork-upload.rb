@@ -139,6 +139,39 @@ module KnifeSpork
                end
             end
 
+            if !AppConf.eventinator.nil? && AppConf.eventinator.enabled
+              metadata = {}
+              metadata[:cookbook_name]    = cookbook.name
+              metadata[:cookbook_version] = cookbook.version
+
+              event_data = {}
+              event_data[:tag]      = "knife"
+              event_data[:username] = ENV['USER']
+              event_data[:status]   = "#{ENV['USER']} uploaded and froze version #{cookbook.version} of cookbook #{cookbook_name}"
+              event_data[:metadata] = metadata.to_json
+
+              uri = URI.parse(AppConf.eventinator.url)
+
+              http = Net::HTTP.new(uri.host, uri.port)
+
+              ## TODO: should make this configurable, timeout after 5 sec
+              http.read_timeout = 5;
+
+              request = Net::HTTP::Post.new(uri.request_uri)
+              request.set_form_data(event_data)
+
+              begin
+                response = http.request(request)
+                if response.code != "200"
+                  ui.warn("Got a #{response.code} from #{AppConf.eventinator.url} upload wasn't eventinated")
+                end 
+              rescue Timeout::Error
+                ui.warn("Timed out connecting to #{AppConf.eventinator.url} upload wasn't eventinated")
+              rescue Exception => msg
+                ui.warn("An unhandled execption occured while eventinating: #{msg}")
+              end 
+            end 
+
           rescue Chef::Exceptions::CookbookNotFoundInRepo => e
             ui.error("Could not find cookbook #{cookbook_name} in your cookbook path, skipping it")
             Chef::Log.debug(e)
