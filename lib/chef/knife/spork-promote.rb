@@ -4,7 +4,7 @@
 # License:: Apache License, Version 2.0
 #
 #
-# Uses code from the knife cookbook upload plugin by:
+# Uses some code from the knife cookbook upload plugin by:
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
 # Author:: Christopher Walters (<cw@opscode.com>)
@@ -144,7 +144,7 @@ module KnifeSpork
               ui.msg "Saving changes into #{e}.json"
               new_environment_json = pretty_print(@environment)
               save_environment_changes(e,new_environment_json)
-
+          
               if config[:remote]
                 ui.msg "Uploading #{e} to server"
                 save_environment_changes_remote("#{e}")
@@ -180,7 +180,7 @@ module KnifeSpork
            end
       end
 
-       def valid_version(version)
+      def valid_version(version)
           v = version.split(".")
           if v.size < 3 or v.size > 3
             return false
@@ -191,7 +191,7 @@ module KnifeSpork
              end
           end
           return true
-      end
+       end
 
       def loader
         @loader ||= Chef::Knife::Core::ObjectLoader.new(Chef::Environment, ui)
@@ -215,7 +215,17 @@ module KnifeSpork
           if env_diff.size > 1
             ui.warn "You're about to promote changes to several cookbooks:"
             ui.warn "\n#{env_diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
-            ui.confirm("Are you sure you want to continue?")
+            begin
+              ui.confirm("Are you sure you want to continue")
+            rescue SystemExit => e
+                if e.status == 3
+                  ui.confirm("Would you like to revert your local changes to #{environment}.json")
+                  tmp_env = Chef::Environment.load(environment)
+                  save_environment_changes(environment,pretty_print(tmp_env))
+                  puts "#{environment}.json reverted."
+                end
+                raise
+            end
           end
           updated.save
 
@@ -253,30 +263,23 @@ module KnifeSpork
           if !AppConf.eventinator.nil? && AppConf.eventinator.enabled
             metadata = {}
             metadata[:promoted_cookbooks] = {}
-
             promoted_cookbooks = []
             env_diff.collect do |k,v|
               v =~ /= ([\d\.]+) changed to = ([\d\.]+)/
               metadata[:promoted_cookbooks][k] = { :previous_version => $1, :new_version => $2 }
               promoted_cookbooks << "#{k} (#{$2})"
             end
-
             event_data = {}
             event_data[:tag]      = "knife"
             event_data[:username] = ENV['USER']
             event_data[:status]   = "#{ENV['USER']} promoted #{promoted_cookbooks.join(", ")} to #{environment.gsub(".json","")}"
             event_data[:metadata] = metadata.to_json
-
             uri = URI.parse(AppConf.eventinator.url)
-
             http = Net::HTTP.new(uri.host, uri.port)
-
             ## TODO: should make this configurable, timeout after 5 sec
             http.read_timeout = 5;
-
             request = Net::HTTP::Post.new(uri.request_uri)
             request.set_form_data(event_data)
-
             begin
               response = http.request(request)
               if response.code != "200"
@@ -288,7 +291,6 @@ module KnifeSpork
               ui.warn("An unhandled execption occured while eventinating: #{msg}")
             end 
           end
-
           if !AppConf.graphite.nil? && AppConf.graphite.enabled
             begin
               time = Time.now
@@ -300,7 +302,6 @@ module KnifeSpork
               puts "Something went wrong with sending to graphite: (#{msg})"  
             end
           end
-          
       end
 
       def save_environment_changes(environment,envjson)
@@ -318,10 +319,16 @@ module KnifeSpork
             f2.puts envjson
           end
         end
+        if !AppConf.git.nil? && AppConf.git.enabled
+            if !@@gitavail
+              ui.msg "Git gem not available, skipping git add.\n\n"
+            else
+              git_add(path)
+            end
+        end
       end
 
       def promote(environment,cookbook)
-
         if config[:version]
             if !valid_version(config[:version])
               ui.error("#{config[:version]} isn't a valid version number.")
@@ -332,7 +339,6 @@ module KnifeSpork
         else
            @version = get_version(config[:cookbook_path], cookbook)
         end
-        
         ui.msg "Adding version constraint #{cookbook} = #{@version}"
         return update_version_constraints(environment,cookbook,@version)
       end
@@ -344,9 +350,9 @@ module KnifeSpork
             results << c
           end
           return results
-     end
+      end
      
-    def check_cookbook_uploaded(cookbook)
+      def check_cookbook_uploaded(cookbook)
       if config[:version]
             if !valid_version(config[:version])
               ui.error("#{config[:version]} isn't a valid version number.")
@@ -364,11 +370,11 @@ module KnifeSpork
         ui.msg "#{cookbook} version #{@version } found on server!"
     end
 
-     def pretty_print(environment)
+      def pretty_print(environment)
        return JSON.pretty_generate(JSON.parse(environment.to_json))
      end
 
-     def git_pull_if_repo
+      def git_pull_if_repo
         strio = StringIO.new
         l = Logger.new strio
         cookbook_path = config[:cookbook_path]
@@ -405,10 +411,27 @@ module KnifeSpork
           end
         end
      end
-    end
+     
+      def git_add(environment)
+      strio = StringIO.new
+      l = Logger.new strio
+      cookbook_path = config[:cookbook_path]
+      begin
+        path = cookbook_path[0].gsub("cookbooks","")
+        ui.msg "Opening git repo #{path}\n\n"
+        g = Git.open(path, :log => Logger.new(strio))
+        ui.msg "Git add'ing #{environment}\n\n"
+        g.add("#{environment}")
+      rescue ArgumentError => e
+        ui.warn "Git: The root of your chef repo doesn't look like it's a git repo. Skipping git add...\n\n"
+      rescue
+        ui.warn "Git: Cookbook bump succeeded, but something went wrong with git add #{environment}, so you'll want to manually git add it. Dumping log info..."
+        ui.warn "#{strio.string}"
+      end
+     end
   end
-
-  class String
+end
+class String
       def is_i?
          !!(self =~ /^[-+]?[0-9]+$/)
       end

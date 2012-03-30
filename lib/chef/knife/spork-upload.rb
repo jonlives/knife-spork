@@ -3,7 +3,9 @@
 # Copyright:: Copyright (c) 2011 Jon Cowie
 # License:: Apache License, Version 2.0
 #
-# Modified cookbook upload to always freeze, and disable --force option
+# Modified cookbook upload to always freeze, and disable --force option, some other options disabled such as
+# updating environment constraints, as this is done later in the spork workflow.
+
 # Based on the knife cookbook upload plugin by:
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
@@ -54,12 +56,6 @@ module KnifeSpork
         :description => 'Freeze this version of the cookbook so that it cannot be overwritten',
         :boolean => true
 
-      option :environment,
-        :short => '-E',
-        :long  => '--environment ENVIRONMENT',
-        :description => "Set ENVIRONMENT's version dependency match the version you're uploading.",
-        :default => nil
-
       option :depends,
         :short => "-d",
         :long => "--include-dependencies",
@@ -91,9 +87,7 @@ module KnifeSpork
       
         config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 
-        assert_environment_valid!
         warn_about_cookbook_shadowing
-        version_constraints_to_update = {}
         # Get a list of cookbooks and their versions from the server
         # for checking existence of dependending cookbooks.
         @server_side_cookbooks = Chef::CookbookVersion.list
@@ -117,7 +111,6 @@ module KnifeSpork
             upload(cookbook, justify_width)
             cookbook.freeze_version
             upload(cookbook, justify_width)
-            version_constraints_to_update[cookbook_name] = cookbook.version
                   
             if !AppConf.irccat.nil? && AppConf.irccat.enabled
                 begin
@@ -179,7 +172,6 @@ module KnifeSpork
         end
 
         ui.info "upload complete"
-        update_version_constraints(version_constraints_to_update) if config[:environment]
       end
 
       def cookbook_repo
@@ -187,18 +179,6 @@ module KnifeSpork
           Chef::Cookbook::FileVendor.on_create { |manifest| Chef::Cookbook::FileSystemFileVendor.new(manifest, config[:cookbook_path]) }
           Chef::CookbookLoader.new(config[:cookbook_path])
         end
-      end
-
-      def update_version_constraints(new_version_constraints)
-        new_version_constraints.each do |cookbook_name, version|
-          environment.cookbook_versions[cookbook_name] = "= #{version}"
-        end
-        environment.save
-      end
-
-
-      def environment
-        @environment ||= config[:environment] ? Chef::Environment.load(config[:environment]) : nil
       end
 
       def warn_about_cookbook_shadowing
@@ -219,20 +199,7 @@ WARNING
 
       private
 
-      def assert_environment_valid!
-        environment
-      rescue Net::HTTPServerException => e
-        if e.response.code.to_s == "404"
-          ui.error "The environment #{config[:environment]} does not exist on the server, aborting."
-          Chef::Log.debug(e)
-          exit 1
-        else
-          raise
-        end
-      end
-
       def upload(cookbook, justify_width)
-
         check_for_broken_links(cookbook)
         check_dependencies(cookbook)
         Chef::CookbookUploader.new(cookbook, config[:cookbook_path]).upload_cookbook
