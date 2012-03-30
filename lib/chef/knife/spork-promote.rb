@@ -219,10 +219,10 @@ module KnifeSpork
               ui.confirm("Are you sure you want to continue")
             rescue SystemExit => e
                 if e.status == 3
-                  ui.confirm("Would you like to revert your local changes to #{environment}.json")
+                  ui.confirm("Would you like to reset your local #{environment}.json to match the server?")
                   tmp_env = Chef::Environment.load(environment)
                   save_environment_changes(environment,pretty_print(tmp_env))
-                  puts "#{environment}.json reverted."
+                  puts "#{environment}.json reset."
                 end
                 raise
             end
