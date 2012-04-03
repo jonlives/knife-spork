@@ -5,12 +5,13 @@ Features:
     - Spork Promote will now git add updated environment files if git is enabled
     - Spork Promote will optionally revert local changes to environment files if multiple changes were detected.
     - Spork Bump will now perform a git pull and pull from submodules if git is enabled
-    - Foodcritic integration for Spork Upload
+    - Optional Foodcritic integration added for Spork Upload
     - ickymettle's Eventinator service now optionally supported
     
 Bugfixes:
 
     - Correct irccat alerts to not fire if cookbook upload fails
+    - Code cleanup to remove unused Opscode code from Spork Upload
 
 ## 0.1.8 (21st February, 2012)
     
@@ -53,6 +54,7 @@ Features:
     - Spork now supports alerting using irccat when a cookbook upload or promote --remote happens
     - It will also optionally post a gist of version constraint changes in the above message when a promote --remote happens
     - Added support for default environments to promote to
+    - knife-spork gemification thanks to Daniel Schauenberg
     
 Bugfixes:
 
