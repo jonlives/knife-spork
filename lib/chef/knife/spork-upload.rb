@@ -37,12 +37,18 @@ module KnifeSpork
       CHECKSUM = "checksum"
       MATCH_CHECKSUM = /[0-9a-f]{32,}/
 
+      @@fcavail = true
       deps do
         require 'chef/exceptions'
         require 'chef/cookbook_loader'
         require 'chef/cookbook_uploader'
+        begin
+          require "foodcritic"
+        rescue LoadError
+            @@fcavail = false
+        end
       end
-
+      
       banner "knife spork upload [COOKBOOKS...] (options)"
 
       option :cookbook_path,
@@ -106,6 +112,15 @@ module KnifeSpork
                 @name_args.push dep
               end
             end
+            
+            if !AppConf.foodcritic.nil? && AppConf.foodcritic.enabled
+              if !@@fcavail
+                ui.msg "Foodcritic gem not available, skipping cookbook lint check.\n\n"
+              else
+                foodcritic_lint_check(cookbook_name)
+              end
+            end
+            
             ui.info("Uploading and freezing #{cookbook.name.to_s.ljust(justify_width + 10)} [#{cookbook.version}]")
             
             upload(cookbook, justify_width)
@@ -208,6 +223,7 @@ WARNING
         when "409"
           ui.error "Version #{cookbook.version} of cookbook #{cookbook.name} is frozen. Please bump your version number."
           Chef::Log.debug(e)
+          exit 1
         else
           raise
         end
@@ -269,6 +285,35 @@ WARNING
         end
         false
       end
-
+      
+      def foodcritic_lint_check(cookbook_name)
+        
+        if config[:cookbook_path].size > 1
+          ui.warn "It looks like you have multiple cookbook paths defined so I'm not sure where to look for this cookbook.\n\n"
+          ui.warn "Skipping Lint Check.\n\n"
+          return
+        end 
+        
+        fail_tags = []
+        fail_tags = AppConf.foodcritic.fail_tags unless AppConf.foodcritic.fail_tags.nil?
+        
+        tags = []
+        tags = AppConf.foodcritic.tags unless AppConf.foodcritic.tags.nil?
+        
+        include_rules = []
+        include_rules = AppConf.foodcritic.include_rules unless AppConf.foodcritic.include_rules.nil?
+        
+        ui.msg "Lint checking #{cookbook_name}..."
+        options = {:fail_tags => fail_tags, :tags =>tags, :include_rules => include_rules}
+        review = FoodCritic::Linter.new.check("#{config[:cookbook_path][0]}/#{cookbook_name}",options)
+        
+        if review.failed?
+          ui.error "Lint check failed. Halting upload."
+          ui.error "Lint check output:"
+          ui.error review
+          exit 1
+        end
+        ui.msg "Lint check passed"
+      end
     end
   end
