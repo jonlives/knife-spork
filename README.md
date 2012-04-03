@@ -46,6 +46,11 @@ gist:
   in_chef: true
   chef_path: cookbooks/gist/files/default/gist
   path: /usr/bin/gist
+foodcritic:
+  enabled: true
+  fail_tags: [any]
+  tags: [foo]
+  include_rules: [/home/me/myrules]
 default_environments: [ production, development ]
 ````
 ## Git
@@ -69,6 +74,18 @@ This lets you send to a graphite metric when promote --remote is performed. It s
 ## Gist
 
 This allows you to generate an optional gist of environment changes which will be added to irccat notifications on promote --remote. It supports the https://rubygems.org/gems/gist, and contains two parameters to use a version in your chef repo, or a version installed somewhere else locally.
+
+## Foodcritic
+
+This allows you to run a foodcritic lint check against your cookbook before spork uploading. The check only runs against the cookbook you've passed to spork-upload on the command line.
+
+PLEASE NOTE: Due to it's many dependancies (gem dependancy Nokogiri requires libxml-devel, libxslt-devel), foodcritic is not specified as a dependency of the knife-spork gem as it won't install without other manual package installs, so if you want to use it you'll need to make sure it's installed yourself for now. This may change in a future version.
+
+The optional attributes for this section work as follows:
+
+fail_tags: Fail the build if any of the specified tags are matched.
+tags: Only check against rules with the specified tags.
+include_rules: Additional rule file path(s) to load.
 
 ## Default Environments
 
