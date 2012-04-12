@@ -1,4 +1,7 @@
 ## 0.1.10 (12th April, 2012)
+Features:
+
+    - All spork plugins now support multiple cookbook paths
     
 Bugfixes:
     
