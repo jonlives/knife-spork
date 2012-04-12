@@ -1,3 +1,9 @@
+## 0.1.10 (12th April, 2012)
+    
+Bugfixes:
+    
+    - Fixes to work with app_conf 0.4.0
+    
 ## 0.1.9 (3rd April, 2012)
     
 Features:
