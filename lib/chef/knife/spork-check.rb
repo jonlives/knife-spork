@@ -69,14 +69,12 @@ module KnifeSpork
       end
 
       cookbook = name_args.first
-      cookbook_path = Array(config[:cookbook_path]).first
-
+      cookbook_path = config[:cookbook_path]
       local_version = get_local_cookbook_version(cookbook_path, cookbook)
       remote_versions = get_remote_cookbook_versions(cookbook)
 
       check_versions(cookbook, local_version, remote_versions)
     end
-
 
     def get_local_cookbook_version(cookbook_path, cookbook)
       current_version = get_version(cookbook_path, cookbook).split(".").map{|i| i.to_i}
