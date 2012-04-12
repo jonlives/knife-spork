@@ -55,9 +55,7 @@ module KnifeSpork
         
       bump_type=""
       
-      if config.has_key?(:cookbook_path)
-        cookbook_path = config["cookbook_path"]
-      else
+      if !config.has_key?(:cookbook_path)
         ui.fatal "No default cookbook_path; Specify with -o or fix your knife.rb."
         show_usage
         exit 1
@@ -86,22 +84,21 @@ module KnifeSpork
         exit 1
       end
       
+      cookbook = name_args.first
+      cookbook_path = cookbook_repo[cookbook].root_dir.gsub("#{cookbook}","")
+        
       if !@conf.git.nil? && @conf.git.enabled
         if !@@gitavail
             ui.msg "Git gem not available, skipping git pull.\n\n"
         else
-            git_pull_if_repo
+            git_pull_if_repo([cookbook_path])
         end
       end
 
       if bump_type == "manual"
         manual_version = name_args.last
-        cookbook = name_args.first
-        cookbook_path = Array(config[:cookbook_path]).first
         patch_manual(cookbook_path, cookbook, manual_version)
       else
-          cookbook = name_args.first
-          cookbook_path = Array(config[:cookbook_path]).first
           patch(cookbook_path, cookbook, bump_type)
       end
 
@@ -114,6 +111,13 @@ module KnifeSpork
       end
     end
 
+    def cookbook_repo
+        @cookbook_loader ||= begin
+          Chef::Cookbook::FileVendor.on_create { |manifest| Chef::Cookbook::FileSystemFileVendor.new(manifest, config[:cookbook_path]) }
+          Chef::CookbookLoader.new(config[:cookbook_path])
+        end
+    end
+      
     def patch(cookbook_path, cookbook, type)
       t = TYPE_INDEX[type]
       current_version = get_version(cookbook_path, cookbook).split(".").map{|i| i.to_i}
@@ -166,60 +170,51 @@ module KnifeSpork
     def git_add(cookbook)
       strio = StringIO.new
       l = Logger.new strio
-      cookbook_path = config[:cookbook_path]
-      if cookbook_path.size > 1
-        ui.warn "It looks like you have multiple cookbook paths defined so I can't tell if you're running inside a git repo.\n\n"
-      else
-        begin
-          path = cookbook_path[0].gsub("cookbooks","")
-          ui.msg "Opening git repo #{path}\n\n"
-          g = Git.open(path, :log => Logger.new(strio))
-          ui.msg "Git add'ing #{path}cookbooks/#{cookbook}/metadata.rb\n\n"
-          g.add("#{path}cookbooks/#{cookbook}/metadata.rb")
-        rescue ArgumentError => e
-          ui.warn "Git: The root of your chef repo doesn't look like it's a git repo. Skipping git add...\n\n"
-        rescue
-          ui.warn "Git: Cookbook bump succeeded, but something went wrong with git add metadata.rb, so you'll want to manually git add it. Dumping log info..."
-          ui.warn "#{strio.string}"
-        end
+      cookbook_path = cookbook_repo[cookbook].root_dir.gsub("#{cookbook}","")
+      begin
+        path = cookbook_path.gsub("/site-cookbooks","").gsub("/cookbooks","")
+        ui.msg "Opening git repo #{path}\n\n"
+        g = Git.open(path, :log => Logger.new(strio))
+        ui.msg "Git add'ing #{cookbook_path}#{cookbook}/metadata.rb\n\n"
+        g.add("#{cookbook_path}/#{cookbook}/metadata.rb")
+      rescue ArgumentError => e
+        ui.warn "Git: The root of your chef repo doesn't look like it's a git repo. Skipping git add...\n\n"
+      rescue
+        ui.warn "Git: Cookbook bump succeeded, but something went wrong with git add metadata.rb, so you'll want to manually git add it. Dumping log info..."
+        ui.warn "#{strio.string}"
       end
     end
     
-    def git_pull_if_repo
+    def git_pull_if_repo(cookbook_path)
         strio = StringIO.new
         l = Logger.new strio
-        cookbook_path = config[:cookbook_path]
-        if cookbook_path.size > 1
-          ui.warn "It looks like you have multiple cookbook paths defined so I can't tell if you're running inside a git repo.\n\n"
-        else
-          begin
-            path = cookbook_path[0].gsub("/cookbooks","")
-            ui.msg "Opening git repo #{path}\n\n"
-            g = Git.open(path, :log => Logger.new(strio))
-            ui.msg "Pulling latest changes from git\n\n"
-            output = IO.popen ("cd #{path} && git pull 2>&1")
-            Process.wait
-            exit_code = $?            
-            if exit_code.exitstatus ==  0
-              ui.msg "#{output.read()}\n"
-            else
-              ui.error "#{output.read()}\n"
-              exit 1
-            end
-
-            ui.msg "Pulling latest changes from git submodules (if any)\n\n"
-            output = IO.popen ("cd #{path} && git submodule foreach git pull 2>&1")
-            Process.wait
-            exit_code = $?
-            if exit_code.exitstatus ==  0
-              ui.msg "#{output.read()}\n"
-            else
-              ui.error "#{output.read()}\n"
-              exit 1
-            end
-          rescue ArgumentError => e
-            ui.warn "Git: The root of your chef repo doesn't look like it's a git repo. Skipping git pull...\n\n"
+        begin
+          path = cookbook_path[0].gsub("/site-cookbooks","").gsub("/cookbooks","")
+          ui.msg "Opening git repo #{path}\n\n"
+          g = Git.open(path, :log => Logger.new(strio))
+          ui.msg "Pulling latest changes from git\n\n"
+          output = IO.popen ("cd #{path} && git pull 2>&1")
+          Process.wait
+          exit_code = $?            
+          if exit_code.exitstatus ==  0
+            ui.msg "#{output.read()}\n"
+          else
+            ui.error "#{output.read()}\n"
+            exit 1
           end
+
+          ui.msg "Pulling latest changes from git submodules (if any)\n\n"
+          output = IO.popen ("cd #{path} && git submodule foreach git pull 2>&1")
+          Process.wait
+          exit_code = $?
+          if exit_code.exitstatus ==  0
+            ui.msg "#{output.read()}\n"
+          else
+            ui.error "#{output.read()}\n"
+            exit 1
+          end
+        rescue ArgumentError => e
+          ui.warn "Git: #{cookbook_path.join} doesn't look like it's a git repo. Skipping git pull...\n\n"
         end
       end
     end
