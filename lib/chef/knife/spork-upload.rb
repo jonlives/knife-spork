@@ -289,12 +289,8 @@ WARNING
       
       def foodcritic_lint_check(cookbook_name)
         
-        if config[:cookbook_path].size > 1
-          ui.warn "It looks like you have multiple cookbook paths defined so I'm not sure where to look for this cookbook.\n\n"
-          ui.warn "Skipping Lint Check.\n\n"
-          return
-        end 
-        
+        cookbook_path = cookbook_repo[cookbook_name].root_dir
+
         fail_tags = []
         fail_tags = @conf.foodcritic.fail_tags unless @conf.foodcritic.fail_tags.nil?
         
@@ -306,7 +302,7 @@ WARNING
         
         ui.msg "Lint checking #{cookbook_name}..."
         options = {:fail_tags => fail_tags, :tags =>tags, :include_rules => include_rules}
-        review = FoodCritic::Linter.new.check("#{config[:cookbook_path][0]}/#{cookbook_name}",options)
+        review = FoodCritic::Linter.new.check("#{cookbook_path}",options)
         
         if review.failed?
           ui.error "Lint check failed. Halting upload."
