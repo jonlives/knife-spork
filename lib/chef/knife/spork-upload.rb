@@ -75,19 +75,20 @@ module KnifeSpork
         end
       
         self.config = Chef::Config.merge!(config)
-
+        @conf = AppConf.new
+        
         if File.exists?("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
-          AppConf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
+          @conf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
           ui.msg "Loaded config file #{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml...\n\n"
         end
       
         if File.exists?("/etc/spork-config.yml")
-          AppConf.load("/etc/spork-config.yml")
+          @conf.load("/etc/spork-config.yml")
           ui.msg "Loaded config file /etc/spork-config.yml...\n\n"
         end
       
         if File.exists?(File.expand_path("~/.chef/spork-config.yml"))
-          AppConf.load(File.expand_path("~/.chef/spork-config.yml"))
+          @conf.load(File.expand_path("~/.chef/spork-config.yml"))
           ui.msg "Loaded config file #{File.expand_path("~/.chef/spork-config.yml")}...\n\n"
         end
       
@@ -113,7 +114,7 @@ module KnifeSpork
               end
             end
             
-            if !AppConf.foodcritic.nil? && AppConf.foodcritic.enabled
+            if !@conf.foodcritic.nil? && @conf.foodcritic.enabled
               if !@@fcavail
                 ui.msg "Foodcritic gem not available, skipping cookbook lint check.\n\n"
               else
@@ -127,18 +128,18 @@ module KnifeSpork
             cookbook.freeze_version
             upload(cookbook, justify_width)
                   
-            if !AppConf.irccat.nil? && AppConf.irccat.enabled
+            if !@conf.irccat.nil? && @conf.irccat.enabled
                 begin
                               
-                  if !AppConf.irccat.channel?(String)
-                    channels = AppConf.irccat.channel
+                  if !@conf.irccat.channel?(String)
+                    channels = @conf.irccat.channel
                   else
-                    channels = ["#{AppConf.irccat.channel}"]
+                    channels = ["#{@conf.irccat.channel}"]
                   end
                   
                   channels.each do |c|
                       message = "#{c} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded and froze cookbook #TEAL#{cookbook_name}#NORMAL version #TEAL#{cookbook.version}#NORMAL"
-                      s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
+                      s = TCPSocket.open(@conf.irccat.server,@conf.irccat.port)
                       s.write(message)
                       s.close
                   end
@@ -147,7 +148,7 @@ module KnifeSpork
                end
             end
 
-            if !AppConf.eventinator.nil? && AppConf.eventinator.enabled
+            if !@conf.eventinator.nil? && @conf.eventinator.enabled
               metadata = {}
               metadata[:cookbook_name]    = cookbook.name
               metadata[:cookbook_version] = cookbook.version
@@ -158,7 +159,7 @@ module KnifeSpork
               event_data[:status]   = "#{ENV['USER']} uploaded and froze version #{cookbook.version} of cookbook #{cookbook_name}"
               event_data[:metadata] = metadata.to_json
 
-              uri = URI.parse(AppConf.eventinator.url)
+              uri = URI.parse(@conf.eventinator.url)
 
               http = Net::HTTP.new(uri.host, uri.port)
 
@@ -171,10 +172,10 @@ module KnifeSpork
               begin
                 response = http.request(request)
                 if response.code != "200"
-                  ui.warn("Got a #{response.code} from #{AppConf.eventinator.url} upload wasn't eventinated")
+                  ui.warn("Got a #{response.code} from #{@conf.eventinator.url} upload wasn't eventinated")
                 end 
               rescue Timeout::Error
-                ui.warn("Timed out connecting to #{AppConf.eventinator.url} upload wasn't eventinated")
+                ui.warn("Timed out connecting to #{@conf.eventinator.url} upload wasn't eventinated")
               rescue Exception => msg
                 ui.warn("An unhandled execption occured while eventinating: #{msg}")
               end 
@@ -295,13 +296,13 @@ WARNING
         end 
         
         fail_tags = []
-        fail_tags = AppConf.foodcritic.fail_tags unless AppConf.foodcritic.fail_tags.nil?
+        fail_tags = @conf.foodcritic.fail_tags unless @conf.foodcritic.fail_tags.nil?
         
         tags = []
-        tags = AppConf.foodcritic.tags unless AppConf.foodcritic.tags.nil?
+        tags = @conf.foodcritic.tags unless @conf.foodcritic.tags.nil?
         
         include_rules = []
-        include_rules = AppConf.foodcritic.include_rules unless AppConf.foodcritic.include_rules.nil?
+        include_rules = @conf.foodcritic.include_rules unless @conf.foodcritic.include_rules.nil?
         
         ui.msg "Lint checking #{cookbook_name}..."
         options = {:fail_tags => fail_tags, :tags =>tags, :include_rules => include_rules}

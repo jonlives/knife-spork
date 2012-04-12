@@ -36,18 +36,20 @@ module KnifeSpork
       
       self.config = Chef::Config.merge!(config)
 
+      @conf = AppConf.new
+      
       if File.exists?("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
-        AppConf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
+        @conf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
         ui.msg "Loaded config file #{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml...\n\n"
       end
       
       if File.exists?("/etc/spork-config.yml")
-        AppConf.load("/etc/spork-config.yml")
+        @conf.load("/etc/spork-config.yml")
         ui.msg "Loaded config file /etc/spork-config.yml...\n\n"
       end
     
       if File.exists?(File.expand_path("~/.chef/spork-config.yml"))
-        AppConf.load(File.expand_path("~/.chef/spork-config.yml"))
+        @conf.load(File.expand_path("~/.chef/spork-config.yml"))
         ui.msg "Loaded config file #{File.expand_path("~/.chef/spork-config.yml")}...\n\n"
       end
         
@@ -84,7 +86,7 @@ module KnifeSpork
         exit 1
       end
       
-      if !AppConf.git.nil? && AppConf.git.enabled
+      if !@conf.git.nil? && @conf.git.enabled
         if !@@gitavail
             ui.msg "Git gem not available, skipping git pull.\n\n"
         else
@@ -103,7 +105,7 @@ module KnifeSpork
           patch(cookbook_path, cookbook, bump_type)
       end
 
-      if !AppConf.git.nil? && AppConf.git.enabled
+      if !@conf.git.nil? && @conf.git.enabled
         if !@@gitavail
             ui.msg "Git gem not available, skipping git add.\n\n"
         else

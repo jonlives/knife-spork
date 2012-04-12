@@ -66,39 +66,40 @@ module KnifeSpork
         end
         
         self.config = Chef::Config.merge!(config)
-
+        @conf = AppConf.new
+        
         if File.exists?("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
-          AppConf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
+          @conf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
           ui.msg "Loaded config file #{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml...\n\n"
         end
       
         if File.exists?("/etc/spork-config.yml")
-          AppConf.load("/etc/spork-config.yml")
+          @conf.load("/etc/spork-config.yml")
           ui.msg "Loaded config file /etc/spork-config.yml...\n\n"
         end
       
         if File.exists?(File.expand_path("~/.chef/spork-config.yml"))
-          AppConf.load(File.expand_path("~/.chef/spork-config.yml"))
+          @conf.load(File.expand_path("~/.chef/spork-config.yml"))
           ui.msg "Loaded config file #{File.expand_path("~/.chef/spork-config.yml")}...\n\n"
         end
         
         config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 
-        if @name_args.empty? && AppConf.default_environments.nil?
+        if @name_args.empty? && @conf.default_environments.nil?
           show_usage
           ui.error("You must specify a cookbook name and an environment")
           exit 1
-        elsif @name_args.empty? && !AppConf.default_environments.nil?
+        elsif @name_args.empty? && !@conf.default_environments.nil?
           show_usage
           ui.error("Default environments loaded from config, but you must specify a cookbook name")
           exit 1
-        elsif @name_args.size != 2 && AppConf.default_environments.nil?
+        elsif @name_args.size != 2 && @conf.default_environments.nil?
           show_usage
           ui.error("You must specify a cookbook name and an environment")
           exit 1
         end
         
-        if !AppConf.git.nil? && AppConf.git.enabled
+        if !@conf.git.nil? && @conf.git.enabled
           if !@@gitavail
               ui.msg "Git gem not available, skipping git pull.\n\n"
           else
@@ -106,14 +107,14 @@ module KnifeSpork
           end
         end
         
-        if AppConf.default_environments.nil?
+        if @conf.default_environments.nil?
             environments = [ @name_args[0] ]
             @cookbook = @name_args[1]
-        elsif !AppConf.default_environments.nil? && @name_args.size == 2
+        elsif !@conf.default_environments.nil? && @name_args.size == 2
             environments = [ @name_args[0] ]
             @cookbook = @name_args[1]
         else
-            environments = AppConf.default_environments
+            environments = @conf.default_environments
             @cookbook = @name_args[0]
         end
         
@@ -229,29 +230,29 @@ module KnifeSpork
           end
           updated.save
 
-          if !AppConf.gist.nil? && AppConf.gist.enabled
-            if AppConf.gist.in_chef
-              gist_path = AppConf.gist.chef_path
+          if !@conf.gist.nil? && @conf.gist.enabled
+            if @conf.gist.in_chef
+              gist_path = @conf.gist.chef_path
             else
-              gist_path = AppConf.gist.path
+              gist_path = @conf.gist.path
             end
             
             msg = "Environment #{environment.gsub(".json","")} uploaded at #{Time.now.getutc} by #{ENV['USER']}\n\nConstraints updated on server in this version:\n\n#{env_diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
             @gist = %x[ echo "#{msg}" | #{gist_path}]
           end
           
-          if !AppConf.irccat.nil? && AppConf.irccat.enabled   
+          if !@conf.irccat.nil? && @conf.irccat.enabled   
             begin
               
-              if !AppConf.irccat.channel?(String)
-                channels = AppConf.irccat.channel
+              if !@conf.irccat.channel?(String)
+                channels = @conf.irccat.channel
               else
-                channels = ["#{AppConf.irccat.channel}"]
+                channels = ["#{@conf.irccat.channel}"]
               end
               
               channels.each do |c|   
                 message = "#{c} #BOLD#PURPLECHEF:#NORMAL #{ENV['USER']} uploaded environment #TEAL#{environment.gsub(".json","")}#NORMAL #{@gist}"
-                s = TCPSocket.open(AppConf.irccat.server,AppConf.irccat.port)
+                s = TCPSocket.open(@conf.irccat.server,@conf.irccat.port)
                 s.write(message)
                 s.close
               end
@@ -260,7 +261,7 @@ module KnifeSpork
             end
           end
             
-          if !AppConf.eventinator.nil? && AppConf.eventinator.enabled
+          if !@conf.eventinator.nil? && @conf.eventinator.enabled
             metadata = {}
             metadata[:promoted_cookbooks] = {}
             promoted_cookbooks = []
@@ -274,7 +275,7 @@ module KnifeSpork
             event_data[:username] = ENV['USER']
             event_data[:status]   = "#{ENV['USER']} promoted #{promoted_cookbooks.join(", ")} to #{environment.gsub(".json","")}"
             event_data[:metadata] = metadata.to_json
-            uri = URI.parse(AppConf.eventinator.url)
+            uri = URI.parse(@conf.eventinator.url)
             http = Net::HTTP.new(uri.host, uri.port)
             ## TODO: should make this configurable, timeout after 5 sec
             http.read_timeout = 5;
@@ -283,19 +284,19 @@ module KnifeSpork
             begin
               response = http.request(request)
               if response.code != "200"
-                ui.warn("Got a #{response.code} from #{AppConf.eventinator.url} promote wasn't eventinated")
+                ui.warn("Got a #{response.code} from #{@conf.eventinator.url} promote wasn't eventinated")
               end 
             rescue Timeout::Error
-              ui.warn("Timed out connecting to #{AppConf.eventinator.url} promote wasn't eventinated")
+              ui.warn("Timed out connecting to #{@conf.eventinator.url} promote wasn't eventinated")
             rescue Exception => msg 
               ui.warn("An unhandled execption occured while eventinating: #{msg}")
             end 
           end
-          if !AppConf.graphite.nil? && AppConf.graphite.enabled
+          if !@conf.graphite.nil? && @conf.graphite.enabled
             begin
               time = Time.now
               message = "deploys.chef.#{environment.gsub(".json","")} 1 #{time.to_i}\n"
-              s = TCPSocket.open(AppConf.graphite.server,AppConf.graphite.port)
+              s = TCPSocket.open(@conf.graphite.server,@conf.graphite.port)
               s.write(message)
               s.close
             rescue Exception => msg  
@@ -319,7 +320,7 @@ module KnifeSpork
             f2.puts envjson
           end
         end
-        if !AppConf.git.nil? && AppConf.git.enabled
+        if !@conf.git.nil? && @conf.git.enabled
             if !@@gitavail
               ui.msg "Git gem not available, skipping git add.\n\n"
             else

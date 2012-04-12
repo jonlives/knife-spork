@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'knife-spork'
-  s.version           = '0.1.8'
-  s.date              = '2012-02-21'
+  s.version           = '0.1.10'
+  s.date              = '2012-04-12'
   s.rubyforge_project = 'knife-spork'
 
   ## Make sure your summary is short. The description may be as long
@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   ## that are needed for an end user to actually USE your code.
   s.add_dependency('chef', [">= 0.10.4"])
   s.add_dependency('git', [">= 1.2.5"])
-  s.add_dependency('app_conf', [">= 0.3.0"])
+  s.add_dependency('app_conf', [">= 0.4.0"])
 
   ## Leave this section as-is. It will be automatically generated from the
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
