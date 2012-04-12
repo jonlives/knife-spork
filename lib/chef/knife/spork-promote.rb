@@ -309,16 +309,13 @@ module KnifeSpork
         cookbook_path = config[:cookbook_path]
 
         if cookbook_path.size > 1
-          ui.warn "It looks like you have multiple cookbook paths defined so I'm not sure where to save your changed environment file.\n\n"
-          ui.msg "Here's the JSON for you to paste into #{environment}.json in the environments directory you wish to use.\n\n"
-          ui.msg "#{envjson}\n\n"
-        else
-          path = cookbook_path[0].gsub("cookbooks","environments") + "/#{environment}.json"
+          ui.warn "It looks like you have multiple cookbook paths defined so I'm trying the first one (#{cookbook_path[0]}).\n\n"
+        end
+        path = cookbook_path[0].gsub("cookbooks","environments") + "/#{environment}.json"
 
-          File.open(path, 'w') do |f2|
-            # use "\n" for two lines of text
-            f2.puts envjson
-          end
+        File.open(path, 'w') do |f2|
+          # use "\n" for two lines of text
+          f2.puts envjson
         end
         if !@conf.git.nil? && @conf.git.enabled
             if !@@gitavail
