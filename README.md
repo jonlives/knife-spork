@@ -32,6 +32,13 @@ Below is a sample config file with all supported options enabled below, followed
 ````
 git:
   enabled: true
+hipchat:
+  enabled: true
+  apikey: MYAPIKEYHERE
+  nickname: "Knife-Spork"
+  room: "Chef"
+  notify: true
+  color: "red"
 irccat:
   enabled: true
   server: irccat.mycompany.com
@@ -59,6 +66,15 @@ This section enables a couple of git commands which will run as part of your spo
 
 * When you bump a cookbook's version, the relevant metadata.rb file will be git added
 * When you promote an environment, git pull will be run before your changes are made.
+
+## HipChat
+
+Notifications will be sent to the HipChat room of your choice. Currently notifies on
+
+* When a cookbook is uploaded using spork upload
+* When  an environment is promoted to the server using promote --remote
+
+color: "yellow", "red", "green", "purple", or "random"
 
 ## Irccat
 

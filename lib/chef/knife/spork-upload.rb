@@ -30,6 +30,7 @@
 require 'app_conf'
 require 'chef/knife'
 require 'socket'
+require 'hipchat'
 
 module KnifeSpork
   class SporkUpload < Chef::Knife
@@ -146,6 +147,16 @@ module KnifeSpork
                rescue Exception => msg  
                 puts "Something went wrong with sending to irccat: (#{msg})"  
                end
+            end
+
+            if !@conf.hipchat.nil? && @conf.hipchat.enabled
+                begin
+                  message = "#{ENV['USER']} uploaded and froze cookbook #{cookbook_name} version #{cookbook.version}"
+                  client = HipChat::Client.new(@conf.hipchat.apikey)
+                  client["#{@conf.hipchat.room}"].send( @conf.hipchat.nickname, message, :notify => @conf.hipchat.notify, :color => @conf.hipchat.color )
+                rescue Exception => msg  
+                  puts "Something went wrong with sending to HipChat: (#{msg})"  
+                end
             end
 
             if !@conf.eventinator.nil? && @conf.eventinator.enabled
