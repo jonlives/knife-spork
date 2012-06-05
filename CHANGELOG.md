@@ -1,3 +1,12 @@
+## 0.1.11 (5th June, 2012)
+Features:
+
+    - Hipchat Support (courtesy of Chris Ferry: @cdferry)
+    
+Bugfixes:
+    
+    - Tweaks to spork bump to play nicely with x.x versions as well as x.x.x (courtesy of Russ Garrett: @russss)
+    
 ## 0.1.10 (12th April, 2012)
 Features:
 

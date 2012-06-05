@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'knife-spork'
-  s.version           = '0.1.10'
-  s.date              = '2012-04-12'
+  s.version           = '0.1.11'
+  s.date              = '2012-06-05'
   s.rubyforge_project = 'knife-spork'
 
   ## Make sure your summary is short. The description may be as long
@@ -51,6 +51,7 @@ Gem::Specification.new do |s|
   # = MANIFEST =
   s.files = %w[
     README.md
+    CHANGELOG.md
     Rakefile
     knife-spork.gemspec
     lib/chef/knife/spork-bump.rb
