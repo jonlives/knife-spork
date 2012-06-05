@@ -130,7 +130,7 @@ module KnifeSpork
       metadata_file = File.join(cookbook_path, cookbook, "metadata.rb")
       old_version = current_version.join('.')
       new_version = bumped_version.join('.')
-      update_metadata(old_version, new_version, metadata_file)
+      update_version(new_version, metadata_file)
       ui.msg("Bumping #{type} level of the #{cookbook} cookbook from #{old_version} to #{new_version}\n\n")
     end
 
@@ -150,15 +150,15 @@ module KnifeSpork
       end
 
       metadata_file = File.join(cookbook_path, cookbook, "metadata.rb")
-      update_metadata(current_version, version, metadata_file)
+      update_version(version, metadata_file)
       ui.msg("Manually bumped version of the #{cookbook} cookbook from #{current_version} to #{version}")
     end
 
-    def update_metadata(old_version, new_version, metadata_file)
+    def update_version(new_version, metadata_file)
       open_file = File.open(metadata_file, "r")
       body_of_file = open_file.read
       open_file.close
-      body_of_file.gsub!(old_version, new_version)
+      body_of_file.gsub!(/version\s+"[0-9\.]+"/, "version    \"#{new_version}\"")
       File.open(metadata_file, "w") { |file| file << body_of_file }
     end
 
