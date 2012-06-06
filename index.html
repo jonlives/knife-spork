@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Knife-spork : A workflow plugin to help many devs work with cookbooks and environments at once" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Knife-spork</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jonlives/knife-spork">View on GitHub</a>
+
+          <h1 id="project_title">Knife-spork</h1>
+          <h2 id="project_tagline">A workflow plugin to help many devs work with cookbooks and environments at once</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jonlives/knife-spork/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jonlives/knife-spork/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>knife-spork</h1>
+
+<p>A workflow plugin for Chef::Knife which helps multiple devs work on the same chef server and repo without treading on eachothers toes. This plugin was designed around the workflow we have here at Etsy, where several people are working on the chef repo and chef server at the same time. It contains several functions, documented below:</p>
+
+<h1>Installation</h1>
+
+<h2>SCRIPT INSTALL</h2>
+
+<p>Copy spork-* script from lib/chef/knife/spork-*.rb to your ~/.chef/plugins/knife directory.</p>
+
+<h2>GEM INSTALL</h2>
+
+<p>knife-spork is available on rubygems.org - if you have that source in your gemrc, you can simply use:</p>
+
+<pre><code>gem install knife-spork
+</code></pre>
+
+<h1>Spork Configuration</h1>
+
+<p>Out of the box, knife spork will work with no configuration. However, you can optionally enable several features to enhance it's functionality.</p>
+
+<p>Knife Spork will look for it's config file in the following locations, in ascending order of precedence.</p>
+
+<ul>
+<li>/config/spork-config.yml</li>
+<li>/etc/spork-config.yml</li>
+<li>~/.chef/spork-config.yml</li>
+</ul><p>Anything set in the config file in your home directory for example, will override options set in your chef repo or /etc.</p>
+
+<p>Below is a sample config file with all supported options enabled below, followed by an explanation of each section.</p>
+
+<pre><code>git:
+  enabled: true
+hipchat:
+  enabled: true
+  apikey: MYAPIKEYHERE
+  nickname: "Knife-Spork"
+  room: "Chef"
+  notify: true
+  color: "red"
+irccat:
+  enabled: true
+  server: irccat.mycompany.com
+  port: 12345
+  channel: "#chef"
+graphite:
+  enabled: true
+  server: graphite.mycompany.com
+  port: 2003
+gist:
+  enabled: true
+  in_chef: true
+  chef_path: cookbooks/gist/files/default/gist
+  path: /usr/bin/gist
+foodcritic:
+  enabled: true
+  fail_tags: [any]
+  tags: [foo]
+  include_rules: [/home/me/myrules]
+default_environments: [ production, development ]
+</code></pre>
+
+<h2>Git</h2>
+
+<p>This section enables a couple of git commands which will run as part of your spork workflow, namely:</p>
+
+<ul>
+<li>When you bump a cookbook's version, the relevant metadata.rb file will be git added</li>
+<li>When you promote an environment, git pull will be run before your changes are made.</li>
+</ul><h2>HipChat</h2>
+
+<p>Notifications will be sent to the HipChat room of your choice. Currently notifies on</p>
+
+<ul>
+<li>When a cookbook is uploaded using spork upload</li>
+<li>When  an environment is promoted to the server using promote --remote</li>
+</ul><p>color: "yellow", "red", "green", "purple", or "random"</p>
+
+<h2>Irccat</h2>
+
+<p>If you're using the irccat (<a href="https://github.com/RJ/irccat">https://github.com/RJ/irccat</a>) irc bot, this lets you post notifications to the channel of your choice. It currently notifies on</p>
+
+<ul>
+<li>When a cookbook is uploaded using spork upload</li>
+<li>When  an environment is promoted to the server using promote --remote</li>
+</ul><h2>Graphite</h2>
+
+<p>This lets you send to a graphite metric when promote --remote is performed. It send to the metric deploys.chef.</p>
+
+<h2>Gist</h2>
+
+<p>This allows you to generate an optional gist of environment changes which will be added to irccat notifications on promote --remote. It supports the <a href="https://rubygems.org/gems/gist">https://rubygems.org/gems/gist</a>, and contains two parameters to use a version in your chef repo, or a version installed somewhere else locally.</p>
+
+<h2>Foodcritic</h2>
+
+<p>This allows you to run a foodcritic lint check against your cookbook before spork uploading. The check only runs against the cookbook you've passed to spork-upload on the command line.</p>
+
+<p>PLEASE NOTE: Due to it's many dependancies (gem dependancy Nokogiri requires libxml-devel, libxslt-devel), foodcritic is not specified as a dependency of the knife-spork gem as it won't install without other manual package installs, so if you want to use it you'll need to make sure it's installed yourself for now. This may change in a future version.</p>
+
+<p>The optional attributes for this section work as follows:</p>
+
+<p>fail_tags: Fail the build if any of the specified tags are matched.
+tags: Only check against rules with the specified tags.
+include_rules: Additional rule file path(s) to load.</p>
+
+<h2>Default Environments</h2>
+
+<p>This allows you to specify a default list of environments you want to promote changes to. If this option is configured and you <em>ommit</em> the environment parameter when promoting, ie knife spork promote , then it will promote to all environments in this list.</p>
+
+<h1>Spork Check</h1>
+
+<p>This function is designed to help you avoid trampling on other people's cookbook versions, and to make sure that when you come to version your own work it's easy to see what version numbers have already been used and if the one you're using will overwrite anything.</p>
+
+<h2>Usage</h2>
+
+<pre><code>knife spork check COOKBOOK ( --all)
+</code></pre>
+
+<p>By default, spork check only shows the 5 most recent remote cookbook versions. Add the --all option if you want to see everything.</p>
+
+<h2>Example (Checking an Unfrozen Cookbook with version clash)</h2>
+
+<pre><code>$ knife spork check apache
+Checking versions for cookbook apache...
+
+Current local version: 0.1.0
+
+Remote versions (Max. 5 most recent only):
+*0.1.0, unfrozen
+0.0.0, unfrozen
+
+DANGER: Your local cookbook version number clashes with an unfrozen remote version.
+
+If you upload now, you'll overwrite it.
+</code></pre>
+
+<h2>Example (Checking a Frozen Cookbook with version clash)</h2>
+
+<pre><code>$ knife spork check apache2
+Checking versions for cookbook apache2...
+
+Current local version: 1.0.6
+
+Remote versions (Max. 5 most recent only):
+*1.0.6, frozen
+1.0.5, frozen
+1.0.4, frozen
+1.0.3, frozen
+1.0.2, frozen
+1.0.1, frozen
+1.0.0, frozen
+
+DANGER: Your local cookbook has same version number as the starred version above!
+
+Please bump your local version or you won't be able to upload.
+</code></pre>
+
+<h2>Example (No version clashes)</h2>
+
+<pre><code>$ knife spork check apache2
+Checking versions for cookbook apache2...
+
+Current local version: 1.0.7
+
+Remote versions (Max. 5 most recent only):
+1.0.6, frozen
+1.0.5, frozen
+1.0.4, frozen
+1.0.3, frozen
+1.0.2, frozen
+1.0.1, frozen
+1.0.0, frozen
+
+Everything looks fine, no version clashes. You can upload!
+</code></pre>
+
+<h1>Spork Bump</h1>
+
+<p>This function lets you easily version your cookbooks without having to manually edit the cookbook's metadata.rb file. You can either specify the version level you'd like to bump (major, minor or patch), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number.</p>
+
+<h2>Usage</h2>
+
+<pre><code>knife bump COOKBOOK &lt;MAJOR | MINOR | PATCH | MANUAL x.x.x&gt;
+
+</code></pre>
+
+<h2>Example (Bumping patch level)</h2>
+
+<pre><code>$ knife spork bump apache2 patch
+Bumping patch level of the apache2 cookbook from 1.0.6 to 1.0.7
+</code></pre>
+
+<h2>Example (Manually setting version)</h2>
+
+<pre><code>$ knife spork bump apache2 manual 1.0.13
+Manually bumped version of the apache2 cookbook from 1.0.7 to 1.0.13
+</code></pre>
+
+<h1>Spork Upload</h1>
+
+<p>This function works mostly the same as normal "knife cookbook upload" except that this version automatically freezes cookbooks when you upload them. If you don't want to have to remember to add "--freeze" to your "knife cookbook upload" commands, then use this version.</p>
+
+<h2>Usage</h2>
+
+<pre><code>knife spork upload COOKBOOK
+</code></pre>
+
+<h2>Example</h2>
+
+<pre><code>$ knife spork upload apache
+
+Uploading and freezing apache             [1.0.6]
+upload complete
+</code></pre>
+
+<h1>Spork Promote</h1>
+
+<p>This function lets you easily set a version constraint in an environment for a particular cookbook. By default it will set the version constraint to whatever the local version of the specified cookbook is. Optionally, you can include a --version option which will set the version constraint for the specified cookbook to whatever version number you provide. You might want to use this if, for example, you pushed a version constraint for a cookbook version you don't want your nodes to use anymore, so you want to "roll back" the environment to a previous version. You can also specify the --remote option if you'd like to automatically upload your changed local environment file to the server.</p>
+
+<h2>Usage</h2>
+
+<pre><code>knife spork promote ENVIRONMENT COOKBOOK (OPTIONS: --version, --remote)
+</code></pre>
+
+<h2>Example (Using local Cookbook version number, into environment "foo", uploading to chef server)</h2>
+
+<pre><code>$ knife spork promote foo php --remote
+Adding version constraint php = 0.1.0
+
+Saving changes into foo.json
+
+Uploading foo to server
+
+Promotion complete! Please remember to upload your changed Environment file to the Chef Server.
+</code></pre>
+
+<h2>Example (Using manual version, into environment "foo", saving to local environment file only)</h2>
+
+<pre><code>$ knife spork promote foo php -v 1.0.6
+Adding version constraint php = 1.0.6
+
+Saving changes into foo.json
+
+Promotion complete! Please remember to upload your changed Environment file to the Chef Server.
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Knife-spork maintained by <a href="https://github.com/jonlives">jonlives</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
