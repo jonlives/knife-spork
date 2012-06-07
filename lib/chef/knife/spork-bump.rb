@@ -193,7 +193,7 @@ module KnifeSpork
           ui.msg "Opening git repo #{path}\n\n"
           g = Git.open(path, :log => Logger.new(strio))
           ui.msg "Pulling latest changes from git\n\n"
-          output = IO.popen ("cd #{path} && git pull 2>&1")
+          output = IO.popen ("cd #{path} && git pull --recurse-submodules 2>&1")
           Process.wait
           exit_code = $?            
           if exit_code.exitstatus ==  0
@@ -204,7 +204,7 @@ module KnifeSpork
           end
 
           ui.msg "Pulling latest changes from git submodules (if any)\n\n"
-          output = IO.popen ("cd #{path} && git submodule foreach git pull 2>&1")
+          output = IO.popen ("cd #{path} && git submodule update 2>&1")
           Process.wait
           exit_code = $?
           if exit_code.exitstatus ==  0
