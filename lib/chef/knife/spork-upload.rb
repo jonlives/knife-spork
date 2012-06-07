@@ -313,7 +313,7 @@ WARNING
         
         ui.msg "Lint checking #{cookbook_name}..."
         options = {:fail_tags => fail_tags, :tags =>tags, :include_rules => include_rules}
-        review = FoodCritic::Linter.new.check("#{cookbook_path}",options)
+        review = FoodCritic::Linter.new.check([cookbook_path],options)
         
         if review.failed?
           ui.error "Lint check failed. Halting upload."
