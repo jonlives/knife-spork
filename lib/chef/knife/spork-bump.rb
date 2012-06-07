@@ -158,8 +158,13 @@ module KnifeSpork
       open_file = File.open(metadata_file, "r")
       body_of_file = open_file.read
       open_file.close
-      body_of_file.gsub!(/version\s+"[0-9\.]+"/, "version    \"#{new_version}\"")
-      File.open(metadata_file, "w") { |file| file << body_of_file }
+      new_body_of_file = body_of_file.gsub(/version\s+"[0-9\.]+"/, "version    \"#{new_version}\"")
+      if(body_of_file.eql?(new_body_of_file))
+        ui.error("Applying version bump to #{metadata_file} did not result in a change, aborting!")
+        exit 2
+      else
+        File.open(metadata_file, "w") { |file| file << new_body_of_file }
+      end
     end
 
     def get_version(cookbook_path, cookbook)
