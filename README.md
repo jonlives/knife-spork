@@ -185,7 +185,7 @@ This function lets you easily version your cookbooks without having to manually 
 ## Usage
 
 ````
-knife bump COOKBOOK <MAJOR | MINOR | PATCH | MANUAL x.x.x>
+knife spork bump COOKBOOK <MAJOR | MINOR | PATCH | MANUAL x.x.x>
 
 ````
 
