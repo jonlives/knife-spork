@@ -31,7 +31,6 @@ require 'app_conf'
 require 'chef/knife'
 require 'socket'
 require 'hipchat'
-require 'pry'
 
 module KnifeSpork
   class SporkUpload < Chef::Knife
