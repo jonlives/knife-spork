@@ -65,7 +65,7 @@ module KnifeSpork
 
       option :force,
         :long => '--force',
-        :description => 'Force this version of the cookbook to override a frozen cookbook.  Use with care!',
+        :description => 'Force this version of the cookbook to override a frozen cookbook.  Use with caution!',
         :boolean => true
 
       option :depends,
