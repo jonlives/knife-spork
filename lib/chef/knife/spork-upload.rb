@@ -63,6 +63,11 @@ module KnifeSpork
         :description => 'Freeze this version of the cookbook so that it cannot be overwritten',
         :boolean => true
 
+      option :force,
+        :long => '--force',
+        :description => 'Force this version of the cookbook to override a frozen cookbook.  Use with care!',
+        :boolean => true
+
       option :depends,
         :short => "-d",
         :long => "--include-dependencies",
@@ -127,6 +132,7 @@ module KnifeSpork
             
             upload(cookbook, justify_width)
             cookbook.freeze_version
+            cookbook.force_save_url if config[:force]
             upload(cookbook, justify_width)
                   
             if !@conf.irccat.nil? && @conf.irccat.enabled
