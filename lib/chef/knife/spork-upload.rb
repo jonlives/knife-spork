@@ -63,6 +63,11 @@ module KnifeSpork
         :description => 'Freeze this version of the cookbook so that it cannot be overwritten',
         :boolean => true
 
+      option :force,
+        :long => '--force',
+        :description => 'Force this version of the cookbook to override a frozen cookbook.  Use with caution!',
+        :boolean => true
+
       option :depends,
         :short => "-d",
         :long => "--include-dependencies",
@@ -124,10 +129,10 @@ module KnifeSpork
             end
             
             ui.info("Uploading and freezing #{cookbook.name.to_s.ljust(justify_width + 10)} [#{cookbook.version}]")
-            
-            upload(cookbook, justify_width)
+
+            upload(cookbook, justify_width, :force => config[:force])
             cookbook.freeze_version
-            upload(cookbook, justify_width)
+            upload(cookbook, justify_width, :force => config[:force])
                   
             if !@conf.irccat.nil? && @conf.irccat.enabled
                 begin
@@ -151,7 +156,7 @@ module KnifeSpork
 
             if !@conf.hipchat.nil? && @conf.hipchat.enabled
                 begin
-                  message = "#{ENV['USER']} uploaded and froze cookbook #{cookbook_name} version #{cookbook.version}"
+                  message = "#{ENV['USER']}#{" force" if config[:force]} uploaded and froze cookbook #{cookbook_name} version #{cookbook.version}"
                   client = HipChat::Client.new(@conf.hipchat.apikey)
                   client["#{@conf.hipchat.room}"].send( @conf.hipchat.nickname, message, :notify => @conf.hipchat.notify, :color => @conf.hipchat.color )
                 rescue Exception => msg  
@@ -226,10 +231,10 @@ WARNING
 
       private
 
-      def upload(cookbook, justify_width)
+      def upload(cookbook, justify_width, opts={})
         check_for_broken_links(cookbook)
         check_dependencies(cookbook)
-        Chef::CookbookUploader.new(cookbook, config[:cookbook_path]).upload_cookbook
+        Chef::CookbookUploader.new(cookbook, config[:cookbook_path], opts).upload_cookbook
       rescue Net::HTTPServerException => e
         case e.response.code
         when "409"
