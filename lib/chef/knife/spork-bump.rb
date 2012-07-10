@@ -170,7 +170,7 @@ module KnifeSpork
     def git_add(cookbook)
       strio = StringIO.new
       l = Logger.new strio
-      cookbook_path = cookbook_repo[cookbook].root_dir.gsub("#{cookbook}","")
+      cookbook_path = cookbook_repo[cookbook].root_dir.gsub(/#{cookbook}$/,"")
       begin
         path = cookbook_path.gsub("/site-cookbooks","").gsub("/cookbooks","")
         ui.msg "Opening git repo #{path}\n\n"
