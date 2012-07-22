@@ -1,156 +1,88 @@
-#
-# Author:: Jon Cowie (<jonlives@gmail.com>)
-# Copyright:: Copyright (c) 2011 Jon Cowie
-# License:: GPL
-
-
-require 'app_conf'
-require 'json'
 require 'chef/knife'
-require 'chef/cookbook_loader'
+require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkCheck < Chef::Knife
+    include KnifeSpork::Runner
 
-    deps do
-         require 'chef/json_compat'
-         require 'uri'
-         require 'chef/cookbook_version'
-    end
-    banner "knife spork check COOKBOOK"
-    
+    banner 'knife spork check COOKBOOK'
+
     option :all,
-      :short => "--a",
-      :long => "--all",
-      :description => "Show all uploaded versions of the cookbook"
-    
+      :short => '--a',
+      :long => '--all',
+      :description => 'Show all uploaded versions of the cookbook'
+
     def run
-
-      if RUBY_VERSION.to_f < 1.9
-        ui.fatal "Sorry, knife-spork requires ruby 1.9 or newer."
-        exit 1
-      end
-      
       self.config = Chef::Config.merge!(config)
-      @conf = AppConf.new
-      
-      if File.exists?("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
-        @conf.load("#{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml")
-        ui.msg "Loaded config file #{config[:cookbook_path].first.gsub("cookbooks","")}config/spork-config.yml...\n\n"
-      end
-      
-      if File.exists?("/etc/spork-config.yml")
-        @conf.load("/etc/spork-config.yml")
-        ui.msg "Loaded config file /etc/spork-config.yml...\n\n"
-      end
-    
-      if File.exists?(File.expand_path("~/.chef/spork-config.yml"))
-        @conf.load(File.expand_path("~/.chef/spork-config.yml"))
-        ui.msg "Loaded config file #{File.expand_path("~/.chef/spork-config.yml")}...\n\n"
-      end
 
-      if config.has_key?(:cookbook_path)
-        cookbook_path = config["cookbook_path"]
-      else
-        ui.fatal "No default cookbook_path; Specify with -o or fix your knife.rb."
+      if name_args.empty?
+        ui.fatal 'You must specify a cookbook name!'
         show_usage
-        exit 1
+        exit(1)
       end
 
-      if name_args.size == 0
-        show_usage
-        exit 0
-      end
+      @cookbook = load_cookbook(name_args.first)
 
-      unless name_args.size == 1
-        ui.fatal "Please specify the cookbook whose version you which to check."
-        show_usage
-        exit 1
-      end
-
-      cookbook = name_args.first
-      cookbook_path = config[:cookbook_path]
-      local_version = get_local_cookbook_version(cookbook_path, cookbook)
-      remote_versions = get_remote_cookbook_versions(cookbook)
-
-      check_versions(cookbook, local_version, remote_versions)
+      run_plugins(:before_check)
+      check
+      run_plugins(:after_check)
     end
 
-    def get_local_cookbook_version(cookbook_path, cookbook)
-      current_version = get_version(cookbook_path, cookbook).split(".").map{|i| i.to_i}
-      metadata_file = File.join(cookbook_path, cookbook, "metadata.rb")
-      local_version = current_version.join('.')
-      return local_version
-    end
-
-    def get_remote_cookbook_versions(cookbook)
-      env           = config[:environment]
-      api_endpoint  = env ? "environments/#{env}/cookbooks/#{cookbook}" : "cookbooks/#{cookbook}"
-      cookbooks = rest.get_rest(api_endpoint)
-      versions = cookbooks[cookbook]["versions"]
-      if config[:all]
-        return versions
-      else
-        return versions[0..4]
-      end
-    end
-
-    def check_versions(cookbook, local_version, remote_versions)
-
-      conflict = false
-      frozen = false
-      ui.msg "Checking versions for cookbook #{cookbook}..."
+    private
+    def check
+      ui.msg "Checking versions for cookbook #{@cookbook.name}..."
       ui.msg ""
-      ui.msg "Current local version: #{local_version}"
+      ui.msg "Local Version:"
+      ui.msg "  #{local_version}"
       ui.msg ""
-      if config[:all]
-        ui.msg "Remote versions:"
-      else
-        ui.msg "Remote versions (Max. 5 most recent only):"
-      end
-      remote_versions.each do |v|
-
-        version_frozen = check_frozen(cookbook,v["version"])
-
-        if version_frozen then
-          pretty_frozen = "frozen"
+      ui.msg "Remote Versions: (* indicates frozen)"
+      remote_versions.each do |remote_version|
+        if frozen?(remote_version)
+          ui.msg " *#{remote_version}"
         else
-          pretty_frozen = "unfrozen"
+          ui.msg "  #{remote_version}"
         end
+      end
+      ui.msg ""
 
-        if v["version"] == local_version then
-          ui.msg "*" + v["version"] + ", " + pretty_frozen
-          conflict = true
-          if version_frozen then
-            frozen = true
+      remote_versions.each do |remote_version|
+        if remote_version == local_version
+          if frozen?(remote_version)
+            ui.warn "Your local version (#{local_version}) is frozen on the remote server. You'll need to bump before you can upload."
+          else
+            ui.error "The version #{local_version} exists on the server and is not frozen. Uploading will overwrite!"
           end
-        else
-          ui.msg v["version"] + ", " + pretty_frozen
+
+          return
         end
-
       end
-      ui.msg ""
 
-      if conflict && frozen
-        ui.msg "DANGER: Your local cookbook has same version number as the starred version above!\n\nPlease bump your local version or you won't be able to upload."
-      elsif conflict && !frozen
-          ui.msg "DANGER: Your local cookbook version number clashes with an unfrozen remote version.\n\nIf you upload now, you'll overwrite it."
-      else
-        ui.msg "Everything looks fine, no version clashes. You can upload!"
+      ui.msg 'Everything looks good!'
+    end
+
+    def local_version
+      @cookbook.version
+    end
+
+    def remote_versions
+      @remote_versions ||= begin
+        environment = config[:environment]
+        api_endpoint = environment ? "environments/#{environment}/cookbooks/#{@cookbook.name}" : "cookbooks/#{@cookbook.name}"
+        cookbooks = rest.get_rest(api_endpoint)
+
+        versions = cookbooks[@cookbook.name.to_s]['versions']
+        (config[:all] ? versions : versions[0..4]).collect{|v| v['version']}
       end
     end
 
-    def get_version(cookbook_path, cookbook)
-      loader = ::Chef::CookbookLoader.new(cookbook_path)
-      return loader[cookbook].version
-    end
+    def frozen?(version)
+      @versions_cache ||= {}
 
-    def check_frozen(cookbook,version)
-      env           = config[:environment]
-      api_endpoint  = env ? "environments/#{env}/cookbooks/#{cookbook}" : "cookbooks/#{cookbook}/#{version}"
-      cookbooks = rest.get_rest(api_endpoint)
-      cookbook_hash = cookbooks.to_hash
-      return cookbook_hash["frozen?"]
+      @versions_cache[version.to_sym] ||= begin
+        environment = config[:environment]
+        api_endpoint = environment ? "environments/#{environment}/cookbooks/#{@cookbook.name}" : "cookbooks/#{@cookbook.name}/#{version}"
+        rest.get_rest(api_endpoint).to_hash['frozen?']
+      end
     end
   end
 end
