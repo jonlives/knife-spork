@@ -16,7 +16,13 @@ module KnifeSpork
 
     TYPE_INDEX = { "major" => 0, "minor" => 1, "patch" => 2, "manual" => 3 }
 
-    banner "knife spork bump COOKBOOK [major|minor|patch|manual]"
+    banner "knife spork bump COOKBOOK [major|minor|patch|manual] (options)"
+
+    option :cookbook_path,
+      :short => "-o PATH:PATH",
+      :long => "--cookbook-path PATH:PATH",
+      :description => "A colon-separated path to look for cookbooks in",
+      :proc => lambda { |o| o.split(":") }
 
       @@gitavail = true
       deps do
