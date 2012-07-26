@@ -1,3 +1,3 @@
 module KnifeSpork
-  VERSION = "0.1.11"
+  require 'knife-spork/plugins'
 end
