@@ -18,7 +18,6 @@ module KnifeSpork
         load_paths.each do |load_path|
           if File.exists?(load_path)
             @spork_config.load(load_path)
-            break
           end
         end
 
