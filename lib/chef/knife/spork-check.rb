@@ -23,12 +23,15 @@ module KnifeSpork
       :short => "--a",
       :long => "--all",
       :description => "Show all uploaded versions of the cookbook"
+
+    option :fail,
+      :long => "--fail",
+      :description => "If the check fails exit with non-zero exit code"
     
     def run
 
       if RUBY_VERSION.to_f < 1.9
-        ui.fatal "Sorry, knife-spork requires ruby 1.9 or newer."
-        exit 1
+        fail_and_exit("Sorry, knife-spork requires ruby 1.9 or newer.")
       end
       
       self.config = Chef::Config.merge!(config)
@@ -52,9 +55,7 @@ module KnifeSpork
       if config.has_key?(:cookbook_path)
         cookbook_path = config["cookbook_path"]
       else
-        ui.fatal "No default cookbook_path; Specify with -o or fix your knife.rb."
-        show_usage
-        exit 1
+        fail_and_exit("No default cookbook_path; Specify with -o or fix your knife.rb.", :show_usage => true)
       end
 
       if name_args.size == 0
@@ -63,9 +64,7 @@ module KnifeSpork
       end
 
       unless name_args.size == 1
-        ui.fatal "Please specify the cookbook whose version you which to check."
-        show_usage
-        exit 1
+        fail_and_exit("Please specify the cookbook whose version you which to check.", :show_usage => true)
       end
 
       cookbook = name_args.first
@@ -132,12 +131,20 @@ module KnifeSpork
       ui.msg ""
 
       if conflict && frozen
-        ui.msg "DANGER: Your local cookbook has same version number as the starred version above!\n\nPlease bump your local version or you won't be able to upload."
+        message = "DANGER: Your local cookbook has same version number as the starred version above!\n\nPlease bump your local version or you won't be able to upload."
+        !config[:fail] ? ui.msg message ? fail_and_exit(message)
       elsif conflict && !frozen
-          ui.msg "DANGER: Your local cookbook version number clashes with an unfrozen remote version.\n\nIf you upload now, you'll overwrite it."
+        message = "DANGER: Your local cookbook version number clashes with an unfrozen remote version.\n\nIf you upload now, you'll overwrite it."
+        !config[:fail] ? ui.msg message ? fail_and_exit(message)
       else
         ui.msg "Everything looks fine, no version clashes. You can upload!"
       end
+    end
+
+    def fail_and_exit(message, options={})
+      ui.fatal message
+      show_usage if options[:show_usage]
+      exit 1
     end
 
     def get_version(cookbook_path, cookbook)
