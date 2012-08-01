@@ -132,10 +132,10 @@ module KnifeSpork
 
       if conflict && frozen
         message = "DANGER: Your local cookbook has same version number as the starred version above!\n\nPlease bump your local version or you won't be able to upload."
-        !config[:fail] ? ui.msg message ? fail_and_exit(message)
+        !config[:fail] ? ui.msg(message) : fail_and_exit(message)
       elsif conflict && !frozen
         message = "DANGER: Your local cookbook version number clashes with an unfrozen remote version.\n\nIf you upload now, you'll overwrite it."
-        !config[:fail] ? ui.msg message ? fail_and_exit(message)
+        !config[:fail] ? ui.msg(message) : fail_and_exit(message)
       else
         ui.msg "Everything looks fine, no version clashes. You can upload!"
       end
