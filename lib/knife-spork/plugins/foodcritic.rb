@@ -15,8 +15,11 @@ module KnifeSpork
 
         cookbooks.each do |cookbook|
           ui.info "Running foodcritic against #{cookbook.name}@#{cookbook.version}..."
-          cookbook_path = File.expand_path(File.join(Chef::Config.cookbook_path, cookbook.name.to_s))
 
+					cookbook_path = cookbook.root_dir
+
+					ui.info cookbook_path
+					
           options = {:tags => tags, :fail_tags => fail_tags, :include_rules => include_rules}
           review = ::FoodCritic::Linter.new.check([cookbook_path], options)
 

@@ -92,7 +92,7 @@ module KnifeSpork
 
       def load_cookbook(cookbook_name)
         return cookbook_name if cookbook_name.is_a?(::Chef::CookbookVersion)
-        loader = ::Chef::CookbookLoader.new(cookbook_path)
+        loader = ::Chef::CookbookLoader.new(Chef::Config.cookbook_path)
         loader[cookbook_name]
       end
 
