@@ -4,12 +4,12 @@ module KnifeSpork
   module Plugins
     class Graphite < Plugin
       name :graphite
-      hooks :after_upload
+      hooks :after_promote_remote
 
       def perform
         environments.each do |environment|
           begin
-            message = "deploys.chef.#{environment} 1 #{time.to_i}\n"
+            message = "deploys.chef.#{environment} 1 #{Time.now.to_i}\n"
             socket = TCPSocket.open(config.server, config.port)
             socket.write(message)
           rescue Exception => e

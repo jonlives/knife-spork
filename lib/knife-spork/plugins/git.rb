@@ -9,26 +9,38 @@ module KnifeSpork
 
       def before_bump
         git_pull
+				git_pull_submodules
+      end
+
+			def before_upload
+        git_pull
+				git_pull_submodules
+      end
+
+			def before_promote
+        git_pull
+				git_pull_submodules
       end
 
       def after_bump
-        git_pull
-        git_commit
-        git_push
+        cookbooks.each do |cookbook|
+					git_add("#{cookbook.root_dir}/metadata.rb")
+				end
       end
 
-      def after_promote
-        git_commit
-        git_tag("knifespork-#{tag_name}")
-        git_push(true)
+      def after_promote_local
+        environments.each do |environment|
+					git_add("./environments/#{environment}.json")
+				end
       end
 
       private
       def git
         safe_require 'git'
 
+				@strio ||= StringIO.new
         @git ||= begin
-          ::Git.open('.')
+          ::Git.open('.', :log => Logger.new(@strio))
         rescue
           ui.error 'You are not currently in a git repository. Ensure you are in the proper working directory or remove the git plugin from your KnifeSpork configuration!'
           exit(0)
@@ -40,17 +52,34 @@ module KnifeSpork
       #   - Pull from the remote
       #   - Pop the stash
       def git_pull
-        git.branch.stashes.save('[KnifeSpork] Stashing local changes')
-
-        begin
+				begin
+					ui.msg "Pulling latest changes from remote Git repo."
           git.pull remote, branch
         rescue ::Git::GitExecuteError => e
           ui.error "Could not pull from remote #{remote}/#{branch}. Does it exist?"
         end
-
-        git.branch.stashes.apply
       end
 
+			def git_pull_submodules
+				ui.msg "Pulling latest changes from git submodules (if any)"
+        output = IO.popen ("git submodule foreach git pull 2>&1")
+        Process.wait
+        exit_code = $?
+        if !exit_code.exitstatus ==  0
+          	ui.error "#{output.read()}\n"
+        		exit 1
+        end
+			end
+			
+			def git_add(filepath)
+     	 begin
+	        ui.msg "Git add'ing #{filepath}\n\n"
+	        git.add("#{filepath}")
+	      rescue ::Git::GitExecuteError => e
+	        ui.error "Git: Something went wrong with git add #{filepath}. Please try running git add manually."
+	      end
+			end
+			
       # Commit changes, if any
       def git_commit
         begin

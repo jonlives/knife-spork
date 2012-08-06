@@ -8,11 +8,11 @@ module KnifeSpork
       def perform; end
 
       def after_upload
-        irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} uploaded\n#TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join("\n")}#NORMAL")
+        irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} uploaded #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL")
       end
 
-      def after_promote
-        irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} promoted\n#TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join("\n")}#NORMAL")
+      def after_promote_remote
+        irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environments.collect{ |e| "#{e.name}" }.join(", ")}")
       end
 
       private

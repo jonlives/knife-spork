@@ -34,7 +34,7 @@ module KnifeSpork
 
       new_version = version_array.join('.')
 
-      metadata_file = File.expand_path( File.join(cookbook_path, @cookbook.name.to_s, 'metadata.rb') )
+      metadata_file = "#{@cookbook.root_dir}/metadata.rb"
       new_contents = File.read(metadata_file).gsub(/version\s+['"][0-9\.]+['"]/, "version '#{new_version}'")
       File.open(metadata_file, 'w'){ |f| f.write(new_contents) }
 

@@ -42,15 +42,17 @@ module KnifeSpork
         save_environment_changes(e, new_environment_json)
 
         if config[:remote]
-          ui.msg "Uploading #{environment.name} to Chef Server"
+          ui.msg "Uploading #{environment.name}.json to Chef Server"
           save_environment_changes_remote(e)
           ui.info 'Promotion complete!'
         else
-          ui.info "Promotion complete. Don't forget to upload your changed #{environment.name} to Chef Server"
+          ui.info "Promotion complete. Don't forget to upload your changed #{environment.name}.json to Chef Server"
         end
       end
-
-      run_plugins(:after_promote)
+      run_plugins(:after_promote_local)
+			if config[:remote]
+				run_plugins(:after_promote_remote)
+			end
     end
 
     def update_version_constraints(environment, cookbook, new_version)

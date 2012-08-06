@@ -16,7 +16,7 @@ EOH
         end
       end
 
-      def after_promote
+      def after_promote_remote
         campfire do |rooms|
           rooms.paste <<-EOH
 #{current_user} promoted cookbooks on Chef Server:

@@ -11,7 +11,7 @@ module KnifeSpork
         hipchat "#{current_user} uploaded the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")}"
       end
 
-      def after_promote
+      def after_promote_remote
         hipchat "#{current_user} promoted the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")}"
       end
 
