@@ -12,7 +12,9 @@ module KnifeSpork
       end
 
       def after_promote_remote
-        irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environments.collect{ |e| "#{e.name}" }.join(", ")}")
+				environments.each do |environment|
+        	irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environment.name}")
+				end
       end
 
       private
