@@ -62,19 +62,9 @@ module KnifeSpork
 
     def save_environment_changes_remote(environment)
       local_environment = load_environment(environment)
+      remote_environment = load_remote_environment(environment)
 
-      begin
-        remote_environment = Chef::Environment.load(environment)
-      rescue Net::HTTPServerException => e
-        ui.error "Could not load #{environment} from Chef Server. You must upload the environment manually the first time."
-        exit(1)
-      end
-
-      local_environment_versions = local_environment.to_hash['cookbook_versions']
-      remote_environment_versions = remote_environment.to_hash['cookbook_versions']
-      environment_diff = remote_environment_versions.diff(local_environment_versions)
-
-      if environment_diff.size > 1
+      if environment_diff(local_environment, remote_environment).size > 1
         ui.warn 'You\'re about to promote changes to several cookbooks:'
         ui.warn environment_diff.collect{|k,v| "\t#{k}: #{v}"}.join("\n")
 
@@ -127,17 +117,6 @@ module KnifeSpork
         ui.error "#{cookbook_name}@#{version} does not exist on Chef Server! Upload the cookbook first by running:\n\n\tknife spork upload #{cookbook_name}\n\n"
         exit(1)
       end
-    end
-  end
-end
-
-class Hash
-  def diff(other)
-    self.keys.inject({}) do |memo, key|
-      unless self[key] == other[key]
-        memo[key] = "#{self[key]} changed to #{other[key]}"
-      end
-      memo
     end
   end
 end
