@@ -73,7 +73,7 @@ module KnifeSpork
 			
 			def git_add(filepath)
      	 begin
-	        ui.msg "Git add'ing #{filepath}\n\n"
+	        ui.msg "Git add'ing #{filepath}"
 	        git.add("#{filepath}")
 	      rescue ::Git::GitExecuteError => e
 	        ui.error "Git: Something went wrong with git add #{filepath}. Please try running git add manually."
