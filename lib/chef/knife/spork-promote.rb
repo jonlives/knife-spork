@@ -124,7 +124,7 @@ module KnifeSpork
       begin
         cookbooks = rest.get_rest(api_endpoint)
       rescue Net::HTTPServerException => e
-        ui.error "#{cookbook_name}@#{version} does not exist on Chef Server! Upload the cookbook first by running:\n\n\tknife cookbook upload #{cookbook_name}\n\n"
+        ui.error "#{cookbook_name}@#{version} does not exist on Chef Server! Upload the cookbook first by running:\n\n\tknife spork upload #{cookbook_name}\n\n"
         exit(1)
       end
     end
