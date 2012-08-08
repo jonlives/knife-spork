@@ -6,9 +6,10 @@ module KnifeSpork
   module Plugins
     class Eventinator < Plugin
       name :eventinator
-      hooks :after_upload
 
-      def perform
+      def perform; end
+
+			def after_upload
 				cookbooks.each do |cookbook|
         	event_data = {
 	          :tag => 'knife',
@@ -19,8 +20,29 @@ module KnifeSpork
 	            :cookbook_version => cookbook.version
 	          }.to_json
 	        }
+					eventinate(event_data)
+				end
+      end
 
-	        begin
+			def after_promote_remote
+				environments.each do |environment|
+					cookbooks.each do |cookbook|
+	        	event_data = {
+		          :tag => 'knife',
+		          :username => current_user,
+		          :status => "#{current_user} has promoted #{cookbook.name}(#{cookbook.version}) to #{environment.name}",
+		          :metadata => {
+		            :cookbook_name => cookbook.name,
+		            :cookbook_version => cookbook.version
+		          }.to_json
+		        }
+						eventinate(event_data)
+					end
+				end
+			end
+
+			def eventinate(event_data)
+				begin
 	          uri = URI.parse(config.url)
 	        rescue Exception => e
 	          ui.error 'Could not parse URI for Eventinator.'
@@ -43,8 +65,7 @@ module KnifeSpork
 	          ui.error 'Eventinator error.'
 	          ui.error e.to_s
 	        end
-				end
-      end
+			end
     end
   end
 end
