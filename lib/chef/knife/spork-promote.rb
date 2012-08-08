@@ -63,10 +63,11 @@ module KnifeSpork
     def save_environment_changes_remote(environment)
       local_environment = load_environment(environment)
       remote_environment = load_remote_environment(environment)
-
-      if environment_diff(local_environment, remote_environment).size > 1
+			@environment_diffs ||= Hash.new
+			@environment_diffs["#{environment}"] = environment_diff(local_environment, remote_environment)
+      if 	@environment_diffs["#{environment}"].size > 1
         ui.warn 'You\'re about to promote changes to several cookbooks:'
-        ui.warn environment_diff.collect{|k,v| "\t#{k}: #{v}"}.join("\n")
+        ui.warn @environment_diffs["#{environment}"].collect{|k,v| "\t#{k}: #{v}"}.join("\n")
 
         begin
           ui.confirm('Are you sure you want to continue?')

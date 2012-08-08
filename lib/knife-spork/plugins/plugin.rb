@@ -48,6 +48,10 @@ module KnifeSpork
         @options[:environments]
       end
 
+			def environment_diffs
+        @options[:environment_diffs]
+      end
+
       def ui
         @options[:ui]
       end

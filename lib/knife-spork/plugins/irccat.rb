@@ -13,7 +13,9 @@ module KnifeSpork
 
       def after_promote_remote
 				environments.each do |environment|
-        	irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environment.name}")
+					diff = environment_diffs[environment.name]
+					env_gist = gist(environment, diff) if config.gist
+        	irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environment.name} #{env_gist}")
 				end
       end
 
@@ -33,6 +35,11 @@ module KnifeSpork
         end
       end
 
+			def gist(environment, diff)
+				msg = "Environment #{environment} uploaded at #{Time.now.getutc} by #{current_user}\n\nConstraints updated on server in this version:\n\n#{diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
+        %x[ echo "#{msg}" | #{config.gist}]
+			end
+			
       def channels
         [ config.channel || config.channels ].flatten
       end

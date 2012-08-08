@@ -27,13 +27,14 @@ module KnifeSpork
       def run_plugins(hook)
         cookbooks = [ @cookbooks || @cookbook ].flatten.compact.collect{|cookbook| cookbook.is_a?(::Chef::CookbookVersion) ? cookbook : load_cookbook(cookbook)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environments = [ @environments || @environment ].flatten.compact.collect{|environment| environment.is_a?(::Chef::Environment) ? environment : load_environment(environment)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
-				environment_diffs = Hash[environments.collect { |environment| [environment.name, environment_diff(environment, load_remote_environment(environment))] }]
-
+				environment_diffs = @environment_diffs
+				
         KnifeSpork::Plugins.run(
           :config => spork_config,
           :hook => hook.to_sym,
           :cookbooks => cookbooks,
           :environments => environments,
+					:environment_diffs => environment_diffs,
           :ui => ui
         )
       end
@@ -118,7 +119,6 @@ module KnifeSpork
 			def environment_diff (local_environment, remote_environment)
 				  local_environment_versions = local_environment.to_hash['cookbook_versions']
       		remote_environment_versions = remote_environment.to_hash['cookbook_versions']
-					ui.msg "Diff: #{remote_environment_versions.diff(local_environment_versions)}"
       		remote_environment_versions.diff(local_environment_versions)
 			end
 			
