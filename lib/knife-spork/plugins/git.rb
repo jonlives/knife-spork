@@ -8,37 +8,37 @@ module KnifeSpork
       def perform; end
 
       def before_bump
-				git_pull
-				git_pull_submodules
+        git_pull
+        git_pull_submodules
       end
 
-			def before_upload
+      def before_upload
         git_pull
-				git_pull_submodules
+        git_pull_submodules
       end
 
-			def before_promote
+      def before_promote
         git_pull
-				git_pull_submodules
+        git_pull_submodules
       end
 
       def after_bump
         cookbooks.each do |cookbook|
-					git_add("#{cookbook.root_dir}/metadata.rb")
-				end
+          git_add("#{cookbook.root_dir}/metadata.rb")
+        end
       end
 
-			def after_promote_local
+      def after_promote_local
         environments.each do |environment|
-					git_add("./environments/#{environment}.json")
-				end
+          git_add("./environments/#{environment}.json")
+        end
       end
 
       private
       def git
         safe_require 'git'
 
-				@strio ||= StringIO.new
+        @strio ||= StringIO.new
         @git ||= begin
           ::Git.open('.', :log => Logger.new(STDOUT))
         rescue
@@ -52,38 +52,38 @@ module KnifeSpork
       #   - Pull from the remote
       #   - Pop the stash
       def git_pull
-				ui.msg "Pulling latest changes from remote Git repo."
-				output = IO.popen ("git pull 2>&1")
-       	Process.wait
-       	exit_code = $?
-       	if !exit_code.exitstatus ==  0
-         		ui.error "#{output.read()}\n"
-       			exit 1
-				end
+        ui.msg "Pulling latest changes from remote Git repo."
+        output = IO.popen ("git pull 2>&1")
+        Process.wait
+        exit_code = $?
+        if !exit_code.exitstatus ==  0
+            ui.error "#{output.read()}\n"
+            exit 1
+        end
       end
 
-			def git_pull_submodules
-				ui.msg "Pulling latest changes from git submodules (if any)"
+      def git_pull_submodules
+        ui.msg "Pulling latest changes from git submodules (if any)"
         output = IO.popen ("git submodule foreach git pull 2>&1")
         Process.wait
         exit_code = $?
         if !exit_code.exitstatus ==  0
-          	ui.error "#{output.read()}\n"
-        		exit 1
+            ui.error "#{output.read()}\n"
+            exit 1
         else
-						 ui.msg "#{output.read()}\n"
-				end
-			end
-			
-			def git_add(filepath)
-     	 begin
-	        ui.msg "Git add'ing #{filepath}"
-	        git.add("#{filepath}")
-	      rescue ::Git::GitExecuteError => e
-	        ui.error "Git: Something went wrong with git add #{filepath}. Please try running git add manually."
-	      end
-			end
-			
+             ui.msg "#{output.read()}\n"
+        end
+      end
+      
+      def git_add(filepath)
+       begin
+          ui.msg "Git add'ing #{filepath}"
+          git.add("#{filepath}")
+        rescue ::Git::GitExecuteError => e
+          ui.error "Git: Something went wrong with git add #{filepath}. Please try running git add manually."
+        end
+      end
+      
       # Commit changes, if any
       def git_commit
         begin
