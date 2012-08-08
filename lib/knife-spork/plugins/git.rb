@@ -8,7 +8,7 @@ module KnifeSpork
       def perform; end
 
       def before_bump
-        git_pull
+				git_pull
 				git_pull_submodules
       end
 
@@ -28,7 +28,7 @@ module KnifeSpork
 				end
       end
 
-      def after_promote_local
+			def after_promote_local
         environments.each do |environment|
 					git_add("./environments/#{environment}.json")
 				end
@@ -40,7 +40,7 @@ module KnifeSpork
 
 				@strio ||= StringIO.new
         @git ||= begin
-          ::Git.open('.', :log => Logger.new(@strio))
+          ::Git.open('.', :log => Logger.new(STDOUT))
         rescue
           ui.error 'You are not currently in a git repository. Ensure you are in the proper working directory or remove the git plugin from your KnifeSpork configuration!'
           exit(0)
@@ -52,12 +52,14 @@ module KnifeSpork
       #   - Pull from the remote
       #   - Pop the stash
       def git_pull
-				begin
-					ui.msg "Pulling latest changes from remote Git repo."
-          git.pull remote, branch
-        rescue ::Git::GitExecuteError => e
-          ui.error "Could not pull from remote #{remote}/#{branch}. Does it exist?"
-        end
+				ui.msg "Pulling latest changes from remote Git repo."
+				output = IO.popen ("git pull 2>&1")
+       	Process.wait
+       	exit_code = $?
+       	if !exit_code.exitstatus ==  0
+         		ui.error "#{output.read()}\n"
+       			exit 1
+				end
       end
 
 			def git_pull_submodules
@@ -68,7 +70,9 @@ module KnifeSpork
         if !exit_code.exitstatus ==  0
           	ui.error "#{output.read()}\n"
         		exit 1
-        end
+        else
+						 ui.msg "#{output.read()}\n"
+				end
 			end
 			
 			def git_add(filepath)
