@@ -50,9 +50,9 @@ module KnifeSpork
         end
       end
       run_plugins(:after_promote_local)
-			if config[:remote]
-				run_plugins(:after_promote_remote)
-			end
+      if config[:remote]
+        run_plugins(:after_promote_remote)
+      end
     end
 
     def update_version_constraints(environment, cookbook, new_version)
@@ -63,9 +63,9 @@ module KnifeSpork
     def save_environment_changes_remote(environment)
       local_environment = load_environment(environment)
       remote_environment = load_remote_environment(environment)
-			@environment_diffs ||= Hash.new
-			@environment_diffs["#{environment}"] = environment_diff(local_environment, remote_environment)
-      if 	@environment_diffs["#{environment}"].size > 1
+      @environment_diffs ||= Hash.new
+      @environment_diffs["#{environment}"] = environment_diff(local_environment, remote_environment)
+      if  @environment_diffs["#{environment}"].size > 1
         ui.warn 'You\'re about to promote changes to several cookbooks:'
         ui.warn @environment_diffs["#{environment}"].collect{|k,v| "\t#{k}: #{v}"}.join("\n")
 

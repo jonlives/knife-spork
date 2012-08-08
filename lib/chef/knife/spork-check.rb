@@ -21,13 +21,13 @@ module KnifeSpork
         exit(1)
       end
 
-			begin
-      	@cookbook = load_cookbook(name_args.first)
-			rescue Chef::Exceptions::CookbookNotFoundInRepo => e
+      begin
+        @cookbook = load_cookbook(name_args.first)
+      rescue Chef::Exceptions::CookbookNotFoundInRepo => e
         ui.error "#{name_args.first} does not exist locally in your cookbook path(s), Exiting."
-				exit(1)
-			end
-			
+        exit(1)
+      end
+      
       run_plugins(:before_check)
       check
       run_plugins(:after_check)
@@ -77,9 +77,9 @@ module KnifeSpork
 
         versions = cookbooks[@cookbook.name.to_s]['versions']
         (config[:all] ? versions : versions[0..4]).collect{|v| v['version']}
-			rescue Net::HTTPServerException => e
+      rescue Net::HTTPServerException => e
         ui.info "#{@cookbook.name} does not yet exist on the Chef Server!"
-				return []
+        return []
       end
     end
 
