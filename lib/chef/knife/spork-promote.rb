@@ -65,8 +65,31 @@ module KnifeSpork
       remote_environment = load_remote_environment(environment)
       @environment_diffs ||= Hash.new
       @environment_diffs["#{environment}"] = environment_diff(local_environment, remote_environment)
+      
+      version_change_threshold = spork_config.version_change_threshold || 2
+      env_constraints_diff = constraints_diff(@environment_diffs["#{environment}"]).select{|k,v| v > version_change_threshold}
+      
+      if env_constraints_diff.size !=0 then
+        ui.warn 'You\'re about to promote a significant version number change to 1 or more cookbooks:'
+        ui.warn @environment_diffs["#{environment}"].select{|k,v|env_constraints_diff.has_key?(k)}.collect{|k,v| "\t#{k}: #{v}"}.join("\n")
+
+        begin
+          ui.confirm('Are you sure you want to continue?')
+        rescue SystemExit => e
+          if e.status == 3
+            ui.confirm("Would you like to reset your local #{environment}.json to match the remote server?")
+            tmp = Chef::Environment.load(environment)
+            save_environment_changes(environment, pretty_print_json(tmp))
+            ui.info "#{environment}.json was reset"
+          end
+
+          raise
+        end
+      end
+      
       if  @environment_diffs["#{environment}"].size > 1
-        ui.warn 'You\'re about to promote changes to several cookbooks:'
+        ui.msg ""
+        ui.warn "You're about to promote changes to several cookbooks at once:"
         ui.warn @environment_diffs["#{environment}"].collect{|k,v| "\t#{k}: #{v}"}.join("\n")
 
         begin
@@ -75,7 +98,7 @@ module KnifeSpork
           if e.status == 3
             ui.confirm("Would you like to reset your local #{environment}.json to match the remote server?")
             tmp = Chef::Environment.load(environment)
-            save_environment_chages(environment, pretty_print_json(tmp))
+            save_environment_changes(environment, pretty_print_json(tmp))
             ui.info "#{environment}.json was reset"
           end
 

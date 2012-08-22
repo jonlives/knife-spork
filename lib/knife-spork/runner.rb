@@ -122,6 +122,21 @@ module KnifeSpork
           remote_environment_versions.diff(local_environment_versions)
       end
       
+      def constraints_diff (environment_diff)
+        Hash[Hash[environment_diff.map{|k,v| [k, v.split(" changed to ").map{|x|x.gsub("= ","")}]}].map{|k,v|[k,calc_diff(v)]}]
+      end
+      
+      def calc_diff(version)
+        components =  version.map{|v|v.split(".")}
+        if components[1][0].to_i != components[0][0].to_i
+          return (components[1][0].to_i - components[0][0].to_i)*100
+        elsif components[1][1].to_i != components[0][1].to_i
+          return (components[1][1].to_i - components[0][1].to_i)*10
+        else
+          return (components[1][2].to_i - components[0][2].to_i)
+        end
+      end
+      
       def ensure_cookbook_path!
         if !config.has_key?(:cookbook_path)
           ui.fatal "No default cookbook_path; Specify with -o or fix your knife.rb."
