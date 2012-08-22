@@ -40,7 +40,7 @@ module KnifeSpork
 
         @strio ||= StringIO.new
         @git ||= begin
-          ::Git.open('.', :log => Logger.new(STDOUT))
+          ::Git.open('.', :log => Logger.new(@strio))
         rescue
           ui.error 'You are not currently in a git repository. Ensure you are in the proper working directory or remove the git plugin from your KnifeSpork configuration!'
           exit(0)
@@ -70,8 +70,6 @@ module KnifeSpork
         if !exit_code.exitstatus ==  0
             ui.error "#{output.read()}\n"
             exit 1
-        else
-             ui.msg "#{output.read()}\n"
         end
       end
       
