@@ -66,7 +66,7 @@ module KnifeSpork
         begin
           require file
         rescue LoadError
-          raise "You are using a plugin for knife-spork that requires #{file}, but you have not added it to your Gemfile! Either add #{file} to your Gemfile or remove the plugin from your configuration."
+          raise "You are using a plugin for knife-spork that requires #{file}, but you have not installed it. Please either run \"gem install #{file}\", add #{file} to your Gemfile or remove the plugin from your configuration."
         end
       end
     end
