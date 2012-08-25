@@ -70,6 +70,11 @@ The `default_environments` directive allows you to specify a default list of env
 #### Version Change Threshold
 The `version_change_threshold` directive allows you to customise the threshold used by a safety check in spork promote which will prompt for confirmation if you're promoting a cookbook by more than version_change_threshold versions. This defaults to 2 if not set, ie promoting a cookbook from v1.0.1 to v 1.0.2 will not trip this check, wheras promoting from v1.0.1 to v1.0.3 will.
 
+#### Plugins
+Knife spork supports plugins to allow users to hook it into existing systems such as source control, monitoring and chat systems. Plugins are enabled / disabled by adding / removing their config block from the plugin section of the config file. Any of the default plugins shown above can be disabled by removing their section.
+
+For more information on how to develop plugins for spork, please read the plugins/README.md file.
+
 Spork Info
 -----------
 This function is designed to help you see which plugins you currently have loaded, and the current config Hash which knife spork is using.
