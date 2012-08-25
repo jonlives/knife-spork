@@ -37,10 +37,10 @@ module KnifeSpork
       private
       def git
         safe_require 'git'
-
-        @strio ||= StringIO.new
+        log = Logger.new(STDOUT)
+        log.level = Logger::WARN
         @git ||= begin
-          ::Git.open('.', :log => Logger.new(@strio))
+          ::Git.open('.', :log => log)
         rescue
           ui.error 'You are not currently in a git repository. Ensure you are in the proper working directory or remove the git plugin from your KnifeSpork configuration!'
           exit(0)
@@ -53,12 +53,11 @@ module KnifeSpork
       #   - Pop the stash
       def git_pull
         ui.msg "Pulling latest changes from remote Git repo."
-        output = IO.popen ("git pull 2>&1")
-        Process.wait
-        exit_code = $?
-        if !exit_code.exitstatus ==  0
-            ui.error "#{output.read()}\n"
-            exit 1
+        begin
+          git.fetch(remote)
+          git.merge("#{remote}/#{branch}")
+        rescue ::Git::GitExecuteError => e
+          ui.error "Could not pull from remote #{remote}/#{branch}. Does it exist?"
         end
       end
 
