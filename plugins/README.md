@@ -62,5 +62,9 @@ This returns an array of `Chef::CookbookVersion` objects corresponding to the co
 #### environments
 This returns an array of `Chef::Environment` objects corresponding to the environments that are being changed/altered in the hook. For more information on the methods avaliable, see the [file in the Chef repo](https://github.com/opscode/chef/blob/master/chef/lib/chef/environment.rb).
 
+#### environment_diffs
+This returns a Hash of Hash objects containing a diff between local and remote environment for each environment changed/altered in the hook. Currently, this will only be populated during the promotea action. 
+
+
 #### ui
 This returns a `Chef::Knife::UI` element for outputting to the console. For more information on the methods avaliable, see the [file in the Chef repo](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/core/ui.rb).
