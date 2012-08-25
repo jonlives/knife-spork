@@ -1,6 +1,6 @@
 Git
 ===
-This plugin attempts to manage your workflow by automatically pulling, committing, and pushing your changes to the remote repository. **Do not use this plugin if you are not using Git.**
+This plugin attempts to help manage your workflow by automatically pulling changes from your repo. **Do not use this plugin if you are not using Git.**
 
 Gem Requirements
 ----------------

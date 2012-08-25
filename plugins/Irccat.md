@@ -1,6 +1,6 @@
 Plugin Name
 ===========
-Here is an optional, short description about your plugin.
+This plugin interfaces with the irccat IRC bot (https://github.com/RJ/irccat)
 
 Gem Requirements
 ----------------
@@ -20,6 +20,7 @@ plugins:
     channels:
       - #chef
       - #knife
+    gist: "/usr/bin/gist"
 ```
 
 #### server
@@ -36,3 +37,8 @@ The port of the IRC server.
 The channels to post to.
 
 - Type: `Array`
+
+#### gist
+Optional path to gist binary installed by https://rubygems.org/gems/gist
+
+- Type: `String`

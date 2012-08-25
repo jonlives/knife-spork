@@ -32,7 +32,7 @@ KnifeSpork will look for a configuration file in the following locations, in asc
 
 Anything set in the configuration file in your home directory for example, will override options set in your Chef repository or `/etc`.
 
-Below is a sample config file with all supported options enabled below, followed by an explanation of each section.
+Below is a sample config file with all supported options and all shipped plugins enabled below, followed by an explanation of each section.
 
 ```yaml
 default_environments:
@@ -43,6 +43,25 @@ plugins:
   campfire:
     account: myaccount
     token: a1b2c3d4...
+  hipchat:
+    api_token: ABC123
+    rooms:
+      - General
+      - Web Operations
+    notify: true
+    color: yellow
+  git:
+    enabled: true
+  irccat:
+    server: irccat.mydomain.com
+    port: 12345
+    gist: "/usr/bin/gist"
+    channel: ["chef-annoucements"]
+  graphite:
+    server: graphite.mydomain.com
+    port: 2003
+  eventinator:
+    url: http://eventinator.mydomain.com/events/oneshot
 ```
 
 #### Default Environments
@@ -50,6 +69,32 @@ The `default_environments` directive allows you to specify a default list of env
 
 #### Version Change Threshold
 The `version_change_threshold` directive allows you to customise the threshold used by a safety check in spork promote which will prompt for confirmation if you're promoting a cookbook by more than version_change_threshold versions. This defaults to 2 if not set, ie promoting a cookbook from v1.0.1 to v 1.0.2 will not trip this check, wheras promoting from v1.0.1 to v1.0.3 will.
+
+Spork Info
+-----------
+This function is designed to help you see which plugins you currently have loaded, and the current config Hash which knife spork is using.
+
+#### Usage
+```bash
+knife spork info
+```
+
+#### Example
+
+```text
+$ knife spork info
+Config Hash:
+{"plugins"=>{"git"=>{"enabled"=>true}, "irccat"=>{"server"=>"irccat.mydomain.com", "port"=>12345, "gist"=>"usr/bin/gist", "channel"=>["#chef-announce"]}, "graphite"=>{"server"=>"graphite.mydomain.com", "port"=>2003}, "eventinator"=>{"url"=>"http://eventinator.mydomain.com/events/oneshot"}}, "default_environments"=>["development", "production"], "version_change_threshold"=>2, "pplugins"=>{"foodcritic"=>{"fail_tags"=>["style,correctness,test"], "tags"=>["~portability"], "include_rules"=>["config/rules.rb"]}}}
+
+Plugins:
+KnifeSpork::Plugins::Campfire: disabled
+KnifeSpork::Plugins::Eventinator: enabled
+KnifeSpork::Plugins::Foodcritic: disabled
+KnifeSpork::Plugins::Git: enabled
+KnifeSpork::Plugins::Graphite: enabled
+KnifeSpork::Plugins::HipChat: disabled
+KnifeSpork::Plugins::Irccat: enabled
+```
 
 Spork Check
 -----------
