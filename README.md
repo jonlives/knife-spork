@@ -38,6 +38,7 @@ Below is a sample config file with all supported options enabled below, followed
 default_environments:
   - development
   - production
+version_change_threshold: 
 plugins:
   campfire:
     account: myaccount
@@ -46,6 +47,9 @@ plugins:
 
 #### Default Environments
 The `default_environments` directive allows you to specify a default list of environments you want to promote changes to. If this option is configured and you *ommit* the environment parameter when promoting KnifeSpork will promote to all environments in this list.
+
+#### Version Change Threshold
+The `version_change_threshold` directive allows you to customise the threshold used by a safety check in spork promote which will prompt for confirmation if you're promoting a cookbook by more than version_change_threshold versions. This defaults to 2 if not set, ie promoting a cookbook from v1.0.1 to v 1.0.2 will not trip this check, wheras promoting from v1.0.1 to v1.0.3 will.
 
 Spork Check
 -----------
