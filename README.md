@@ -121,12 +121,17 @@ Everything looks good!
 
 Spork Bump
 ----------
-This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` file. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number.
+This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` file. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
 
 #### Usage
 ```bash
 knife spork bump COOKBOOK [MAJOR | MINOR | PATCH | MANUAL x.x.x]
 ````
+
+#### Example (No patch level specified - defaulting to patch)
+```text
+$ knife spork bump apache2
+Successfully bumped apache2 to v2.0.4!
 
 #### Example (Bumping patch level)
 ```text
@@ -158,6 +163,8 @@ Successfully uploaded apache2@1.0.13!
 Spork Promote
 -------------
 This function lets you easily set a version constraint in an environment for a particular cookbook. By default it will set the version constraint to whatever the local version of the specified cookbook is. Optionally, you can include a `--version` option which will set the version constraint for the specified cookbook to whatever version number you provide. You might want to use this if, for example, you pushed a version constraint for a cookbook version you don't want your nodes to use anymore, so you want to "roll back" the environment to a previous version. You can also specify the `--remote` option if you'd like to automatically upload your changed local environment file to the server.
+
+If you don't specify an environment, the default_environments config directive will be used if set.
 
 #### Usage
 
