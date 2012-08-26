@@ -1,5 +1,6 @@
 ## 1.0.0 (27th August, 2012)
 Features:
+
     - Major refactor (initial refactor: Seth Vargo)
     - Plugin API (Seth Vargo)
     - Added "spork info" command to show config hash and plugins status
