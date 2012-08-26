@@ -5,12 +5,16 @@ module KnifeSpork
   class SporkCheck < Chef::Knife
     include KnifeSpork::Runner
 
-    banner 'knife spork check COOKBOOK'
+    banner 'knife spork check COOKBOOK (options)'
 
     option :all,
       :short => '--a',
       :long => '--all',
       :description => 'Show all uploaded versions of the cookbook'
+      
+      option :fail,
+       	 :long => "--fail",
+       	 :description => "If the check fails exit with non-zero exit code"
 
     def run
       self.config = Chef::Config.merge!(config)
@@ -53,9 +57,11 @@ module KnifeSpork
       remote_versions.each do |remote_version|
         if remote_version == local_version
           if frozen?(remote_version)
-            ui.warn "Your local version (#{local_version}) is frozen on the remote server. You'll need to bump before you can upload."
+            message = "Your local version (#{local_version}) is frozen on the remote server. You'll need to bump before you can upload."
+            config[:fail] ? fail_and_exit("#{message}") : ui.warn("#{message}")
           else
-            ui.error "The version #{local_version} exists on the server and is not frozen. Uploading will overwrite!"
+            message =  "The version #{local_version} exists on the server and is not frozen. Uploading will overwrite!"
+            config[:fail] ? fail_and_exit("#{message}") : ui.error("#{message}")
           end
 
           return
@@ -91,6 +97,12 @@ module KnifeSpork
         api_endpoint = environment ? "environments/#{environment}/cookbooks/#{@cookbook.name}" : "cookbooks/#{@cookbook.name}/#{version}"
         rest.get_rest(api_endpoint).to_hash['frozen?']
       end
+    end
+    
+    def fail_and_exit(message, options={})
+     	ui.fatal message
+     	show_usage if options[:show_usage]
+     	exit 1
     end
   end
 end
