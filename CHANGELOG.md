@@ -1,7 +1,15 @@
-## 1.0.0 (21st July, 2012)
+## 1.0.0 (27th August, 2012)
 Features:
-    - Major refactor
-    - Plugin API
+    - Major refactor (initial refactor: Seth Vargo)
+    - Plugin API (Seth Vargo)
+    - Added "spork info" command to show config hash and plugins status
+    - Missing local / remote cookbook now handled nicely in spork check
+    - Add "--fail" option to spork check to "exit 1" if check fails
+    - Git plugin now uses git gem instead of shelling out
+    - Confirmation check on promote if version jumps more than version_change_threshold
+    - Thanks also to jperry, bethanybenzur and nickmarden for contributions submitted pre-refactor which have been included in one form or another.
+
+    
 
 ## 0.1.11 (5th June, 2012)
 Features:
