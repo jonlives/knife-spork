@@ -158,8 +158,13 @@ module KnifeSpork
       open_file = File.open(metadata_file, "r")
       body_of_file = open_file.read
       open_file.close
-      body_of_file.gsub!(/version\s+"[0-9\.]+"/, "version    \"#{new_version}\"")
-      File.open(metadata_file, "w") { |file| file << body_of_file }
+      new_body_of_file = body_of_file.gsub(/version\s+(["'])[0-9\.]+\1/, "version    \"#{new_version}\"")
+      if(body_of_file.eql?(new_body_of_file))
+        ui.error("Applying version bump to #{metadata_file} did not result in a change, aborting!")
+        exit 2
+      else
+        File.open(metadata_file, "w") { |file| file << new_body_of_file }
+      end
     end
 
     def get_version(cookbook_path, cookbook)
@@ -193,7 +198,7 @@ module KnifeSpork
           ui.msg "Opening git repo #{path}\n\n"
           g = Git.open(path, :log => Logger.new(strio))
           ui.msg "Pulling latest changes from git\n\n"
-          output = IO.popen ("cd #{path} && git pull 2>&1")
+          output = IO.popen ("cd #{path} && git pull --recurse-submodules 2>&1")
           Process.wait
           exit_code = $?            
           if exit_code.exitstatus ==  0
@@ -204,7 +209,7 @@ module KnifeSpork
           end
 
           ui.msg "Pulling latest changes from git submodules (if any)\n\n"
-          output = IO.popen ("cd #{path} && git submodule foreach git pull 2>&1")
+          output = IO.popen ("cd #{path} && git submodule update 2>&1")
           Process.wait
           exit_code = $?
           if exit_code.exitstatus ==  0
