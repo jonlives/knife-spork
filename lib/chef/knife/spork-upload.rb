@@ -2,6 +2,7 @@ require 'chef/knife'
 require 'chef/exceptions'
 require 'chef/cookbook_loader'
 require 'chef/cookbook_uploader'
+require 'knife-spork/runner'
 require 'socket'
 
 module KnifeSpork
