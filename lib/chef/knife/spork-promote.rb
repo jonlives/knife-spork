@@ -1,5 +1,6 @@
 require 'chef/knife'
 require 'chef/exceptions'
+require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkPromote < Chef::Knife
