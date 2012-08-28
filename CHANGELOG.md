@@ -1,3 +1,13 @@
+## 1.0.2 (28th August, 2012)
+Bugfixes:
+
+    - Fix bug which caused plugin errors when no spork config file could be found
+    
+## 1.0.1 (27th August, 2012)
+Bugfixes:
+
+    - Fix require error which broke spork on CentOS 5.6
+    
 ## 1.0.0 (27th August, 2012)
 Features:
 
