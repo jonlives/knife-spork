@@ -37,7 +37,7 @@ module KnifeSpork
 
       private
       def config
-        @options[:config].plugins.send(self.class.name.to_sym)
+          @options[:config].plugins.send(self.class.name.to_sym) unless @options[:config].nil? || @options[:config].plugins.nil?
       end
 
       def cookbooks
