@@ -11,6 +11,13 @@ module KnifeSpork
 
     def run
       self.config = Chef::Config.merge!(config)
+      
+      if @name_args.empty?
+        show_usage
+        ui.error("You must specify at least a cookbook name")
+        exit 1
+      end
+      
       @cookbook = load_cookbook(name_args.first)
 
       run_plugins(:before_bump)
