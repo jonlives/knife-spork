@@ -104,7 +104,8 @@ module KnifeSpork
       end
 
       def load_environment(environment_name)
-        loader.load_from('environments', "#{environment_name}.json")
+        env_path = spork_config[:environment_path] || cookbook_path.gsub("/cookbooks","/environments")
+        loader.object_from_file("#{env_path}/#{environment_name}.json")
       end
 
       def load_remote_environment(environment_name)
