@@ -87,6 +87,10 @@ module KnifeSpork
         ensure_cookbook_path!
         [config[:cookbook_path] ||= ::Chef::Config.cookbook_path].flatten[0]
       end
+      
+      def environment_path
+        spork_config[:environment_path] || cookbook_path.gsub("/cookbooks","/environments")
+      end
 
       def all_cookbooks
         ::Chef::CookbookLoader.new(::Chef::Config.cookbook_path)
@@ -104,8 +108,7 @@ module KnifeSpork
       end
 
       def load_environment(environment_name)
-        env_path = spork_config[:environment_path] || cookbook_path.gsub("/cookbooks","/environments")
-        loader.object_from_file("#{env_path}/#{environment_name}.json")
+        loader.object_from_file("#{environment_path}/#{environment_name}.json")
       end
 
       def load_remote_environment(environment_name)
