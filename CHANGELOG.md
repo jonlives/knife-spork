@@ -1,3 +1,9 @@
+## 1.0.3 (10th September, 2012)
+Bugfixes:
+
+    - Fix spork upload when using Chef 10.14.0
+    - Optional config override for chef environment location (not documented in README until 1.0.4)
+    
 ## 1.0.2 (28th August, 2012)
 Bugfixes:
 
