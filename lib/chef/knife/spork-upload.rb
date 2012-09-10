@@ -62,11 +62,20 @@ module KnifeSpork
       @cookbooks.reverse.each do |cookbook|
         begin
           check_dependencies(cookbook)
-          Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path).upload_cookbook
-          if name_args.include?(cookbook.name.to_s)
-            ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
-            cookbook.freeze_version
-            Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path).upload_cookbook
+          if Gem.loaded_specs['chef'].version == Gem::Version.create('10.14.0')
+            uploader = Chef::CookbookUploader.new([cookbook], ::Chef::Config.cookbook_path).upload_cookbooks
+            if name_args.include?(cookbook.name.to_s)
+              ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
+              cookbook.freeze_version
+              Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path).upload_cookbooks
+            end
+          else
+            uploader = Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path).upload_cookbook
+            if name_args.include?(cookbook.name.to_s)
+              ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
+              cookbook.freeze_version
+              Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path).upload_cookbook
+            end
           end
         rescue Net::HTTPServerException => e
           if e.response.code == '409'
