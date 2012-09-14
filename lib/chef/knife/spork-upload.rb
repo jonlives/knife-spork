@@ -62,15 +62,20 @@ module KnifeSpork
       @cookbooks.reverse.each do |cookbook|
         begin
           check_dependencies(cookbook)
-          uploader = Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path)
           if name_args.include?(cookbook.name.to_s)
-            ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
-            cookbook.freeze_version
+            uploader = Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path)
             if uploader.respond_to?(:upload_cookbooks)
               # Chef >= 10.14.0
               uploader.upload_cookbooks
+              ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
+              cookbook.freeze_version
+              uploader.upload_cookbooks
             else
               uploader.upload_cookbook
+              ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
+              cookbook.freeze_version
+              uploader.upload_cookbook
+              
             end
           end
         rescue Net::HTTPServerException => e
