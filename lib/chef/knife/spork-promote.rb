@@ -45,7 +45,7 @@ module KnifeSpork
         if config[:remote]
           ui.msg "Uploading #{environment.name}.json to Chef Server"
           save_environment_changes_remote(e)
-          ui.info 'Promotion complete!'
+          ui.info "Promotion complete at #{Time.now}!"
         else
           ui.info "Promotion complete. Don't forget to upload your changed #{environment.name}.json to Chef Server"
         end
