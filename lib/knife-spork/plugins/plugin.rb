@@ -52,6 +52,14 @@ module KnifeSpork
         @options[:environment_diffs]
       end
 
+      def environment_path
+        @options[:environment_path]
+      end
+      
+      def cookbook_path
+        @options[:cookbook_path]
+      end
+      
       def ui
         @options[:ui]
       end

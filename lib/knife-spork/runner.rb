@@ -35,6 +35,8 @@ module KnifeSpork
           :cookbooks => cookbooks,
           :environments => environments,
           :environment_diffs => environment_diffs,
+          :environment_path => environment_path,
+          :cookbook_path => cookbook_path,
           :ui => ui
         )
       end

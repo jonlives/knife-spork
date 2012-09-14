@@ -8,29 +8,41 @@ module KnifeSpork
       def perform; end
 
       def before_bump
-        git_pull
-        git_pull_submodules
+        git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
+        git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
+        cookbooks.each do |cookbook|
+          git_pull(cookbook.root_dir)
+          git_pull_submodules(cookbook.root_dir)
+        end
       end
 
       def before_upload
-        git_pull
-        git_pull_submodules
+        git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
+        git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
+        cookbooks.each do |cookbook|
+          git_pull(cookbook.root_dir)
+          git_pull_submodules(cookbook.root_dir)
+        end
       end
 
       def before_promote
-        git_pull
-        git_pull_submodules
+        cookbooks.each do |cookbook|
+          git_pull(environment_path) unless cookbook.root_dir.include?(environment_path.gsub"/environments","")
+          git_pull_submodules(environment_path) unless cookbook.root_dir.include?(environment_path.gsub"/environments","")
+          git_pull(cookbook.root_dir)
+          git_pull_submodules(cookbook.root_dir)
+        end
       end
 
       def after_bump
         cookbooks.each do |cookbook|
-          git_add("#{cookbook.root_dir}/metadata.rb")
+          git_add(cookbook.root_dir,"metadata.rb")
         end
       end
 
       def after_promote_local
         environments.each do |environment|
-          git_add("./environments/#{environment}.json")
+          git_add(environment_path,"#{environment}.json")
         end
       end
 
@@ -42,7 +54,7 @@ module KnifeSpork
         @git ||= begin
           ::Git.open('.', :log => log)
         rescue
-          ui.error 'You are not currently in a git repository. Ensure you are in the proper working directory or remove the git plugin from your KnifeSpork configuration!'
+          ui.error 'You are not currently in a git repository. Please ensure you are in a git repo, a repo subdirectory, or remove the git plugin from your KnifeSpork configuration!'
           exit(0)
         end
       end
@@ -51,33 +63,42 @@ module KnifeSpork
       #   - Stash local changes
       #   - Pull from the remote
       #   - Pop the stash
-      def git_pull
-        ui.msg "Pulling latest changes from remote Git repo."
-        begin
-          git.fetch(remote)
-          git.merge("#{remote}/#{branch}")
-        rescue ::Git::GitExecuteError => e
-          ui.error "Could not pull from remote #{remote}/#{branch}. Does it exist?"
+      def git_pull(path)
+        if is_repo?(path)
+          ui.msg "Git: Pulling latest changes from #{path}"
+          output = IO.popen ("git pull 2>&1")
+          Process.wait
+          exit_code = $?
+          if !exit_code.exitstatus ==  0
+            ui.error "#{output.read()}\n"
+            exit 1
+          end
         end
       end
 
-      def git_pull_submodules
-        ui.msg "Pulling latest changes from git submodules (if any)"
-        output = IO.popen ("git submodule foreach git pull 2>&1")
-        Process.wait
-        exit_code = $?
-        if !exit_code.exitstatus ==  0
-            ui.error "#{output.read()}\n"
-            exit 1
+      def git_pull_submodules(path)
+        if is_repo?(path)
+          ui.msg "Pulling latest changes from git submodules (if any)"
+          output = IO.popen ("git submodule foreach git pull 2>&1")
+          Process.wait
+          exit_code = $?
+          if !exit_code.exitstatus ==  0
+              ui.error "#{output.read()}\n"
+              exit 1
+          end
         end
       end
       
-      def git_add(filepath)
-       begin
-          ui.msg "Git add'ing #{filepath}"
-          git.add("#{filepath}")
-        rescue ::Git::GitExecuteError => e
-          ui.error "Git: Something went wrong with git add #{filepath}. Please try running git add manually."
+      def git_add(filepath,filename)
+        if is_repo?(filepath)
+          ui.msg "Git add'ing #{filepath}/#{filename}"
+          output = IO.popen ("cd #{filepath} && git add #{filename}")
+          Process.wait
+          exit_code = $?
+          if !exit_code.exitstatus ==  0
+              ui.error "#{output.read()}\n"
+              exit 1
+          end
         end
       end
       
@@ -107,6 +128,17 @@ module KnifeSpork
         end
       end
 
+      def is_repo?(path)
+        output = IO.popen ("cd #{path} && git rev-parse --git-dir 2>&1")
+        Process.wait
+        if $? != 0
+            ui.warn "#{path} is not a git repo, skipping..."
+            return false
+        else
+            return true
+        end
+      end
+      
       def remote
         config.remote || 'origin'
       end

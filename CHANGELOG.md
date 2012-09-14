@@ -1,3 +1,13 @@
+## 1.0.4 (14th September, 2012)
+Features:
+
+    - Spork can now run command from any directory, not just the root of your chef repository.
+    
+Bugfixes:
+
+    - Fixed spork uploader to work more cleanly with 10.14.0 and greater
+    - Spork bump will no longer throw errors when no cookbook name is specified
+    
 ## 1.0.3 (10th September, 2012)
 Bugfixes:
 

@@ -38,7 +38,8 @@ Below is a sample config file with all supported options and all shipped plugins
 default_environments:
   - development
   - production
-version_change_threshold: 
+version_change_threshold: 2
+environment_path: "/home/me/environments"
 plugins:
   campfire:
     account: myaccount
@@ -69,6 +70,9 @@ The `default_environments` directive allows you to specify a default list of env
 
 #### Version Change Threshold
 The `version_change_threshold` directive allows you to customise the threshold used by a safety check in spork promote which will prompt for confirmation if you're promoting a cookbook by more than version_change_threshold versions. This defaults to 2 if not set, ie promoting a cookbook from v1.0.1 to v 1.0.2 will not trip this check, wheras promoting from v1.0.1 to v1.0.3 will.
+
+#### Environment Path
+The `envirinment_path` allows you to specify the path to where you store your chef environment json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
 
 #### Plugins
 Knife spork supports plugins to allow users to hook it into existing systems such as source control, monitoring and chat systems. Plugins are enabled / disabled by adding / removing their config block from the plugin section of the config file. Any of the default plugins shown above can be disabled by removing their section.
