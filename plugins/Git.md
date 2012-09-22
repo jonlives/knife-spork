@@ -40,7 +40,7 @@ The git remote to push/pull to/from.
 - Default: `origin`
 
 #### branch
-The git brnach to push/pull to/from.
+The git branch to push/pull to/from.
 
 - Type: `String`
 - Default: `master`
