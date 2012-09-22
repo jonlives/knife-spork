@@ -3,7 +3,7 @@ require 'knife-spork/plugins/plugin'
 module KnifeSpork
   module Plugins
     class HipChat < Plugin
-      name :hip_chat
+      name :hipchat
 
       def perform; end
 
