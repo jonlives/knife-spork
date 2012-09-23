@@ -77,7 +77,7 @@ The `environment_path` allows you to specify the path to where you store your ch
 #### Plugins
 Knife spork supports plugins to allow users to hook it into existing systems such as source control, monitoring and chat systems. Plugins are enabled / disabled by adding / removing their config block from the plugin section of the config file. Any of the default plugins shown above can be disabled by removing their section.
 
-For more information on how to develop plugins for spork, please read the [plugins/README.md](./plugins/README.md) file.
+For more information on how to develop plugins for spork, please read the [plugins/README.md](plugins/README.md) file.
 
 Spork Info
 -----------
