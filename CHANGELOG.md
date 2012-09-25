@@ -1,3 +1,23 @@
+## 1.0.8 (25th September, 2012)
+Bugfixes:
+
+    - Fix whitespace warnings which occur in the git plugin under Ruby 1.8
+    
+## 1.0.7 (25th September, 2012)
+Bugfixes:
+
+    - Fix invalid syntax in Hipchat plugin
+    
+## 1.0.6 (25th September, 2012)
+Bugfixes:
+
+    - Fix for disabling plugins when override config files are present
+    
+## 1.0.5 (24th September, 2012)
+Bugfixes:
+
+    - Fixes for hipchat plugin
+    
 ## 1.0.4 (14th September, 2012)
 Features:
 

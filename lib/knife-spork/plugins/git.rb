@@ -66,7 +66,7 @@ module KnifeSpork
       def git_pull(path)
         if is_repo?(path)
           ui.msg "Git: Pulling latest changes from #{path}"
-          output = IO.popen ("git pull 2>&1")
+          output = IO.popen("git pull 2>&1")
           Process.wait
           exit_code = $?
           if !exit_code.exitstatus ==  0
@@ -79,7 +79,7 @@ module KnifeSpork
       def git_pull_submodules(path)
         if is_repo?(path)
           ui.msg "Pulling latest changes from git submodules (if any)"
-          output = IO.popen ("git submodule foreach git pull 2>&1")
+          output = IO.popen("git submodule foreach git pull 2>&1")
           Process.wait
           exit_code = $?
           if !exit_code.exitstatus ==  0
@@ -92,7 +92,7 @@ module KnifeSpork
       def git_add(filepath,filename)
         if is_repo?(filepath)
           ui.msg "Git add'ing #{filepath}/#{filename}"
-          output = IO.popen ("cd #{filepath} && git add #{filename}")
+          output = IO.popen("cd #{filepath} && git add #{filename}")
           Process.wait
           exit_code = $?
           if !exit_code.exitstatus ==  0
@@ -129,7 +129,7 @@ module KnifeSpork
       end
 
       def is_repo?(path)
-        output = IO.popen ("cd #{path} && git rev-parse --git-dir 2>&1")
+        output = IO.popen("cd #{path} && git rev-parse --git-dir 2>&1")
         Process.wait
         if $? != 0
             ui.warn "#{path} is not a git repo, skipping..."
