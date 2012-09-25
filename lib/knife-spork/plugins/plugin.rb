@@ -32,7 +32,7 @@ module KnifeSpork
       end
 
       def enabled?
-        !config.nil?
+        !(config.nil? || config.enabled == false)
       end
 
       private
