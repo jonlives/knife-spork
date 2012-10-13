@@ -21,6 +21,13 @@ module KnifeSpork
 
     def run
       self.config = Chef::Config.merge!(config)
+
+      if @name_args.empty?
+        show_usage
+        ui.error("You must specify the cookbook and environment to promote to")
+        exit 1
+      end
+
       @environments, @cookbook = load_environments_and_cookbook
 
       run_plugins(:before_promote)
