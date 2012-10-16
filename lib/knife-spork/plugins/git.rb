@@ -1,37 +1,63 @@
 require 'knife-spork/plugins/plugin'
+require 'net/http'
+require 'net/https'
+require 'json'
 
 module KnifeSpork
   module Plugins
     class Git < Plugin
       name :git
 
-      def perform; end
+      def perform
+        if config.feature_branching
+          if cookbooks.length > 1
+            ui.error "Git branching strategy only supports working on one cookbook at a time."
+          end
+        end
+      end
 
+      def before_push
+        git_commit
+      end
+        
       def before_bump
-        git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
-        git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
-        cookbooks.each do |cookbook|
-          git_pull(cookbook.root_dir)
-          git_pull_submodules(cookbook.root_dir)
+        if config.feature_branching
+          git_branch(branch)
+        else
+          git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
+          git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
+          cookbooks.each do |cookbook|
+            git_pull(cookbook.root_dir)
+            git_pull_submodules(cookbook.root_dir)
+          end
         end
       end
 
       def before_upload
-        git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
-        git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
-        cookbooks.each do |cookbook|
-          git_pull(cookbook.root_dir)
-          git_pull_submodules(cookbook.root_dir)
+        unless config.feature_branching
+          git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
+          git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
+          cookbooks.each do |cookbook|
+            git_pull(cookbook.root_dir)
+            git_pull_submodules(cookbook.root_dir)
+          end
         end
       end
 
       def before_promote
-        cookbooks.each do |cookbook|
-          git_pull(environment_path) unless cookbook.root_dir.include?(environment_path.gsub"/environments","")
-          git_pull_submodules(environment_path) unless cookbook.root_dir.include?(environment_path.gsub"/environments","")
-          git_pull(cookbook.root_dir)
-          git_pull_submodules(cookbook.root_dir)
+        unless config.feature_branching
+          cookbooks.each do |cookbook|
+            git_pull(environment_path) unless cookbook.root_dir.include?(environment_path.gsub"/environments","")
+            git_pull_submodules(environment_path) unless cookbook.root_dir.include?(environment_path.gsub"/environments","")
+            git_pull(cookbook.root_dir)
+            git_pull_submodules(cookbook.root_dir)
+          end
         end
+      end
+
+      def after_push
+        git_push
+        github_submit_pull_request
       end
 
       def after_bump
@@ -41,8 +67,10 @@ module KnifeSpork
       end
 
       def after_promote_local
-        environments.each do |environment|
-          git_add(environment_path,"#{environment}.json")
+        unless config.feature_branching
+          environments.each do |environment|
+            git_add(environment_path,"#{environment}.json")
+          end
         end
       end
 
@@ -59,6 +87,32 @@ module KnifeSpork
         end
       end
 
+      def github_api
+        http = Net::HTTP.new('api.github.com', 443)
+        http.use_ssl = true
+        http
+      end
+
+      def github_submit_pull_request
+        request = Net::HTTP::Post.new("/repos/#{config.github.repo}/pulls", initheader = { 'Content-Type' => 'application/json' })
+        request.basic_auth config.github.user, config.github.pass
+        request.body = github_pull_request_data
+        response = github_api.start { |http| http.request(request) }
+        response_json = JSON.parse(response.body)
+        ui.msg("Created Pull Request #{response_json['number']} on #{config.github.repo}: #{response_json['html_url']}")
+      end
+
+      def github_pull_request_data
+        repo_user = config.github.repo.split('/')[0]
+        data = {
+          "title" => "#{cookbooks.first.name}@#{cookbooks.first.version}",
+          "body" => "#{current_user} bumped #{cookbooks.first.name}@#{cookbooks.first.version} via KnifeSpork",
+          "head" => "#{repo_user}:#{branch}",
+          "base" => "master"
+        }.to_json
+        data
+      end
+        
       # In this case, a git pull will:
       #   - Stash local changes
       #   - Pull from the remote
@@ -107,7 +161,7 @@ module KnifeSpork
         begin
           git.add('.')
           `git ls-files --deleted`.chomp.split("\n").each{ |f| git.remove(f) }
-          git.commit_all "[KnifeSpork] Bumping cookbooks:\n#{cookbooks.collect{|c| "  #{c.name}@#{c.version}"}.join("\n")}"
+          git.commit_all "[KnifeSpork] Bumping cookbooks:#{cookbooks.collect{|c| "  #{c.name}@#{c.version}"}.join("\n")}"
         rescue ::Git::GitExecuteError; end
       end
 
@@ -128,6 +182,15 @@ module KnifeSpork
         end
       end
 
+      def git_branch(branch)
+        begin
+          git.branch(branch).checkout
+          ui.msg("On branch #{branch}")
+        rescue ::Git::GitExecuteError => e
+          ui.error "Could not checkout branch #{branch}: #{e.message}"
+        end
+      end
+
       def is_repo?(path)
         output = IO.popen("cd #{path} && git rev-parse --git-dir 2>&1")
         Process.wait
@@ -144,12 +207,17 @@ module KnifeSpork
       end
 
       def branch
-        config.branch || 'master'
+        if config.feature_branching
+          "#{config.initials}-cookbooks-#{cookbooks.first.name}"
+        else
+          config.branch || 'master'
+        end
       end
 
       def tag_name
         cookbooks.collect{|c| "#{c.name}@#{c.version}"}.join('-')
       end
+
     end
   end
 end
