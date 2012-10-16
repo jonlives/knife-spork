@@ -98,14 +98,18 @@ module KnifeSpork
         request.basic_auth config.github.user, config.github.pass
         request.body = github_pull_request_data
         response = github_api.start { |http| http.request(request) }
-        response_json = JSON.parse(response.body)
-        ui.msg("Created Pull Request #{response_json['number']} on #{config.github.repo}: #{response_json['html_url']}")
+        if response.code == "201" && response.message == "Created"
+          response_json = JSON.parse(response.body)
+          ui.msg("Created Pull Request #{response_json['number']} on #{config.github.repo}: #{response_json['html_url']}")
+        else
+          ui.error("Something went wrong during the pull request:\nResponse Code:#{response.code}\nMessage:#{response.message}\n#{response.body}")
+        end
       end
 
       def github_pull_request_data
         repo_user = config.github.repo.split('/')[0]
         data = {
-          "title" => "#{cookbooks.first.name}@#{cookbooks.first.version}",
+          "title" => "KNIFE-SPORK-METADATA=PUSH_TYPE:COOKBOOK NAME:#{cookbooks.first.name} VERSION:#{cookbooks.first.version}",
           "body" => "#{current_user} bumped #{cookbooks.first.name}@#{cookbooks.first.version} via KnifeSpork",
           "head" => "#{repo_user}:#{branch}",
           "base" => "master"
