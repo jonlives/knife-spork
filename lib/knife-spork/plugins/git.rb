@@ -103,6 +103,7 @@ module KnifeSpork
           ui.msg("Created Pull Request #{response_json['number']} on #{config.github.repo}: #{response_json['html_url']}")
         else
           ui.error("Something went wrong during the pull request:\nResponse Code:#{response.code}\nMessage:#{response.message}\n#{response.body}")
+          exit(1)
         end
       end
 
@@ -191,7 +192,8 @@ module KnifeSpork
           git.branch(branch).checkout
           ui.msg("On branch #{branch}")
         rescue ::Git::GitExecuteError => e
-          ui.error "Could not checkout branch #{branch}: #{e.message}"
+          ui.error("Could not checkout branch #{branch}: #{e.message}")
+          exit(1)
         end
       end
 
