@@ -42,7 +42,7 @@ module KnifeSpork
     def push; end
 
     def changelog_add_version(file)
-      message = "## #{@cookbook.version}:\n\n"
+      message = "\n## #{@cookbook.version}:\n\n"
       write_changelog(message, file)
     end
 
