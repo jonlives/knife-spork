@@ -51,7 +51,7 @@ module KnifeSpork
     end
 
     def write_changelog(message, file)
-      File.open(file, 'a') { |file| file.write(message) }
+      File.open(file, 'a') { |file| file.write("* #{message}") }
     end
 
   end
