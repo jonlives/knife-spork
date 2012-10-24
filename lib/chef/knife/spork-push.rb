@@ -29,7 +29,7 @@ module KnifeSpork
 
       changelog_add_version(changelog_file)
       if config[:changelog_message] 
-        write_changelog(config[:changelog_message], changelog_file)
+        write_changelog("* #{config[:changelog_message]}", changelog_file)
       else
         edit_changelog(changelog_file)
       end
@@ -47,11 +47,14 @@ module KnifeSpork
     end
 
     def edit_changelog(file)
-      system("#{config[:editor]} #{file}")
+      unless system("#{config[:editor]} #{file}")
+        ui.error("Please set EDITOR environment variable")
+        exit(1)
+      end
     end
 
     def write_changelog(message, file)
-      File.open(file, 'a') { |file| file.write("* #{message}") }
+      File.open(file, 'a') { |file| file.write(message) }
     end
 
   end
