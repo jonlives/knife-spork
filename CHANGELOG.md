@@ -1,3 +1,12 @@
+## 1.0.9 (28th October, 2012)
+Features:
+
+    -  Jabber Plugin (thanks to Graham McMillan - https://github.com/gmcmillan)
+
+Bugfixes:
+
+    - Fix exception when spork promote called with no arguments (thanks to Julian Dunn - https://github.com/juliandunn)
+    
 ## 1.0.8 (25th September, 2012)
 Bugfixes:
 
