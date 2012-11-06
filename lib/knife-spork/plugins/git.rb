@@ -33,6 +33,10 @@ module KnifeSpork
         end
       end
 
+      def before_create
+        before_bump
+      end
+
       def before_upload
         unless config.feature_branching
           git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
@@ -64,6 +68,10 @@ module KnifeSpork
         cookbooks.each do |cookbook|
           git_add(cookbook.root_dir,"metadata.rb")
         end
+      end
+
+      def after_create
+        after_bump
       end
 
       def after_promote_local
