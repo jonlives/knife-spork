@@ -27,10 +27,12 @@ module KnifeSpork
       @cookbook = load_cookbook(name_args.first)
       changelog_file = File.join(@cookbook.root_dir, "CHANGELOG.md")
 
-      changelog_add_version(changelog_file)
       if config[:changelog_message] 
-        write_changelog("* #{config[:changelog_message]}", changelog_file)
+        message = changelog_add_version + "* #{config[:changelog_message]}\n\n"
+        write_changelog(message, changelog_file)
       else
+        message = changelog_add_version + "* ADD YOUR CHANGE MESSAGE HERE\n\n"
+        write_changelog(message, changelog_file)
         edit_changelog(changelog_file)
       end
       run_plugins(:before_push)
@@ -41,9 +43,8 @@ module KnifeSpork
     private
     def push; end
 
-    def changelog_add_version(file)
-      message = "\n## #{@cookbook.version}:\n\n"
-      write_changelog(message, file)
+    def changelog_add_version
+      "## #{@cookbook.version}:\n\n"
     end
 
     def edit_changelog(file)
@@ -54,7 +55,9 @@ module KnifeSpork
     end
 
     def write_changelog(message, file)
-      File.open(file, 'a') { |file| file.write(message) }
+      old_changelog = File.read(file)
+      new_changelog = message + old_changelog
+      File.open(file, 'w') { |file| file.write(new_changelog) }
     end
 
   end
