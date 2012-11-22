@@ -108,7 +108,7 @@ module KnifeSpork
     end
 
     def server_side_cookbooks(cookbook_name, version)
-      if Chef::CokbookVersion.respond_to?(:list_all_versions)
+      if Chef::CookbookVersion.respond_to?(:list_all_versions)
         @server_side_cookbooks ||= Chef::CookbookVersion.list_all_versions
       else
         @server_side_cookbooks ||= Chef::CookbookVersion.list
