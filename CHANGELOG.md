@@ -1,3 +1,8 @@
+## 1.0.11 (22nd November, 2012)
+Bugfixes:
+
+    - Fix bug where cookbook dependancy loading broke in older chef client versions as a result of a fix in 1.0.10
+
 ## 1.0.10 (22nd November, 2012)
 Bugfixes:
 

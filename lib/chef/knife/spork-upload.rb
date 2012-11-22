@@ -108,7 +108,11 @@ module KnifeSpork
     end
 
     def server_side_cookbooks(cookbook_name, version)
-      @server_side_cookbooks ||= Chef::CookbookVersion.list_all_versions
+      if Chef::CokbookVersion.respond_to?(:list_all_versions)
+        @server_side_cookbooks ||= Chef::CookbookVersion.list_all_versions
+      else
+        @server_side_cookbooks ||= Chef::CookbookVersion.list
+      end
 
       hash = @server_side_cookbooks[cookbook_name]
       hash && hash['versions'] && hash['versions'].any?{ |v| Chef::VersionConstraint.new(version).include?(v['version']) }
