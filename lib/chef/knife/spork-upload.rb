@@ -75,7 +75,7 @@ module KnifeSpork
               ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
               cookbook.freeze_version
               uploader.upload_cookbook
-              
+
             end
           end
         rescue Net::HTTPServerException => e
@@ -102,7 +102,7 @@ module KnifeSpork
     end
 
     def server_side_cookbooks(cookbook_name, version)
-      @server_side_cookbooks ||= Chef::CookbookVersion.list
+      @server_side_cookbooks ||= Chef::CookbookVersion.list_all_versions
 
       hash = @server_side_cookbooks[cookbook_name]
       hash && hash['versions'] && hash['versions'].any?{ |v| Chef::VersionConstraint.new(version).include?(v['version']) }
