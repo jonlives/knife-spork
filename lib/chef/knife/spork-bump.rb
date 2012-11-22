@@ -18,9 +18,8 @@ module KnifeSpork
         exit 1
       end
       
-      @cookbook = load_cookbook(name_args.first)
-
       run_plugins(:before_bump)
+      @cookbook = load_cookbook(name_args.first)
       bump
       run_plugins(:after_bump)
     end
