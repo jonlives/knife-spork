@@ -25,14 +25,14 @@ module KnifeSpork
         exit(1)
       end
 
-      begin
-        @cookbook = load_cookbook(name_args.first)
-      rescue Chef::Exceptions::CookbookNotFoundInRepo => e
-        ui.error "#{name_args.first} does not exist locally in your cookbook path(s), Exiting."
-        exit(1)
-      end
+      #First load so plugins etc know what to work with
+      initial_load
       
       run_plugins(:before_check)
+
+      #Reload cookbook in case a VCS plugin found updates
+      initial_load
+
       check
       run_plugins(:after_check)
     end
@@ -69,6 +69,15 @@ module KnifeSpork
       end
 
       ui.msg 'Everything looks good!'
+    end
+
+    def initial_load
+      begin
+        @cookbook = load_cookbook(name_args.first)
+      rescue Chef::Exceptions::CookbookNotFoundInRepo => e
+        ui.error "#{name_args.first} does not exist locally in your cookbook path(s), Exiting."
+        exit(1)
+      end
     end
 
     def local_version

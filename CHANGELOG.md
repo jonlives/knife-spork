@@ -1,3 +1,9 @@
+## 1.0.10 (22nd November, 2012)
+Bugfixes:
+
+    - Load all cookbook versions from remote server when checking dependencies (thanks to gmcmillan)
+    - Fix case where git plugin would update a previously loaded cookbook, resulting in out of data metadata being used. (thanks to zsol)
+
 ## 1.0.9 (28th October, 2012)
 Features:
 

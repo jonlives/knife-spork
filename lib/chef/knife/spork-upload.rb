@@ -40,10 +40,16 @@ module KnifeSpork
         exit 1
       end
 
+      #First load so plugins etc know what to work with
       @cookbooks = load_cookbooks(name_args)
       include_dependencies if config[:depends]
 
       run_plugins(:before_upload)
+
+      #Reload cookbook in case a VCS plugin found updates
+      @cookbooks = load_cookbooks(name_args)
+      include_dependencies if config[:depends]
+
       upload
       run_plugins(:after_upload)
     end
