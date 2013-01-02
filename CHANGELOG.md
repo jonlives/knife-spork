@@ -1,3 +1,47 @@
+## 1.0.12 (22nd November, 2012)
+Bugfixes:
+
+    - Fix bug where cookbook dependancy loading broke in older chef client versions as a result of a fix in 1.0.10
+
+## 1.0.11 (22nd November, 2012)
+
+Yanked
+
+## 1.0.10 (22nd November, 2012)
+Bugfixes:
+
+    - Load all cookbook versions from remote server when checking dependencies (thanks to gmcmillan)
+    - Fix case where git plugin would update a previously loaded cookbook, resulting in out of data metadata being used. (thanks to zsol)
+
+## 1.0.9 (28th October, 2012)
+Features:
+
+    -  Jabber Plugin (thanks to Graham McMillan - https://github.com/gmcmillan)
+
+Bugfixes:
+
+    - Fix exception when spork promote called with no arguments (thanks to Julian Dunn - https://github.com/juliandunn)
+    
+## 1.0.8 (25th September, 2012)
+Bugfixes:
+
+    - Fix whitespace warnings which occur in the git plugin under Ruby 1.8
+    
+## 1.0.7 (25th September, 2012)
+Bugfixes:
+
+    - Fix invalid syntax in Hipchat plugin
+    
+## 1.0.6 (25th September, 2012)
+Bugfixes:
+
+    - Fix for disabling plugins when override config files are present
+    
+## 1.0.5 (24th September, 2012)
+Bugfixes:
+
+    - Fixes for hipchat plugin
+    
 ## 1.0.4 (14th September, 2012)
 Features:
 

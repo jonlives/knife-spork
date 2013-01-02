@@ -28,9 +28,13 @@ module KnifeSpork
         exit 1
       end
 
+      #First load so plugins etc know what to work with
       @environments, @cookbook = load_environments_and_cookbook
 
       run_plugins(:before_promote)
+
+      #Reload cookbook and env in case a VCS plugin found updates
+      @environments, @cookbook = load_environments_and_cookbook
 
       check_cookbook_uploaded(@cookbook)
 

@@ -51,6 +51,15 @@ plugins:
       - Web Operations
     notify: true
     color: yellow
+  jabber:
+    username: YOURUSER
+    password: YOURPASSWORD
+    nickname: Chef Bot
+    server_name: your.jabberserver.com
+    server_port: 5222
+    rooms:
+      - engineering@your.conference.com/spork
+      - systems@your.conference.com/spork
   git:
     enabled: true
   irccat:

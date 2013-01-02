@@ -22,7 +22,7 @@ module KnifeSpork
         rooms.each do |room_name|
           begin
             client = ::HipChat::Client.new(config.api_token)
-            client[room_name].send(nickname, message, notify:notify, color:color)
+            client[room_name].send(nickname, message, :notify => notify, :color =>color)
           rescue Exception => e
             ui.error 'Something went wrong sending to HipChat.'
             ui.error e.to_s

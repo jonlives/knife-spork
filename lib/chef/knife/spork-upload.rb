@@ -40,10 +40,16 @@ module KnifeSpork
         exit 1
       end
 
+      #First load so plugins etc know what to work with
       @cookbooks = load_cookbooks(name_args)
       include_dependencies if config[:depends]
 
       run_plugins(:before_upload)
+
+      #Reload cookbook in case a VCS plugin found updates
+      @cookbooks = load_cookbooks(name_args)
+      include_dependencies if config[:depends]
+
       upload
       run_plugins(:after_upload)
     end
@@ -75,7 +81,7 @@ module KnifeSpork
               ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
               cookbook.freeze_version
               uploader.upload_cookbook
-              
+
             end
           end
         rescue Net::HTTPServerException => e
@@ -102,7 +108,11 @@ module KnifeSpork
     end
 
     def server_side_cookbooks(cookbook_name, version)
-      @server_side_cookbooks ||= Chef::CookbookVersion.list
+      if Chef::CookbookVersion.respond_to?(:list_all_versions)
+        @server_side_cookbooks ||= Chef::CookbookVersion.list_all_versions
+      else
+        @server_side_cookbooks ||= Chef::CookbookVersion.list
+      end
 
       hash = @server_side_cookbooks[cookbook_name]
       hash && hash['versions'] && hash['versions'].any?{ |v| Chef::VersionConstraint.new(version).include?(v['version']) }

@@ -17,10 +17,14 @@ module KnifeSpork
         ui.error("You must specify at least a cookbook name")
         exit 1
       end
-      
+
+      #First load so plugins etc know what to work with
       @cookbook = load_cookbook(name_args.first)
 
       run_plugins(:before_bump)
+
+      #Reload cookbook in case a VCS plugin found updates
+      @cookbook = load_cookbook(name_args.first)
       bump
       run_plugins(:after_bump)
     end
