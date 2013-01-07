@@ -122,7 +122,7 @@ module KnifeSpork
     end
 
     def save_environment_changes(environment, json)
-      environments_path = cookbook_path.gsub('cookbooks', 'environments')
+      environments_path = spork_config[:environment_path] || cookbook_path.gsub('cookbooks', 'environments')
       environment_path = File.expand_path( File.join(environments_path, "#{environment}.json") )
 
       File.open(environment_path, 'w'){ |f| f.puts(json) }
