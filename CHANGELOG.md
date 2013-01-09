@@ -1,3 +1,9 @@
+## 1.0.13 (9th January, 2013)
+
+Features:
+
+    -  Made spork promote Use environment_path from spork config if it's set( thanks to Greg Karékinian - https://github.com/gkarekinian)
+
 ## 1.0.12 (22nd November, 2012)
 Bugfixes:
 
