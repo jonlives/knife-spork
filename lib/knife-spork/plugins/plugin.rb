@@ -37,7 +37,11 @@ module KnifeSpork
 
       private
       def config
-          @options[:config].plugins.send(self.class.name.to_sym) unless @options[:config].nil? || @options[:config].plugins.nil?
+        @options[:config].plugins.send(self.class.name.to_sym) unless @options[:config].nil? || @options[:config].plugins.nil?
+      end
+
+      def organization
+        ::Chef::Config.chef_server_url.split('/').last
       end
 
       def cookbooks
@@ -55,11 +59,11 @@ module KnifeSpork
       def environment_path
         @options[:environment_path]
       end
-      
+
       def cookbook_path
         @options[:cookbook_path]
       end
-      
+
       def ui
         @options[:ui]
       end

@@ -10,7 +10,7 @@ module KnifeSpork
       def after_upload
         campfire do |rooms|
           rooms.paste <<-EOH
-#{current_user} froze the following cookbooks on Chef Server:
+#{organization}: #{current_user} froze the following cookbooks on Chef Server:
 #{cookbooks.collect{|c| "  #{c.name}@#{c.version}"}.join("\n")}
 EOH
         end
@@ -19,7 +19,7 @@ EOH
       def after_promote_remote
         campfire do |rooms|
           rooms.paste <<-EOH
-#{current_user} promoted cookbooks on Chef Server:
+#{organization}: #{current_user} promoted cookbooks on Chef Server:
 
 cookbooks:
 #{cookbooks.collect{|c| "  #{c.name}@#{c.version}"}.join("\n")}
