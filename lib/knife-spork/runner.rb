@@ -28,7 +28,7 @@ module KnifeSpork
         cookbooks = [ @cookbooks || @cookbook ].flatten.compact.collect{|cookbook| cookbook.is_a?(::Chef::CookbookVersion) ? cookbook : load_cookbook(cookbook)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environments = [ @environments || @environment ].flatten.compact.collect{|environment| environment.is_a?(::Chef::Environment) ? environment : load_environment(environment)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environment_diffs = @environment_diffs
-        
+
         KnifeSpork::Plugins.run(
           :config => spork_config,
           :hook => hook.to_sym,
@@ -89,7 +89,7 @@ module KnifeSpork
         ensure_cookbook_path!
         [config[:cookbook_path] ||= ::Chef::Config.cookbook_path].flatten[0]
       end
-      
+
       def environment_path
         spork_config[:environment_path] || cookbook_path.gsub("/cookbooks","/environments")
       end
@@ -100,8 +100,24 @@ module KnifeSpork
 
       def load_cookbook(cookbook_name)
         return cookbook_name if cookbook_name.is_a?(::Chef::CookbookVersion)
+
+        # Search the local chef repo first
         loader = ::Chef::CookbookLoader.new(Chef::Config.cookbook_path)
-        loader[cookbook_name]
+        if loader.has_key?(cookbook_name)
+          return loader[cookbook_name]
+        end
+
+        # We didn't find the cookbook in our local repo, so check Berkshelf
+        if defined?(::Berkshelf)
+          berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
+          if cookbook = berksfile.sources.find{ |source| source.name == cookbook_name }
+            return cookbook
+          end
+        end
+
+        # TODO: add librarian support here
+
+        raise ::Chef::Exceptions::CookbookNotFound, "Could not find cookbook '#{cookbook_name}' in any of the sources!"
       end
 
       def load_cookbooks(cookbook_names)
@@ -119,19 +135,19 @@ module KnifeSpork
         rescue Net::HTTPServerException => e
           ui.error "Could not load #{environment_name} from Chef Server. You must upload the environment manually the first time."
           exit(1)
-        end      
+        end
       end
 
-      def environment_diff (local_environment, remote_environment)
-          local_environment_versions = local_environment.to_hash['cookbook_versions']
-          remote_environment_versions = remote_environment.to_hash['cookbook_versions']
-          remote_environment_versions.diff(local_environment_versions)
+      def environment_diff(local_environment, remote_environment)
+        local_environment_versions = local_environment.to_hash['cookbook_versions']
+        remote_environment_versions = remote_environment.to_hash['cookbook_versions']
+        remote_environment_versions.diff(local_environment_versions)
       end
-      
-      def constraints_diff (environment_diff)
+
+      def constraints_diff(environment_diff)
         Hash[Hash[environment_diff.map{|k,v| [k, v.split(" changed to ").map{|x|x.gsub("= ","")}]}].map{|k,v|[k,calc_diff(v)]}]
       end
-      
+
       def calc_diff(version)
         components =  version.map{|v|v.split(".")}
         if components[1][0].to_i != components[0][0].to_i
@@ -142,7 +158,7 @@ module KnifeSpork
           return (components[1][2].to_i - components[0][2].to_i)
         end
       end
-      
+
       def ensure_cookbook_path!
         if !config.has_key?(:cookbook_path)
           ui.fatal "No default cookbook_path; Specify with -o or fix your knife.rb."
