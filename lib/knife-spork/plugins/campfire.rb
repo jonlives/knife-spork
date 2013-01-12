@@ -32,13 +32,19 @@ EOH
 
       private
       def campfire(&block)
-        safe_require 'tinder'
+        safe_require 'campy'
 
         rooms = [config.rooms || config.room].flatten.compact
-        campfire = Tinder::Campfire.new(config.account, :token => config.token)
+        campfire = Campy::Room.new(:account => config.account, :token => config.token)
+
+        puts "fooooo"
 
         rooms.each do |room_name|
-          room = campfire.find_room_by_name(room_name)
+          room = Campy::Room.new(
+            :account => config.account,
+            :token => config.token,
+            :room => room_name
+          )
           yield(room) unless room.nil?
         end
       end
