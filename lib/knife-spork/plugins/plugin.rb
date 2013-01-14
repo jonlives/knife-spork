@@ -41,7 +41,13 @@ module KnifeSpork
       end
 
       def organization
-        ::Chef::Config.chef_server_url.split('/').last
+        unless ::Chef::Config.chef_server_url.nil?
+          if org = ::Chef::Config.chef_server_url.split('/').last
+            return "#{org}: "
+          end
+        end
+
+        nil
       end
 
       def cookbooks

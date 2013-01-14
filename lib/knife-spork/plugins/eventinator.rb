@@ -14,7 +14,7 @@ module KnifeSpork
           event_data = {
             :tag => 'knife',
             :username => current_user,
-            :status => "#{organization}: #{current_user} uploaded and froze #{cookbook.name}@#{cookbook.version}",
+            :status => "#{organization}#{current_user} uploaded and froze #{cookbook.name}@#{cookbook.version}",
             :metadata => {
               :cookbook_name => cookbook.name,
               :cookbook_version => cookbook.version
@@ -30,7 +30,7 @@ module KnifeSpork
             event_data = {
               :tag => 'knife',
               :username => current_user,
-              :status => "#{organization}: #{current_user} promoted #{cookbook.name}(#{cookbook.version}) to #{environment.name}",
+              :status => "#{organization}#{current_user} promoted #{cookbook.name}(#{cookbook.version}) to #{environment.name}",
               :metadata => {
                 :cookbook_name => cookbook.name,
                 :cookbook_version => cookbook.version
