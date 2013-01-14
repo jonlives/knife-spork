@@ -37,8 +37,6 @@ EOH
         rooms = [config.rooms || config.room].flatten.compact
         campfire = Campy::Room.new(:account => config.account, :token => config.token)
 
-        puts "fooooo"
-
         rooms.each do |room_name|
           room = Campy::Room.new(
             :account => config.account,
