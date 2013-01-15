@@ -8,14 +8,14 @@ module KnifeSpork
       def perform; end
 
       def after_upload
-        irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} uploaded #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL")
+        irccat("#BOLD#PURPLECHEF:#NORMAL #{organization}#{current_user} uploaded #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL")
       end
 
       def after_promote_remote
         environments.each do |environment|
           diff = environment_diffs[environment.name]
           env_gist = gist(environment, diff) if config.gist
-          irccat("#BOLD#PURPLECHEF:#NORMAL #{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environment.name} #{env_gist}")
+          irccat("#BOLD#PURPLECHEF:#NORMAL #{organization}#{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environment.name} #{env_gist}")
         end
       end
 
@@ -39,7 +39,7 @@ module KnifeSpork
         msg = "Environment #{environment} uploaded at #{Time.now.getutc} by #{current_user}\n\nConstraints updated on server in this version:\n\n#{diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
         %x[ echo "#{msg}" | #{config.gist}]
       end
-      
+
       def channels
         [ config.channel || config.channels ].flatten
       end
