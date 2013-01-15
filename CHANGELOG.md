@@ -1,3 +1,15 @@
+## 1.0.14 (15th January, 2013)
+
+Features:
+
+    -  Campfire plugin changed to use campy gem (thanks to Seth Vargo)
+    -  Organization name now added to messages when present (thanks to Seth Vargo)
+    -  Berkshelf support now added (thanks to Seth Vargo)
+
+Bugfixes:
+
+    - Promote won't try to create a version diff if there is no existing remote version (thanks to Seth Vargo)
+
 ## 1.0.13 (9th January, 2013)
 
 Features:
