@@ -28,7 +28,7 @@ module KnifeSpork
         cookbooks = [ @cookbooks || @cookbook ].flatten.compact.collect{|cookbook| cookbook.is_a?(::Chef::CookbookVersion) ? cookbook : load_cookbook(cookbook)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environments = [ @environments || @environment ].flatten.compact.collect{|environment| environment.is_a?(::Chef::Environment) ? environment : load_environment(environment)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environment_diffs = @environment_diffs
-        
+
         KnifeSpork::Plugins.run(
           :config => spork_config,
           :hook => hook.to_sym,
@@ -89,7 +89,7 @@ module KnifeSpork
         ensure_cookbook_path!
         [config[:cookbook_path] ||= ::Chef::Config.cookbook_path].flatten[0]
       end
-      
+
       def environment_path
         spork_config[:environment_path] || cookbook_path.gsub("/cookbooks","/environments")
       end
@@ -119,7 +119,7 @@ module KnifeSpork
         rescue Net::HTTPServerException => e
           ui.error "Could not load #{environment_name} from Chef Server. You must upload the environment manually the first time."
           exit(1)
-        end      
+        end
       end
 
       def environment_diff (local_environment, remote_environment)
@@ -127,13 +127,19 @@ module KnifeSpork
           remote_environment_versions = remote_environment.to_hash['cookbook_versions']
           remote_environment_versions.diff(local_environment_versions)
       end
-      
+
       def constraints_diff (environment_diff)
-        Hash[Hash[environment_diff.map{|k,v| [k, v.split(" changed to ").map{|x|x.gsub("= ","")}]}].map{|k,v|[k,calc_diff(v)]}]
+        Hash[Hash[environment_diff.map{|k,v| [k, v.split(" changed to ").map{|x|x.gsub("= ","")}]}].map{|k,v|[k,calc_diff(k,v)]}]
       end
-      
-      def calc_diff(version)
+
+      def calc_diff(cookbook, version)
         components =  version.map{|v|v.split(".")}
+
+        if components.length < 2
+          ui.warn "#{cookbook} has no remote version to diff against!"
+          return 0
+        end
+
         if components[1][0].to_i != components[0][0].to_i
           return (components[1][0].to_i - components[0][0].to_i)*100
         elsif components[1][1].to_i != components[0][1].to_i
@@ -142,7 +148,7 @@ module KnifeSpork
           return (components[1][2].to_i - components[0][2].to_i)
         end
       end
-      
+
       def ensure_cookbook_path!
         if !config.has_key?(:cookbook_path)
           ui.fatal "No default cookbook_path; Specify with -o or fix your knife.rb."
