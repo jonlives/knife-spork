@@ -7,7 +7,7 @@ Gem Requirements
 This plugin requires the following gems:
 
 ```ruby
-gem 'tinder'
+gem 'campy'
 ```
 
 Hooks
