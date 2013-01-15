@@ -2,6 +2,10 @@ require 'chef/knife'
 require 'chef/exceptions'
 require 'knife-spork/runner'
 
+begin
+  require 'berkshelf'
+rescue LoadError; end
+
 module KnifeSpork
   class SporkPromote < Chef::Knife
     include KnifeSpork::Runner
@@ -18,6 +22,14 @@ module KnifeSpork
       :long  => '--remote',
       :description => 'Save the environment to the chef server in addition to the local JSON file',
       :default => nil
+
+    if defined?(::Berkshelf)
+      option :berksfile,
+        :short => '-b',
+        :long => 'berksfile',
+        :description => 'Path to a Berksfile to operate off of',
+        :default => File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME)
+    end
 
     def run
       self.config = Chef::Config.merge!(config)
@@ -77,10 +89,10 @@ module KnifeSpork
       remote_environment = load_remote_environment(environment)
       @environment_diffs ||= Hash.new
       @environment_diffs["#{environment}"] = environment_diff(local_environment, remote_environment)
-      
+
       version_change_threshold = spork_config.version_change_threshold || 2
       env_constraints_diff = constraints_diff(@environment_diffs["#{environment}"]).select{|k,v| v > version_change_threshold}
-      
+
       if env_constraints_diff.size !=0 then
         ui.warn 'You\'re about to promote a significant version number change to 1 or more cookbooks:'
         ui.warn @environment_diffs["#{environment}"].select{|k,v|env_constraints_diff.has_key?(k)}.collect{|k,v| "\t#{k}: #{v}"}.join("\n")
@@ -98,8 +110,8 @@ module KnifeSpork
           raise
         end
       end
-      
-      if  @environment_diffs["#{environment}"].size > 1
+
+      if @environment_diffs["#{environment}"].size > 1
         ui.msg ""
         ui.warn "You're about to promote changes to several cookbooks at once:"
         ui.warn @environment_diffs["#{environment}"].collect{|k,v| "\t#{k}: #{v}"}.join("\n")

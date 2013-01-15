@@ -100,8 +100,24 @@ module KnifeSpork
 
       def load_cookbook(cookbook_name)
         return cookbook_name if cookbook_name.is_a?(::Chef::CookbookVersion)
+
+        # Search the local chef repo first
         loader = ::Chef::CookbookLoader.new(Chef::Config.cookbook_path)
-        loader[cookbook_name]
+        if loader.has_key?(cookbook_name)
+          return loader[cookbook_name]
+        end
+
+        # We didn't find the cookbook in our local repo, so check Berkshelf
+        if defined?(::Berkshelf)
+          berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
+          if cookbook = berksfile.sources.find{ |source| source.name == cookbook_name }
+            return cookbook
+          end
+        end
+
+        # TODO: add librarian support here
+
+        raise ::Chef::Exceptions::CookbookNotFound, "Could not find cookbook '#{cookbook_name}' in any of the sources!"
       end
 
       def load_cookbooks(cookbook_names)
@@ -122,10 +138,10 @@ module KnifeSpork
         end
       end
 
-      def environment_diff (local_environment, remote_environment)
-          local_environment_versions = local_environment.to_hash['cookbook_versions']
-          remote_environment_versions = remote_environment.to_hash['cookbook_versions']
-          remote_environment_versions.diff(local_environment_versions)
+      def environment_diff(local_environment, remote_environment)
+        local_environment_versions = local_environment.to_hash['cookbook_versions']
+        remote_environment_versions = remote_environment.to_hash['cookbook_versions']
+        remote_environment_versions.diff(local_environment_versions)
       end
 
       def constraints_diff (environment_diff)
