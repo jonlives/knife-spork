@@ -42,8 +42,9 @@ module KnifeSpork
 
       def organization
         unless ::Chef::Config.chef_server_url.nil?
-          if org = ::Chef::Config.chef_server_url.split('/').last
-            return "#{org}: "
+          split_server_url = Chef::Config.chef_server_url.gsub(/http(s)?:\/\//,"").split('/')
+          if split_server_url.length > 1
+            return "#{split_server_url.last}: "
           end
         end
 
