@@ -85,7 +85,6 @@ module KnifeSpork
           end
           output = IO.popen("cd #{top_level} && git submodule foreach git pull 2>&1")
           Process.wait
-          puts output.read
           exit_code = $?
           if !exit_code.exitstatus ==  0
               ui.error "#{output.read()}\n"
