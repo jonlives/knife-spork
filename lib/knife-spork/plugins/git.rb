@@ -79,8 +79,13 @@ module KnifeSpork
       def git_pull_submodules(path)
         if is_repo?(path)
           ui.msg "Pulling latest changes from git submodules (if any)"
-          output = IO.popen("git submodule foreach git pull 2>&1")
+          top_level = `cd #{path} && git rev-parse --show-toplevel 2>&1`.chomp
+          if is_submodule?(top_level)
+            top_level = get_parent_dir(top_level)
+          end
+          output = IO.popen("cd #{top_level} && git submodule foreach git pull 2>&1")
           Process.wait
+          puts output.read
           exit_code = $?
           if !exit_code.exitstatus ==  0
               ui.error "#{output.read()}\n"
@@ -138,7 +143,32 @@ module KnifeSpork
             return true
         end
       end
-      
+
+      def is_submodule?(path)
+        top_level = `cd #{path} && git rev-parse --show-toplevel 2>&1`.chomp
+        output = IO.popen("cd #{top_level}/.. && git rev-parse --show-toplevel 2>&1")
+        Process.wait
+        if $? != 0
+          return false
+        else
+          return true
+        end
+      end
+
+      def get_parent_dir(path)
+        top_level = path
+        return_code = 0
+        while return_code == 0
+          output = IO.popen("cd #{top_level}/.. && git rev-parse --show-toplevel 2>&1")
+          Process.wait
+          return_code = $?
+          if return_code == 0
+            top_level = output.read.chomp
+          end
+        end
+        top_level
+      end
+
       def remote
         config.remote || 'origin'
       end

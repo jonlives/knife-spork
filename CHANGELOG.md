@@ -1,3 +1,10 @@
+## 1.0.15 (12th February, 2013)
+
+Bugfixes:
+
+    - Fixed git plugin so that when working on a submodule, submodules will be git pulled from the parent repo instead
+    - Fixed foodcritic plugin bug where certain tag formats weren't being passed through
+
 ## 1.0.14 (15th January, 2013)
 
 Features:
