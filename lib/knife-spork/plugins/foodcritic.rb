@@ -17,10 +17,11 @@ module KnifeSpork
           ui.info "Running foodcritic against #{cookbook.name}@#{cookbook.version}..."
 
           cookbook_path = cookbook.root_dir
-          
-          options = {:tags => [tags.join(",")], :fail_tags => [fail_tags.join(",")], :include_rules => [include_rules.join(",")]}
-          linter = FoodCritic::Linter.new
-          review = linter.check([cookbook_path], options)
+
+          ui.info cookbook_path
+
+          options = {:tags => tags, :fail_tags => fail_tags, :include_rules => include_rules}
+          review = ::FoodCritic::Linter.new.check([cookbook_path], options)
 
           if review.failed?
             ui.error "Foodcritic failed!"
