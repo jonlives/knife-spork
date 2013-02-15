@@ -1,3 +1,15 @@
+## 1.0.17 (15th February, 2013)
+
+Bugfixes:
+
+    - Fix git plugin to work nicely with Cygwin and its unpredictable exit codes
+
+## 1.0.16 (13th February, 2013)
+
+Bugfixes:
+
+    - Reverted broken foodcritic plugin to that in 1.0.14
+
 ## 1.0.15 (12th February, 2013)
 
 Bugfixes:

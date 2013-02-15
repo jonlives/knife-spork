@@ -161,8 +161,13 @@ module KnifeSpork
           output = IO.popen("cd #{top_level}/.. && git rev-parse --show-toplevel 2>&1")
           Process.wait
           return_code = $?
+          cmd_output = output.read.chomp
+          #cygwin, I hate you for making me do this
+          if cmd_output.include?("fatal: Not a git repository")
+            return_code = 1
+          end
           if return_code == 0
-            top_level = output.read.chomp
+            top_level = cmd_output
           end
         end
         top_level
