@@ -7,6 +7,12 @@ module KnifeSpork
 
     banner 'knife spork check COOKBOOK (options)'
 
+     option :cookbook_path,
+        :short => "-o PATH:PATH",
+        :long => "--cookbook-path PATH:PATH",
+        :description => "A colon-separated path to look for cookbooks in",
+        :proc => lambda { |o| o.split(":") }
+        
     option :all,
       :short => '--a',
       :long => '--all',
