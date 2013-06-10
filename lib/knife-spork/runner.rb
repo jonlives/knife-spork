@@ -98,13 +98,13 @@ module KnifeSpork
         ::Chef::CookbookLoader.new(::Chef::Config.cookbook_path)
       end
 
-      def load_cookbook(cookbook_name)
-        return cookbook_name if cookbook_name.is_a?(Chef::CookbookVersion)
+      def load_cookbook(name)
+        return name if name.is_a?(Chef::CookbookVersion)
 
-        cookbook = load_from_chef || load_from_berkshelf || load_from_librarian
+        cookbook = load_from_chef(name) || load_from_berkshelf(name) || load_from_librarian(name)
 
         cookbook || raise(Chef::Exceptions::CookbookNotFound,
-          "Could not find cookbook '#{cookbook_name}' in any of the sources!")
+          "Could not find cookbook '#{name}' in any of the sources!")
       end
 
       def load_from_chef(name)
@@ -125,7 +125,7 @@ module KnifeSpork
       end
 
       # @todo #opensource
-      def load_from_librarian
+      def load_from_librarian(name)
         # Your code here :)
         nil
       end
