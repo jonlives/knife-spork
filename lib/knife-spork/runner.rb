@@ -99,25 +99,35 @@ module KnifeSpork
       end
 
       def load_cookbook(cookbook_name)
-        return cookbook_name if cookbook_name.is_a?(::Chef::CookbookVersion)
+        return cookbook_name if cookbook_name.is_a?(Chef::CookbookVersion)
 
-        # Search the local chef repo first
-        loader = ::Chef::CookbookLoader.new(Chef::Config.cookbook_path)
-        if loader.has_key?(cookbook_name)
-          return loader[cookbook_name]
-        end
+        cookbook = load_from_chef || load_from_berkshelf || load_from_librarian
 
-        # We didn't find the cookbook in our local repo, so check Berkshelf
-        if defined?(::Berkshelf)
-          berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
-          if cookbook = berksfile.sources.find{ |source| source.name == cookbook_name }
-            return cookbook
-          end
-        end
+        cookbook || raise(Chef::Exceptions::CookbookNotFound,
+          "Could not find cookbook '#{cookbook_name}' in any of the sources!")
+      end
 
-        # TODO: add librarian support here
+      def load_from_chef(name)
+        all_cookbooks[name]
+      rescue Chef::Exceptions::CookbookNotFound,
+             Chef::Exceptions::CookbookNotFoundInRepo
+        nil
+      end
 
-        raise ::Chef::Exceptions::CookbookNotFound, "Could not find cookbook '#{cookbook_name}' in any of the sources!"
+      def load_from_berkshelf(name)
+        return unless defined?(::Berkshelf)
+        berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
+        cookbook = Berkshelf.ui.mute {
+          berksfile.resolve(berksfile.find(name))[:solution].first
+        }
+
+        cookbook
+      end
+
+      # @todo #opensource
+      def load_from_librarian
+        # Your code here :)
+        nil
       end
 
       def load_cookbooks(cookbook_names)
