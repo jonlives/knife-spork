@@ -1,3 +1,9 @@
+## 1.0.18 (18th June, 2013)
+
+Features:
+
+    - Add environment_groups option to YAML configuration. spork promote can update mulitiple environments at once by specifing the environment group name.
+
 ## 1.0.17 (15th February, 2013)
 
 Bugfixes:

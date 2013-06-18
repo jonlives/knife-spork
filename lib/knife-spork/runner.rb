@@ -45,15 +45,20 @@ module KnifeSpork
         ensure_environment_provided!
 
         if @name_args.size == 2
-          [ [@name_args[0]].flatten, @name_args[1] ]
+          environments = load_specified_environment_group(@name_args[0])
+          [ environments, @name_args[1] ]
         elsif @name_args.size == 1
           [ [default_environments].flatten, @name_args[0] ]
         end
       end
 
+      def load_specified_environment_group(name)
+        spork_config.environment_groups[name] || [name]
+      end
+
       def ensure_environment_provided!
         if default_environments.empty? && @name_args.size < 2
-          ui.error('You must specify a cookbook name and an environment')
+          ui.error('You must specify an environment or environment group and a cookbook name')
           exit(1)
         end
       end
