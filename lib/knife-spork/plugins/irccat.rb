@@ -8,14 +8,14 @@ module KnifeSpork
       def perform; end
 
       def after_upload
-        irccat("#BOLD#PURPLECHEF:#NORMAL #{organization}#{current_user} uploaded #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL")
+        irccat("%BOLD%PURPLECHEF:%NORMAL #{organization}#{current_user} uploaded %TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}%NORMAL")
       end
 
       def after_promote_remote
         environments.each do |environment|
           diff = environment_diffs[environment.name]
           env_gist = gist(environment, diff) if config.gist
-          irccat("#BOLD#PURPLECHEF:#NORMAL #{organization}#{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environment.name} #{env_gist}")
+          irccat("%BOLD%PURPLECHEF:%NORMAL #{organization}#{current_user} promoted %TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}%NORMAL to #{environment.name} #{env_gist}")
         end
       end
 
