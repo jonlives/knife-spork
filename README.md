@@ -195,12 +195,13 @@ knife spork bump COOKBOOK [MAJOR | MINOR | PATCH | MANUAL x.x.x]
 ```text
 $ knife spork bump apache2
 Successfully bumped apache2 to v2.0.4!
+```
 
 #### Example (Bumping patch level)
 ```text
 $ knife spork bump apache2 patch
 Successfully bumped apache2 to v2.0.4!
-````
+```
 
 #### Example (Manually setting version)
 ```text
