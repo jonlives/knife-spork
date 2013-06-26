@@ -62,7 +62,7 @@ module KnifeSpork
 
         ui.msg "Saving changes to #{e}.json"
 
-        new_environment_json = pretty_print_json(environment)
+        new_environment_json = pretty_print_json(environment.to_hash)
         save_environment_changes(e, new_environment_json)
 
         if config[:remote]
