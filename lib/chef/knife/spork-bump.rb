@@ -11,7 +11,7 @@ module KnifeSpork
 
     def run
       self.config = Chef::Config.merge!(config)
-      
+
       if @name_args.empty?
         show_usage
         ui.error("You must specify at least a cookbook name")
@@ -46,7 +46,7 @@ module KnifeSpork
       new_version = version_array.join('.')
 
       metadata_file = "#{@cookbook.root_dir}/metadata.rb"
-      new_contents = File.read(metadata_file).gsub(/version\s+['"][0-9\.]+['"]/, "version \"#{new_version}\"")
+      new_contents = File.read(metadata_file).gsub(/(version\s+['"])[0-9\.]+(['"])/, "\\1#{new_version}\\2")
       File.open(metadata_file, 'w'){ |f| f.write(new_contents) }
 
       ui.info "Successfully bumped #{@cookbook.name} to v#{new_version}!"
