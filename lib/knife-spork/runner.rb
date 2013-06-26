@@ -87,7 +87,7 @@ module KnifeSpork
       # always just use the first one in the path.
       def cookbook_path
         ensure_cookbook_path!
-        [config[:cookbook_path] ||= ::Chef::Config.cookbook_path].flatten[0]
+        [config[:cookbook_path] ||= ::Chef::Config.cookbook_path].flatten[0].to_s
       end
 
       def environment_path
