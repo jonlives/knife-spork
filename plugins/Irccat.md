@@ -21,6 +21,8 @@ plugins:
       - #chef
       - #knife
     gist: "/usr/bin/gist"
+    template:
+          upload: "foo bar! #REDCHEF:#NORMAL %{organization}%{current_user} uploaded #GREEN%{cookbooks}#NORMAL"
 ```
 
 #### server
@@ -42,3 +44,7 @@ The channels to post to.
 Optional path to gist binary installed by https://rubygems.org/gems/gist
 
 - Type: `String`
+
+
+### template
+Optional irccat message template if you want to change the formatting of irccat alerts. Supports overriding alerts for upload and promote
