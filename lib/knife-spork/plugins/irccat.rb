@@ -5,17 +5,32 @@ module KnifeSpork
     class Irccat < Plugin
       name :irccat
 
+      TEMPLATES = {
+        :upload  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded #TEAL%{cookbooks}#NORMAL',
+        :promote => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} promoted #TEAL%{cookbooks}#NORMAL to %{environment} %{gist}'
+      }
+
       def perform; end
 
       def after_upload
-        irccat("#BOLD#PURPLECHEF:#NORMAL #{organization}#{current_user} uploaded #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL")
+        irccat(template(:upload) % {
+          :organization => organization,
+          :current_user => current_user,
+          :cookbooks    => cookbooks.collect { |c| "#{c.name}@#{c.version}" }.join(", ")
+        })
       end
 
       def after_promote_remote
         environments.each do |environment|
           diff = environment_diffs[environment.name]
           env_gist = gist(environment, diff) if config.gist
-          irccat("#BOLD#PURPLECHEF:#NORMAL #{organization}#{current_user} promoted #TEAL#{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", ")}#NORMAL to #{environment.name} #{env_gist}")
+          irccat(template(:promote) % {
+            :organization => organization,
+            :current_user => current_user,
+            :cookbooks    => cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(", "),
+            :environment  => environment.name,
+            :gist         => env_gist
+          })
         end
       end
 
@@ -42,6 +57,10 @@ module KnifeSpork
 
       def channels
         [ config.channel || config.channels ].flatten
+      end
+
+      def template(name)
+        (config.template && config.template[name]) || TEMPLATES[name]
       end
     end
   end
