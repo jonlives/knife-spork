@@ -38,6 +38,13 @@ Below is a sample config file with all supported options and all shipped plugins
 default_environments:
   - development
   - production
+environment_groups:
+  qa_group:
+    - quality_assurance
+    - staging
+  test_group:
+    - user_testing
+    - acceptance_testing
 version_change_threshold: 2
 environment_path: "/home/me/environments"
 plugins:
@@ -76,6 +83,9 @@ plugins:
 
 #### Default Environments
 The `default_environments` directive allows you to specify a default list of environments you want to promote changes to. If this option is configured and you *omit* the environment parameter when promoting KnifeSpork will promote to all environments in this list.
+
+#### Environment Groups
+The `environment_groups` directive allows you to specify a list of environments referenced by group names that you want to promote changes to.
 
 #### Version Change Threshold
 The `version_change_threshold` directive allows you to customise the threshold used by a safety check in spork promote which will prompt for confirmation if you're promoting a cookbook by more than version_change_threshold versions. This defaults to 2 if not set, ie promoting a cookbook from v1.0.1 to v 1.0.2 will not trip this check, wheras promoting from v1.0.1 to v1.0.3 will.
@@ -226,14 +236,14 @@ Successfully uploaded apache2@1.0.13!
 
 Spork Promote
 -------------
-This function lets you easily set a version constraint in an environment for a particular cookbook. By default it will set the version constraint to whatever the local version of the specified cookbook is. Optionally, you can include a `--version` option which will set the version constraint for the specified cookbook to whatever version number you provide. You might want to use this if, for example, you pushed a version constraint for a cookbook version you don't want your nodes to use anymore, so you want to "roll back" the environment to a previous version. You can also specify the `--remote` option if you'd like to automatically upload your changed local environment file to the server.
+This function lets you easily set a version constraint in an environment or group of environments for a particular cookbook. By default it will set the version constraint to whatever the local version of the specified cookbook is. Optionally, you can include a `--version` option which will set the version constraint for the specified cookbook to whatever version number you provide. You might want to use this if, for example, you pushed a version constraint for a cookbook version you don't want your nodes to use anymore, so you want to "roll back" the environment to a previous version. You can also specify the `--remote` option if you'd like to automatically upload your changed local environment file to the server.
 
-If you don't specify an environment, the default_environments config directive will be used if set.
+If you don't specify an environment or environment group, the default_environments config directive will be used if set.
 
 #### Usage
 
 ```bash
-knife spork promote [ENVIRONMENT] COOKBOOK [--version, --remote]
+knife spork promote [ENVIRONMENT OR ENVIRONMENT GROUP NAME] COOKBOOK [--version, --remote]
 ```
 
 #### Example (Using local cookbook version number)
