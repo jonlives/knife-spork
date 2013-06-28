@@ -53,7 +53,11 @@ module KnifeSpork
       end
 
       def load_specified_environment_group(name)
-        spork_config.environment_groups[name] || [name]
+        if spork_config.environment_groups.nil?
+          [name]
+        else
+          spork_config.environment_groups[name]
+        end
       end
 
       def ensure_environment_provided!
