@@ -6,8 +6,8 @@ module KnifeSpork
       name :irccat
 
       TEMPLATES = {
-        :upload  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded #TEAL%{cookbooks}#NORMAL',
-        :promote => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} promoted #TEAL%{cookbooks}#NORMAL to %{environment} %{gist}'
+        :upload  => '%%BOLD%%PURPLECHEF:%%NORMAL %{organization}%{current_user} uploaded %%TEAL%{cookbooks}%%NORMAL',
+        :promote => '%%BOLD%%PURPLECHEF:%%NORMAL %{organization}%{current_user} promoted %%TEAL%{cookbooks}%%NORMAL to %{environment} %{gist}'
       }
 
       def perform; end
