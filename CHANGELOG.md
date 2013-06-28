@@ -1,3 +1,18 @@
+## 1.2.0 (26th June, 2013)
+
+Features:
+
+    - StatusNet plugin (Thanks to Tomasz Napierala - https://github.com/zen)
+    - GroveIO plugin (Thanks to Greg Karékinian - https://github.com/gkarekinian)
+    - Configurable irccat message templates (Thanks to Tobias Schmidt - https://github.com/grobie)
+    - Environment Groups - Spork Promote can update multitiple environments at once by specifying the environment group name. (Thanks to Pivotal Casebook - https://github.com/pivotal-casebook)
+
+Bugfixes:
+
+    - Fix spork bump to not change quote style or whitespace (Thanks to Tobias Schmidt - https://github.com/grobie)
+    - Correct Markdown formatting error (Thanks to Jeff Blaine - https://github.com/jblaine)
+    - Fix pretty printing of environments (Thanks to Peter Schultz - https://github.com/pschultz)
+
 ## 1.0.17 (15th February, 2013)
 
 Bugfixes:
