@@ -1,3 +1,9 @@
+## 1.2.1 (28th June, 2013)
+
+Bugfixes:
+
+    - Fix potential error with environment_groups (thanks to Greg Karékinian - https://github.com/gkarekinian)
+
 ## 1.2.0 (28th June, 2013)
 
 Features:
