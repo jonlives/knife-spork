@@ -118,6 +118,9 @@ module KnifeSpork
         return unless defined?(::Berkshelf)
         berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
         lockfile = ::Berkshelf::Lockfile.new(berksfile)
+
+        raise Berkshelf::BerkshelfError, "LockFileNotFound" unless File.exists?(lockfile.filepath)
+
         cookbook = Berkshelf.ui.mute {
           berksfile.resolve(lockfile.find(name))[:solution].first
         }
