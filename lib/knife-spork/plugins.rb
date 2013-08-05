@@ -6,6 +6,9 @@ module KnifeSpork
     def self.run(options = {})
       hook = options[:hook].to_sym
 
+      #Load each of the drop-in plugins specified in the custom plugin path
+      Dir[File.expand_path("#{options[:config][:custom_plugin_path]}/*.rb")].each { |f| require f }
+
       klasses.each do |klass|
         plugin = klass.new(options)
         plugin.send(hook) if plugin.respond_to?(hook) && plugin.enabled?
