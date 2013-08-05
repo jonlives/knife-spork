@@ -53,12 +53,8 @@ module KnifeSpork
       @environments.each do |e|
         environment = load_environment(e)
 
-        if @cookbook == 'all'
-          ui.msg "Promoting ALL cookbooks to environment #{environment}"
-          promote(environment, all_cookbooks)
-        else
-          promote(environment, @cookbook)
-        end
+
+        promote(environment, @cookbook)
 
         ui.msg "Saving changes to #{e}.json"
 
