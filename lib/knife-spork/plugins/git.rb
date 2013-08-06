@@ -189,7 +189,7 @@ module KnifeSpork
         if defined?(Berkshelf) and cookbook.is_a? Berkshelf::CachedCookbook
           cookbook.path.to_s
         else
-          cookbook.root_path
+          cookbook.root_dir
         end
       end
     end
