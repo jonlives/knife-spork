@@ -11,8 +11,8 @@ module KnifeSpork
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         cookbooks.each do |cookbook|
-          git_pull(cookbook.root_dir)
-          git_pull_submodules(cookbook.root_dir)
+          git_pull(cookbook_path_for(cookbook))
+          git_pull_submodules(cookbook_path_for(cookbook))
         end
       end
 
@@ -20,23 +20,23 @@ module KnifeSpork
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         cookbooks.each do |cookbook|
-          git_pull(cookbook.root_dir)
-          git_pull_submodules(cookbook.root_dir)
+          git_pull(cookbook_path_for(cookbook))
+          git_pull_submodules(cookbook_path_for(cookbook))
         end
       end
 
       def before_promote
         cookbooks.each do |cookbook|
-          git_pull(environment_path) unless cookbook.root_dir.include?(environment_path.gsub"/environments","")
-          git_pull_submodules(environment_path) unless cookbook.root_dir.include?(environment_path.gsub"/environments","")
-          git_pull(cookbook.root_dir)
-          git_pull_submodules(cookbook.root_dir)
+          git_pull(environment_path) unless cookbook_path_for(cookbook).include?(environment_path.gsub"/environments","")
+          git_pull_submodules(environment_path) unless cookbook_path_for(cookbook).include?(environment_path.gsub"/environments","")
+          git_pull(cookbook_path_for(cookbook))
+          git_pull_submodules(cookbook_path_for(cookbook))
         end
       end
 
       def after_bump
         cookbooks.each do |cookbook|
-          git_add(cookbook.root_dir,"metadata.rb")
+          git_add(cookbook_path_for(cookbook),"metadata.rb")
         end
       end
 
@@ -92,7 +92,7 @@ module KnifeSpork
           end
         end
       end
-      
+
       def git_add(filepath,filename)
         if is_repo?(filepath)
           ui.msg "Git add'ing #{filepath}/#{filename}"
@@ -105,7 +105,7 @@ module KnifeSpork
           end
         end
       end
-      
+
       # Commit changes, if any
       def git_commit
         begin
@@ -183,6 +183,14 @@ module KnifeSpork
 
       def tag_name
         cookbooks.collect{|c| "#{c.name}@#{c.version}"}.join('-')
+      end
+
+      def cookbook_path_for cookbook
+        if defined?(Berkshelf) and cookbook.is_a? Berkshelf::CachedCookbook
+          cookbook.path.to_s
+        else
+          cookbook.root_path
+        end
       end
     end
   end
