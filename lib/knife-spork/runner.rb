@@ -150,7 +150,16 @@ module KnifeSpork
       def environment_diff(local_environment, remote_environment)
         local_environment_versions = local_environment.to_hash['cookbook_versions']
         remote_environment_versions = remote_environment.to_hash['cookbook_versions']
-        remote_environment_versions.diff(local_environment_versions)
+        hash_diff remote_environment_versions, local_environment_versions
+      end
+
+      def hash_diff(hash, other)
+        hash.keys.inject({}) do |memo, key|
+          unless hash[key] == other[key]
+            memo[key] = "#{hash[key]} changed to #{other[key]}"
+          end
+          memo
+        end
       end
 
       def constraints_diff (environment_diff)
@@ -186,18 +195,6 @@ module KnifeSpork
     def self.included(receiver)
       receiver.extend(ClassMethods)
       receiver.send(:include, InstanceMethods)
-    end
-  end
-end
-
-
-class Hash
-  def diff(other)
-    self.keys.inject({}) do |memo, key|
-      unless self[key] == other[key]
-        memo[key] = "#{self[key]} changed to #{other[key]}"
-      end
-      memo
     end
   end
 end
