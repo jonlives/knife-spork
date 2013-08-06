@@ -107,26 +107,40 @@ module KnifeSpork
         ::Chef::CookbookLoader.new(::Chef::Config.cookbook_path)
       end
 
-      def load_cookbook(cookbook_name)
-        return cookbook_name if cookbook_name.is_a?(::Chef::CookbookVersion)
+      def load_cookbook(name)
+        return name if name.is_a?(Chef::CookbookVersion)
 
-        # Search the local chef repo first
-        loader = ::Chef::CookbookLoader.new(Chef::Config.cookbook_path)
-        if loader.has_key?(cookbook_name)
-          return loader[cookbook_name]
-        end
+        cookbook = load_from_chef(name) || load_from_berkshelf(name) || load_from_librarian(name)
 
-        # We didn't find the cookbook in our local repo, so check Berkshelf
-        if defined?(::Berkshelf)
-          berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
-          if cookbook = berksfile.sources.find{ |source| source.name == cookbook_name }
-            return cookbook
-          end
-        end
+        cookbook || raise(Chef::Exceptions::CookbookNotFound,
+          "Could not find cookbook '#{name}' in any of the sources!")
+      end
 
-        # TODO: add librarian support here
+      def load_from_chef(name)
+        all_cookbooks[name]
+      rescue Chef::Exceptions::CookbookNotFound,
+             Chef::Exceptions::CookbookNotFoundInRepo
+        nil
+      end
 
-        raise ::Chef::Exceptions::CookbookNotFound, "Could not find cookbook '#{cookbook_name}' in any of the sources!"
+      def load_from_berkshelf(name)
+        return unless defined?(::Berkshelf)
+        berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
+        lockfile = ::Berkshelf::Lockfile.new(berksfile)
+
+        raise Berkshelf::BerkshelfError, "LockFileNotFound" unless File.exists?(lockfile.filepath)
+
+        cookbook = Berkshelf.ui.mute {
+          berksfile.resolve(lockfile.find(name))[:solution].first
+        }
+
+        cookbook
+      end
+
+      # @todo #opensource
+      def load_from_librarian(name)
+        # Your code here :)
+        nil
       end
 
       def load_cookbooks(cookbook_names)
