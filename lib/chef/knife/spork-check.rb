@@ -58,7 +58,19 @@ module KnifeSpork
         if remote_version == local_version
           if frozen?(remote_version)
             message = "Your local version (#{local_version}) is frozen on the remote server. You'll need to bump before you can upload."
-            config[:fail] ? fail_and_exit("#{message}") : ui.warn("#{message}")
+            if config[:fail]
+              fail_and_exit("#{message}")
+            else
+              ui.warn("#{message}")
+              answer = ui.ask("Would you like to perform a patch-level bump on the #{@cookbook.name} cookbook now? (Y/N)")
+              if answer == "Y" or answer == "y"
+                bump = SporkBump.new
+                bump.name_args = [@cookbook.name]
+                bump.run
+              else
+                ui.info "Skipping bump..."
+              end
+            end
           else
             message =  "The version #{local_version} exists on the server and is not frozen. Uploading will overwrite!"
             config[:fail] ? fail_and_exit("#{message}") : ui.error("#{message}")
