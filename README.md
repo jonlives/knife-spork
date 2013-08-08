@@ -4,7 +4,8 @@ KnifeSpork is a workflow plugin for `Chef::Knife` which helps multiple developer
 
 Installation
 ------------
-### Gem Install (recommended)
+
+### Gem Install
 `knife-spork` is available on rubygems. Add the following to your `Gemfile`:
 
 ```ruby
@@ -16,9 +17,6 @@ or install the gem manually:
 ```bash
 gem install knife-spork
 ```
-
-### Plugin Install
-Copy spork-* script from lib/chef/knife/spork-*.rb to your ~/.chef/plugins/knife directory.
 
 Spork Configuration
 -------------------
@@ -268,3 +266,88 @@ Adding version constraint apache2 = 2.0.2
 Saving changes to my_environment.json
 Promotion complete. Don't forget to upload your changed my_environment to Chef Server
 ```
+
+Spork Omni
+-------------
+Omni lets you combine one of the most common combinations of spork commands (bump, upload & promote or promote --remote) - into one handy shortcut.
+
+As omni is designed for use only in those cases where you want to perform all three of bump, upload and promote at the same time it supports a limited subset of the command line options supported by the individual bump, upload and promote commands.
+
+If you run omni with no extra options, it will default to performing a ```patch``` level bump, and promote locally to the environments listed in the ```default_environments``` variable in your spork configuration file.
+
+Alternatively, you can specify any of the following options:
+
+```--cookbook-path PATH:PATH```: A colon-separated path to look for cookbooks in
+
+```--include-dependencies```: Also upload cookbook dependencies during the upload step
+
+```--bump-level [major|minor|patch]```: Version level to bump the cookbook (defaults to patch)
+
+```--environment ENVIRONMENT```: Environment to promote the cookbook to',
+
+```--remote```: Make omni perform a promote --remote instead of a local promote',
+
+#### Usage
+
+```bash
+knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote]
+```
+
+#### Example (default options, default_environments set to development and production)
+
+```text
+$ knife spork omni apache2
+OMNI: Bumping apache2
+Successfully bumped apache2 to v0.3.99!
+
+OMNI: Uploading apache2
+Freezing apache2 at 0.3.99...
+Successfully uploaded apache2@0.3.99!
+
+OMNI: Promoting apache2
+Adding version constraint apache2 = 0.3.99
+Saving changes to development.json
+Promotion complete. Don't forget to upload your changed development.json to Chef Server
+Adding version constraint apache2 = 0.3.99
+Saving changes to production.json
+Promotion complete. Don't forget to upload your changed production.json to Chef Server
+```
+
+#### Example (default options, default_environments set to development and production, promote --remote)
+
+```text
+$ knife spork omni apache2 --remote
+OMNI: Bumping apache2
+Successfully bumped apache2 to v0.3.99!
+
+OMNI: Uploading apache2
+Freezing apache2 at 0.3.99...
+Successfully uploaded apache2@0.3.99!
+
+OMNI: Promoting apache2
+Adding version constraint apache2 = 0.3.99
+Saving changes to development.json
+Uploading development.json to Chef Server
+Promotion complete at 2013-08-08 11:43:12 +0100!
+Adding version constraint apache2 = 0.3.99
+Saving changes to production.json
+Uploading production.json to Chef Server
+Promotion complete at 2013-08-08 11:43:12 +0100!
+```
+
+#### Example (Specifying patch level and environment)
+```text
+$ knife spork omni apache2 -l minor -e development
+OMNI: Bumping apache2
+Successfully bumped apache2 to v0.4.0!
+
+OMNI: Uploading apache2
+Freezing apache2 at 0.4.0...
+Successfully uploaded apache2@0.4.0!
+
+OMNI: Promoting apache2
+Adding version constraint apache2 = 0.4.0
+Saving changes to development.json
+Promotion complete. Don't forget to upload your changed development.json to Chef Server
+```
+
