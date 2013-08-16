@@ -30,6 +30,38 @@ EOH
         end
       end
 
+      def after_rolefromfile
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} uploaded role #{role_name}
+          EOH
+        end
+      end
+
+      def after_roleedit
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} edited role #{role_name}
+          EOH
+        end
+      end
+
+      def after_rolecreate
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} created role #{role_name}
+          EOH
+        end
+      end
+
+      def after_roledelete
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} deleted role #{role_name}
+          EOH
+        end
+      end
+
       private
       def campfire(&block)
         safe_require 'campy'

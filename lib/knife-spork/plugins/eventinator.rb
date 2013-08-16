@@ -41,6 +41,55 @@ module KnifeSpork
         end
       end
 
+
+      def after_rolefromfile
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} uploaded role #{role_name}",
+            :metadata => {
+                :role_name => role_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_roleedit
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} edited role #{role_name}",
+            :metadata => {
+                :role_name => role_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_rolecreate
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} created role #{role_name}",
+            :metadata => {
+                :role_name => role_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_roledelete
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} deleted role #{role_name}",
+            :metadata => {
+                :role_name => role_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
       def eventinate(event_data)
         begin
             uri = URI.parse(config.url)
