@@ -15,6 +15,23 @@ module KnifeSpork
         statusnet "#{organization}#{current_user} promoted the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")} to #{environments.collect{ |e| "#{e.name}" }.join(", ")}"
       end
 
+      def after_rolefromfile
+        statusnet "#{organization}#{current_user} uploaded role #{role_name}"
+      end
+
+      def after_roleedit
+        statusnet "#{organization}#{current_user} edited role #{role_name}"
+      end
+
+      def after_rolecreate
+        statusnet "#{organization}#{current_user} created role #{role_name}"
+      end
+
+      def after_roledelete
+        statusnet "#{organization}#{current_user} deleted role #{role_name}"
+      end
+
+
       private
 
       def statusnet(message)

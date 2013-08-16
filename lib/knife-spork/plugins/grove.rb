@@ -19,6 +19,30 @@ module KnifeSpork
         EOH
       end
 
+      def after_rolefromfile
+        grove <<-EOH
+#{current_user} uploaded role #{role_name}
+        EOH
+      end
+
+      def after_roleedit
+        grove <<-EOH
+#{current_user} edited role #{role_name}
+        EOH
+      end
+
+      def after_rolecreate
+        grove <<-EOH
+#{current_user} created role #{role_name}
+        EOH
+      end
+
+      def after_roledelete
+        grove <<-EOH
+#{current_user} deleted role #{role_name}
+        EOH
+      end
+
       private
       def grove(message)
         safe_require 'rest_client'

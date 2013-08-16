@@ -1,4 +1,5 @@
 require 'app_conf'
+require 'diffy'
 require 'json'
 
 require 'chef/cookbook_loader'
@@ -44,6 +45,8 @@ module KnifeSpork
           :environment_diffs => environment_diffs,
           :environment_path => environment_path,
           :cookbook_path => cookbook_path,
+          :role_name => @role,
+          :role_difference => @role_difference,
           :ui => ui
         )
       end
@@ -95,8 +98,12 @@ module KnifeSpork
         end
       end
 
-      def loader
-        @loader ||= Chef::Knife::Core::ObjectLoader.new(::Chef::Environment, ui)
+      def environment_loader
+        @environment_loader ||= Chef::Knife::Core::ObjectLoader.new(::Chef::Environment, ui)
+      end
+
+      def role_loader
+        @role_loader ||= Chef::Knife::Core::ObjectLoader.new(::Chef::Role, ui)
       end
 
       # It's not feasible to try and "guess" which cookbook path to use, so we will
@@ -108,6 +115,10 @@ module KnifeSpork
 
       def environment_path
         spork_config[:environment_path] || cookbook_path.gsub("/cookbooks","/environments")
+      end
+
+      def role_path
+        spork_config[:role_path] || cookbook_path.gsub("/cookbooks","/roles")
       end
 
       def all_cookbooks
@@ -155,8 +166,16 @@ module KnifeSpork
         cookbook_names.collect{ |cookbook_name| load_cookbook(cookbook_name) }
       end
 
+      def load_role_from_file(role_name)
+        role_loader.object_from_file("#{role_path}/#{role_name}.json")
+      end
+
+      def load_role(role_name)
+        Chef::Role.load(role_name)
+      end
+
       def load_environment(environment_name)
-        loader.object_from_file("#{environment_path}/#{environment_name}.json")
+        environment_loader.object_from_file("#{environment_path}/#{environment_name}.json")
       end
 
       def load_remote_environment(environment_name)
@@ -172,6 +191,12 @@ module KnifeSpork
         local_environment_versions = local_environment.to_hash['cookbook_versions']
         remote_environment_versions = remote_environment.to_hash['cookbook_versions']
         hash_diff remote_environment_versions, local_environment_versions
+      end
+
+      def role_diff(a, b)
+        pre_role =  JSON.parse(a.is_a?(Chef::Role) ? a.to_json : a)
+        post_role =  JSON.parse(b.is_a?(Chef::Role) ? b.to_json : b)
+        Diffy::Diff.new(JSON.pretty_generate(pre_role), JSON.pretty_generate(post_role), :diff=>"-U 3")
       end
 
       def hash_diff(hash, other)

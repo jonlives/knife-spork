@@ -2,7 +2,7 @@ $:.push File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name          = 'knife-spork'
-  gem.version       = '1.2.1'
+  gem.version       = '1.3.0'
   gem.authors       = ["Jon Cowie"]
   gem.email         = 'jonlives@gmail.com'
   gem.homepage      = 'https://github.com/jonlives/knife-spork'
@@ -18,4 +18,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'chef', '>= 0.10.4'
   gem.add_runtime_dependency 'git', '>= 1.2.5'
   gem.add_runtime_dependency 'app_conf', '>= 0.4.0'
+  gem.add_runtime_dependency 'diffy', '>= 3.0.1'
 end

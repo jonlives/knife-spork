@@ -45,6 +45,7 @@ environment_groups:
     - acceptance_testing
 version_change_threshold: 2
 environment_path: "/home/me/environments"
+role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 plugins:
   campfire:
@@ -91,6 +92,9 @@ The `version_change_threshold` directive allows you to customise the threshold u
 
 #### Environment Path
 The `environment_path` allows you to specify the path to where you store your chef environment json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
+
+#### Role Path
+The `role_path` allows you to specify the path to where you store your chef role json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "roles"
 
 #### Custom Plugin Path
 The `custom_plugin_path` allows you to specify an additional directory from which to load knife-spork plugins. If this parameter is not specified or the path set does not exist, only the default plugins shipped with knife-spork will be loaded (if enabled in config)
