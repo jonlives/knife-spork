@@ -46,9 +46,9 @@ module KnifeSpork
         event_data = {
             :tag => 'knife',
             :username => current_user,
-            :status => "#{organization}#{current_user} uploaded role #{role_name}",
+            :status => "#{organization}#{current_user} uploaded role #{object_name}",
             :metadata => {
-                :role_name => role_name,
+                :role_name => object_name,
             }.to_json
         }
         eventinate(event_data)
@@ -58,9 +58,9 @@ module KnifeSpork
         event_data = {
             :tag => 'knife',
             :username => current_user,
-            :status => "#{organization}#{current_user} edited role #{role_name}",
+            :status => "#{organization}#{current_user} edited role #{object_name}",
             :metadata => {
-                :role_name => role_name,
+                :role_name => object_name,
             }.to_json
         }
         eventinate(event_data)
@@ -70,9 +70,9 @@ module KnifeSpork
         event_data = {
             :tag => 'knife',
             :username => current_user,
-            :status => "#{organization}#{current_user} created role #{role_name}",
+            :status => "#{organization}#{current_user} created role #{object_name}",
             :metadata => {
-                :role_name => role_name,
+                :role_name => object_name,
             }.to_json
         }
         eventinate(event_data)
@@ -82,9 +82,9 @@ module KnifeSpork
         event_data = {
             :tag => 'knife',
             :username => current_user,
-            :status => "#{organization}#{current_user} deleted role #{role_name}",
+            :status => "#{organization}#{current_user} deleted role #{object_name}",
             :metadata => {
-                :role_name => role_name,
+                :role_name => object_name,
             }.to_json
         }
         eventinate(event_data)

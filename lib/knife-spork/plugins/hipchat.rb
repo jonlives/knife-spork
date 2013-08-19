@@ -16,19 +16,19 @@ module KnifeSpork
       end
 
       def after_rolefromfile
-        hipchat "#{organization}#{current_user} uploaded role #{role_name}"
+        hipchat "#{organization}#{current_user} uploaded role #{object_name}"
       end
 
       def after_roleedit
-        hipchat "#{organization}#{current_user} edited role #{role_name}"
+        hipchat "#{organization}#{current_user} edited role #{object_name}"
       end
 
       def after_rolecreate
-        hipchat "#{organization}#{current_user} created role #{role_name}"
+        hipchat "#{organization}#{current_user} created role #{object_name}"
       end
 
       def after_roledelete
-        hipchat "#{organization}#{current_user} deleted role #{role_name}"
+        hipchat "#{organization}#{current_user} deleted role #{object_name}"
       end
 
       private
