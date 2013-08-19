@@ -71,12 +71,12 @@ module KnifeSpork
         @options[:cookbook_path]
       end
 
-      def role_name
-        @options[:role_name]
+      def object_name
+        @options[:object_name]
       end
 
-      def role_difference
-        @options[:role_difference]
+      def object_difference
+        @options[:object_difference]
       end
 
       def ui

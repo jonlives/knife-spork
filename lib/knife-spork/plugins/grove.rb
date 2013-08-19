@@ -21,25 +21,25 @@ module KnifeSpork
 
       def after_rolefromfile
         grove <<-EOH
-#{current_user} uploaded role #{role_name}
+#{current_user} uploaded role #{object_name}
         EOH
       end
 
       def after_roleedit
         grove <<-EOH
-#{current_user} edited role #{role_name}
+#{current_user} edited role #{object_name}
         EOH
       end
 
       def after_rolecreate
         grove <<-EOH
-#{current_user} created role #{role_name}
+#{current_user} created role #{object_name}
         EOH
       end
 
       def after_roledelete
         grove <<-EOH
-#{current_user} deleted role #{role_name}
+#{current_user} deleted role #{object_name}
         EOH
       end
 

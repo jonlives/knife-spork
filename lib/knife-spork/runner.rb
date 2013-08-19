@@ -45,8 +45,8 @@ module KnifeSpork
           :environment_diffs => environment_diffs,
           :environment_path => environment_path,
           :cookbook_path => cookbook_path,
-          :role_name => @role,
-          :role_difference => @role_difference,
+          :object_name => @object_name,
+          :object_difference => @object_difference,
           :ui => ui
         )
       end
@@ -193,10 +193,10 @@ module KnifeSpork
         hash_diff remote_environment_versions, local_environment_versions
       end
 
-      def role_diff(a, b)
-        pre_role =  JSON.parse(a.is_a?(Chef::Role) ? a.to_json : a)
-        post_role =  JSON.parse(b.is_a?(Chef::Role) ? b.to_json : b)
-        Diffy::Diff.new(JSON.pretty_generate(pre_role), JSON.pretty_generate(post_role), :diff=>"-U 3")
+      def json_diff(a, b)
+        pre_json =  JSON.parse(a.respond_to?(:to_json) ? a.to_json : a)
+        post_json =  JSON.parse(a.respond_to?(:to_json) ? b.to_json : b)
+        Diffy::Diff.new(JSON.pretty_generate(pre_json), JSON.pretty_generate(post_json), :diff=>"-U 3")
       end
 
       def hash_diff(hash, other)

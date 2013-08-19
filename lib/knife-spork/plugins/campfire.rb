@@ -33,7 +33,7 @@ EOH
       def after_rolefromfile
         campfire do |rooms|
           rooms.paste <<-EOH
-#{organization}#{current_user} uploaded role #{role_name}
+#{organization}#{current_user} uploaded role #{object_name}
           EOH
         end
       end
@@ -41,7 +41,7 @@ EOH
       def after_roleedit
         campfire do |rooms|
           rooms.paste <<-EOH
-#{organization}#{current_user} edited role #{role_name}
+#{organization}#{current_user} edited role #{object_name}
           EOH
         end
       end
@@ -49,7 +49,7 @@ EOH
       def after_rolecreate
         campfire do |rooms|
           rooms.paste <<-EOH
-#{organization}#{current_user} created role #{role_name}
+#{organization}#{current_user} created role #{object_name}
           EOH
         end
       end
@@ -57,7 +57,7 @@ EOH
       def after_roledelete
         campfire do |rooms|
           rooms.paste <<-EOH
-#{organization}#{current_user} deleted role #{role_name}
+#{organization}#{current_user} deleted role #{object_name}
           EOH
         end
       end

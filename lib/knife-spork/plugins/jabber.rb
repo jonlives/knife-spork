@@ -16,19 +16,19 @@ module KnifeSpork
       end
 
       def after_rolefromfile
-        jabber "#{organization}#{current_user} uploaded role #{role_name}"
+        jabber "#{organization}#{current_user} uploaded role #{object_name}"
       end
 
       def after_roleedit
-        jabber "#{organization}#{current_user} edited role #{role_name}"
+        jabber "#{organization}#{current_user} edited role #{object_name}"
       end
 
       def after_rolecreate
-        jabber "#{organization}#{current_user} created role #{role_name}"
+        jabber "#{organization}#{current_user} created role #{object_name}"
       end
 
       def after_roledelete
-        jabber "#{organization}#{current_user} deleted role #{role_name}"
+        jabber "#{organization}#{current_user} deleted role #{object_name}"
       end
 
       private
