@@ -21,7 +21,7 @@ module KnifeSpork
       run_plugins(:before_roledelete)
       pre_role = load_role(@object_name)
       role_delete
-      post_role = "{}"
+      post_role = {}
       @object_difference = json_diff(pre_role,post_role).to_s
       run_plugins(:after_roledelete)
     end
