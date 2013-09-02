@@ -21,14 +21,15 @@ module KnifeSpork
         exit 1
       end
 
-      @object_name = @name_args.first
-
-      run_plugins(:before_rolefromfile)
-      pre_role = load_role(@object_name.gsub(".json",""))
-      role_from_file
-      post_role = load_role(@object_name.gsub(".json",""))
-      @object_difference = json_diff(pre_role,post_role).to_s
-      run_plugins(:after_rolefromfile)
+      @name_args.each do |arg|
+          @object_name = arg
+          run_plugins(:before_rolefromfile)
+          pre_role = load_role(@object_name.gsub(".json",""))
+          role_from_file
+          post_role = load_role(@object_name.gsub(".json",""))
+          @object_difference = json_diff(pre_role,post_role).to_s
+          run_plugins(:after_rolefromfile)
+      end
     end
 
     private

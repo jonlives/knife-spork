@@ -24,7 +24,7 @@ module KnifeSpork
       @object_name = @name_args.first
 
       run_plugins(:before_rolecreate)
-      pre_role = "{}"
+      pre_role = {}
       role_create
       post_role = load_role(@object_name)
       @object_difference = json_diff(pre_role,post_role).to_s
