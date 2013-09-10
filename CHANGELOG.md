@@ -1,3 +1,9 @@
+## 1.2.2 (10th Sept, 2013)
+
+Bugfixes:
+
+    - Fix bug with promoting when environment groups are present (thanks to Jimmy Chao & Nik Keating - https://github.com/CaseCommonsDevOps)
+
 ## 1.2.1 (28th June, 2013)
 
 Bugfixes:
