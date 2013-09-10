@@ -198,7 +198,7 @@ This function lets you easily version your cookbooks without having to manually 
 
 #### Usage
 ```bash
-knife spork bump COOKBOOK [MAJOR | MINOR | PATCH | MANUAL x.x.x]
+knife spork bump COOKBOOK [major | minor | patch | manual x.x.x]
 ````
 
 #### Example (No patch level specified - defaulting to patch)
