@@ -134,7 +134,9 @@ module KnifeSpork
           berksfile.resolve(lockfile.find(name))[:solution].first
         }
 
-        cookbook
+        #convert Berkshelf::CachedCookbook to Chef::CookbookVersion
+        ::Chef::CookbookLoader.new(File.dirname(cookbook.path))[name]
+
       end
 
       # @todo #opensource
