@@ -46,6 +46,7 @@ module KnifeSpork
           :environment_path => environment_path,
           :cookbook_path => cookbook_path,
           :object_name => @object_name,
+          :object_secondary_name => @object_secondary_name,
           :object_difference => @object_difference,
           :ui => ui
         )
@@ -176,6 +177,14 @@ module KnifeSpork
         Chef::Role.load(role_name)
       end
 
+      def load_databag(bag)
+        Chef::DataBag.load(bag)
+      end
+
+      def load_databag_item(bag, item_name)
+        Chef::DataBagItem.load(bag, item_name)
+      end
+
       def load_environment(environment_name)
         environment_loader.object_from_file("#{environment_path}/#{environment_name}.json")
       end
@@ -197,7 +206,7 @@ module KnifeSpork
 
       def json_diff(a, b)
         pre_json =  JSON.parse(a.respond_to?(:to_json) ? a.to_json : a)
-        post_json =  JSON.parse(a.respond_to?(:to_json) ? b.to_json : b)
+        post_json =  JSON.parse(b.respond_to?(:to_json) ? b.to_json : b)
         Diffy::Diff.new(JSON.pretty_generate(pre_json), JSON.pretty_generate(post_json), :diff=>"-U 3")
       end
 

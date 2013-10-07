@@ -4,6 +4,7 @@ Features:
 
     - Allow a custom plugin path to be specified in config to load additional plugins from (https://github.com/jonlives/knife-spork/issues/59)
     - Spork omni command added to perform bump, upload and promote in a single step (https://github.com/jonlives/knife-spork/issues/49)
+    - Spork role and data bag commands added (https://github.com/jonlives/knife-spork/issues/81)
 
 Bugfixes:
 
@@ -11,6 +12,13 @@ Bugfixes:
     - Fix incorrect cookbook version numbers in plugin output when -v used with promote (https://github.com/jonlives/knife-spork/issues/64)
     - Replaced monkeypatched Hash#diff with an hash_diff method to fix clashes with ActiveSupport deprecation warnings. (https://github.com/jonlives/knife-spork/pull/84)
     - Various fixes for Berkshelf issues (Thanks to @RSO and @sethvargo: https://github.com/jonlives/knife-spork/issues/73)
+    - Fix load_from_berkshelf method to return a CookbookVersion object (Thanks to @hanskrueger https://github.com/jonlives/knife-spork/pull/90)
+
+## 1.2.2 (10th Sept, 2013)
+
+Bugfixes:
+
+    - Fix bug with promoting when environment groups are present (thanks to Jimmy Chao & Nik Keating - https://github.com/CaseCommonsDevOps)
 
 ## 1.2.2 (10th Sept, 2013)
 
