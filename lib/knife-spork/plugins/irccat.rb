@@ -11,7 +11,12 @@ module KnifeSpork
         :rolefromfile  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded role #TEAL%{object_name}#NORMAL %{gist}',
         :roleedit  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} edited role #TEAL%{object_name}#NORMAL %{gist}',
         :rolecreate  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} created role #TEAL%{object_name}#NORMAL %{gist}',
-        :roledelete  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} deleted role #TEAL%{object_name}#NORMAL %{gist}'
+        :roledelete  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} deleted role #TEAL%{object_name}#NORMAL %{gist}',
+        :databagedit  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} edited data bag item #TEAL%{object_name}:%{object_secondary_name}#NORMAL %{gist}',
+        :databagdelete  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} deleted data bag #TEAL%{object_name}#NORMAL %{gist}',
+        :databagitemdelete  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} deleted data bag item #TEAL%{object_name}:%{object_secondary_name}#NORMAL %{gist}',
+        :databagcreate  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} created data bag #TEAL%{object_name}#NORMAL %{gist}',
+        :databagfromfile  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded data bag item #TEAL%{object_name}:%{object_secondary_name}#NORMAL %{gist}',
       }
 
       def perform; end
@@ -75,6 +80,59 @@ module KnifeSpork
             :current_user => current_user,
             :object_name    => object_name,
             :gist => role_gist
+        })
+      end
+
+      def after_databagedit
+        databag_gist = object_gist("databag item", "#{object_name}:#{object_secondary_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:databagedit) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :object_secondary_name    => object_secondary_name,
+            :gist => databag_gist
+        })
+      end
+
+      def after_databagdelete
+        databag_gist = object_gist("databag item", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:databagdelete) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => databag_gist
+        })
+      end
+
+      def after_databagitemdelete
+        databag_gist = object_gist("databag item", "#{object_name}:#{object_secondary_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:databagitemdelete) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :object_secondary_name    => object_secondary_name,
+            :gist => databag_gist
+        })
+      end
+
+      def after_databagcreate
+        databag_gist = object_gist("databag", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:databagcreate) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => databag_gist
+        })
+      end
+
+      def after_databagfromfile
+        databag_gist = object_gist("databag", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:databagfromfile) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :object_secondary_name    => object_secondary_name,
+            :gist => databag_gist
         })
       end
 

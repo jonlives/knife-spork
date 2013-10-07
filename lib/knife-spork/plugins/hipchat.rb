@@ -31,6 +31,26 @@ module KnifeSpork
         hipchat "#{organization}#{current_user} deleted role #{object_name}"
       end
 
+      def after_databagedit
+        hipchat "#{organization}#{current_user} edited data bag item #{object_name}:#{object_secondary_name}"
+      end
+
+      def after_databagcreate
+        hipchat "#{organization}#{current_user} created data bag #{object_name}"
+      end
+
+      def after_databagdelete
+        hipchat "#{organization}#{current_user} deleted data bag item #{object_name}"
+      end
+
+      def after_databagitemdelete
+        hipchat "#{organization}#{current_user} deleted data bag item #{object_name}:#{object_secondary_name}"
+      end
+
+      def after_databagfromfile
+        hipchat "#{organization}#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}"
+      end
+
       private
       def hipchat(message)
         safe_require 'hipchat'

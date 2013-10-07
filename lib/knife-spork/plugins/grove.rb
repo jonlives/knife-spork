@@ -43,6 +43,38 @@ module KnifeSpork
         EOH
       end
 
+      def after_databagcreate
+        grove <<-EOH
+#{current_user} created data bag #{object_name}
+        EOH
+      end
+
+      def after_databagedit
+        grove <<-EOH
+#{current_user} edited data bag item #{object_name}:#{object_secondary_name}
+        EOH
+      end
+
+      def after_databagitemdelete
+        grove <<-EOH
+#{current_user} edited data bag item #{object_name}:#{object_secondary_name}
+        EOH
+      end
+
+      def after_databagdelete
+        grove <<-EOH
+#{current_user} edited data bag #{object_name}
+        EOH
+      end
+
+      def after_databagfromfile
+        grove <<-EOH
+#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}
+        EOH
+      end
+
+
+
       private
       def grove(message)
         safe_require 'rest_client'

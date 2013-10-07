@@ -31,6 +31,25 @@ module KnifeSpork
         statusnet "#{organization}#{current_user} deleted role #{object_name}"
       end
 
+      def after_databagedit
+        statusnet "#{organization}#{current_user} edited data bag item #{object_name}:#{object_secondary_name}"
+      end
+
+      def after_databagcreate
+        statusnet "#{organization}#{current_user} created data bag #{object_name}"
+      end
+
+      def after_databagdelete
+        statusnet "#{organization}#{current_user} deleted data bag #{object_name}"
+      end
+
+      def after_databagitemdelete
+        statusnet "#{organization}#{current_user} deleted data bag item #{object_name}:#{object_secondary_name}"
+      end
+
+      def after_databagfromfile
+        statusnet "#{organization}#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}"
+      end
 
       private
 

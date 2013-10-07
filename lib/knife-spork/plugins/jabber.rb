@@ -31,6 +31,26 @@ module KnifeSpork
         jabber "#{organization}#{current_user} deleted role #{object_name}"
       end
 
+      def after_databagedit
+        jabber "#{organization}#{current_user} edited data bag item #{object_name}:#{object_secondary_name}"
+      end
+
+      def after_databagcreate
+        jabber "#{organization}#{current_user} created data bag #{object_name}"
+      end
+
+      def after_databagdelete
+        jabber "#{organization}#{current_user} deleted data bag #{object_name}"
+      end
+
+      def after_databagitemdelete
+        jabber "#{organization}#{current_user} deleted data bag item #{object_name}:#{object_secondary_name}"
+      end
+
+      def after_databagfromfile
+        jabber "#{organization}#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}"
+      end
+
       private
 
       def jabber(message)

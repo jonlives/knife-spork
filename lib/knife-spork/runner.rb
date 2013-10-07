@@ -46,6 +46,7 @@ module KnifeSpork
           :environment_path => environment_path,
           :cookbook_path => cookbook_path,
           :object_name => @object_name,
+          :object_secondary_name => @object_secondary_name,
           :object_difference => @object_difference,
           :ui => ui
         )
@@ -63,10 +64,10 @@ module KnifeSpork
       end
 
       def load_specified_environment_group(name)
-        if spork_config.environment_groups.nil?
-          [name]
-        else
+        if !spork_config.environment_groups.nil? && spork_config.environment_groups.keys.include?(name)
           spork_config.environment_groups[name]
+        else
+          [name]
         end
       end
 
@@ -152,7 +153,9 @@ module KnifeSpork
           berksfile.resolve(lockfile.find(name))[:solution].first
         }
 
-        cookbook
+        #convert Berkshelf::CachedCookbook to Chef::CookbookVersion
+        ::Chef::CookbookLoader.new(File.dirname(cookbook.path))[name]
+
       end
 
       # @todo #opensource
@@ -172,6 +175,14 @@ module KnifeSpork
 
       def load_role(role_name)
         Chef::Role.load(role_name)
+      end
+
+      def load_databag(bag)
+        Chef::DataBag.load(bag)
+      end
+
+      def load_databag_item(bag, item_name)
+        Chef::DataBagItem.load(bag, item_name)
       end
 
       def load_environment(environment_name)
@@ -195,7 +206,7 @@ module KnifeSpork
 
       def json_diff(a, b)
         pre_json =  JSON.parse(a.respond_to?(:to_json) ? a.to_json : a)
-        post_json =  JSON.parse(a.respond_to?(:to_json) ? b.to_json : b)
+        post_json =  JSON.parse(b.respond_to?(:to_json) ? b.to_json : b)
         Diffy::Diff.new(JSON.pretty_generate(pre_json), JSON.pretty_generate(post_json), :diff=>"-U 3")
       end
 

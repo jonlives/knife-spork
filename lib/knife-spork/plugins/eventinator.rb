@@ -90,6 +90,69 @@ module KnifeSpork
         eventinate(event_data)
       end
 
+      def after_databagedit
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} edited data bag item #{object_name}:#{object_secondary_name}",
+            :metadata => {
+                :databag_name => object_name,
+                :databag_item => object_secondary_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_databagcreate
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} created data bag #{object_name}",
+            :metadata => {
+                :databag_name => object_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_databagdelete
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} deleted data bag item #{object_name}",
+            :metadata => {
+                :databag_name => object_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_databagitemdelete
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} deleted data bag item #{object_name}:#{object_secondary_name}",
+            :metadata => {
+                :databag_name => object_name,
+                :databag_item => object_secondary_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_databagfromfile
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}",
+            :metadata => {
+                :databag_name => object_name,
+                :databag_item => object_secondary_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
       def eventinate(event_data)
         begin
             uri = URI.parse(config.url)

@@ -75,6 +75,10 @@ module KnifeSpork
         @options[:object_name]
       end
 
+      def object_secondary_name
+        @options[:object_secondary_name]
+      end
+
       def object_difference
         @options[:object_difference]
       end

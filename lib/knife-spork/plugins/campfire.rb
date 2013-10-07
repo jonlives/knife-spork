@@ -62,6 +62,46 @@ EOH
         end
       end
 
+      def after_databagedit
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} edited data bag item #{object_name}:#{object_secondary_name}
+          EOH
+        end
+      end
+
+      def after_databagdelete
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} deleted data bag #{object_name}}
+          EOH
+        end
+      end
+
+      def after_databagitemdelete
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} deleted data bag item #{object_name}:#{object_secondary_name}
+          EOH
+        end
+      end
+
+      def after_databagcreate
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} created data bag #{object_name}
+          EOH
+        end
+      end
+
+      def after_databagfromfile
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}
+          EOH
+        end
+      end
+
       private
       def campfire(&block)
         safe_require 'campy'
