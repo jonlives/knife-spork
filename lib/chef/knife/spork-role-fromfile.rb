@@ -22,11 +22,11 @@ module KnifeSpork
       end
 
       @name_args.each do |arg|
-          @object_name = arg
+          @object_name = arg.split("/").last
           run_plugins(:before_rolefromfile)
-          pre_role = load_role(@object_name.gsub(".json",""))
+          pre_role = load_role(@object_name.gsub(".json","").gsub(".rb",""))
           role_from_file
-          post_role = load_role(@object_name.gsub(".json",""))
+          post_role = load_role(@object_name.gsub(".json","").gsub(".rb",""))
           @object_difference = json_diff(pre_role,post_role).to_s
           run_plugins(:after_rolefromfile)
       end

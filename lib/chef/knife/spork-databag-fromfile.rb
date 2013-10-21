@@ -38,7 +38,7 @@ module KnifeSpork
         databags.each do |bag|
           test.send(:find_all_data_bag_items,bag).each do |item|
             @object_name = bag
-            @object_secondary_name = item
+            @object_secondary_name = item.split("/").last
             run_plugins(:before_databagfromfile)
             begin
               pre_databag = load_databag_item(@object_name, @object_secondary_name.gsub(".json",""))
