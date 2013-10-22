@@ -51,6 +51,34 @@ module KnifeSpork
         jabber "#{organization}#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}"
       end
 
+      def after_nodeedit
+        jabber "#{organization}#{current_user} edited node #{object_name}"
+      end
+
+      def after_nodedelete
+        jabber "#{organization}#{current_user} deleted node #{object_name}"
+      end
+
+      def after_nodecreate
+        jabber "#{organization}#{current_user} created node #{object_name}"
+      end
+
+      def after_nodefromfile
+        jabber "#{organization}#{current_user} uploaded node #{object_name}"
+      end
+
+      def after_noderunlistadd
+        jabber "#{organization}#{current_user} added run_list items to #{object_name}: #{object_secondary_name}"
+      end
+
+      def after_noderunlistremove
+        jabber "#{organization}#{current_user} removed run_list items from #{object_name}: #{object_secondary_name}"
+      end
+
+      def after_noderunlistset
+        jabber "#{organization}#{current_user} set the run_list for #{object_name} to #{object_secondary_name}"
+      end
+
       private
 
       def jabber(message)

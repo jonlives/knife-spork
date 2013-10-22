@@ -102,6 +102,62 @@ EOH
         end
       end
 
+      def after_nodeedit
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} edited node #{object_name}
+          EOH
+        end
+      end
+
+      def after_nodedelete
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} deleted node #{object_name}
+          EOH
+        end
+      end
+
+      def after_nodecreate
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} created node #{object_name}
+          EOH
+        end
+      end
+
+      def after_nodefromfile
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} uploaded node #{object_name}
+          EOH
+        end
+      end
+
+      def after_noderunlistadd
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} added run_list items to #{object_name}: #{object_secondary_name}
+          EOH
+        end
+      end
+
+      def after_noderunlistremove
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} removed run_list items from #{object_name}: #{object_secondary_name}
+          EOH
+        end
+      end
+
+      def after_noderunlistset
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} set the run_list for #{object_name} to #{object_secondary_name}
+          EOH
+        end
+      end
+
       private
       def campfire(&block)
         safe_require 'campy'

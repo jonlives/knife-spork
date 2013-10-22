@@ -153,6 +153,93 @@ module KnifeSpork
         eventinate(event_data)
       end
 
+      def after_nodeedit
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} edited node #{object_name}",
+            :metadata => {
+                :node_name => object_name
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_nodedelete
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} deleted node #{object_name}",
+            :metadata => {
+                :node_name => object_name
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_nodecreate
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} created node #{object_name}",
+            :metadata => {
+                :node_name => object_name
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_nodefromfile
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} uploaded node #{object_name}",
+            :metadata => {
+                :node_name => object_name
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_noderunlistadd
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} added run_list items to #{object_name}: #{object_secondary_name}",
+            :metadata => {
+                :node_name => object_name,
+                :run_list_items => object_secondary_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_noderunlistremove
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} removed run_list items from #{object_name}: #{object_secondary_name}",
+            :metadata => {
+                :node_name => object_name,
+                :run_list_items => object_secondary_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_noderunlistset
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} set the run_list for #{object_name} to #{object_secondary_name}",
+            :metadata => {
+                :node_name => object_name,
+                :run_list_items => object_secondary_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
       def eventinate(event_data)
         begin
             uri = URI.parse(config.url)

@@ -177,6 +177,10 @@ module KnifeSpork
         Chef::Role.load(role_name)
       end
 
+      def load_node(node)
+        Chef::Node.load(node)
+      end
+
       def load_databag(bag)
         Chef::DataBag.load(bag)
       end

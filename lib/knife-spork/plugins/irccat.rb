@@ -17,6 +17,13 @@ module KnifeSpork
         :databagitemdelete  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} deleted data bag item #TEAL%{object_name}:%{object_secondary_name}#NORMAL %{gist}',
         :databagcreate  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} created data bag #TEAL%{object_name}#NORMAL %{gist}',
         :databagfromfile  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded data bag item #TEAL%{object_name}:%{object_secondary_name}#NORMAL %{gist}',
+        :nodeedit  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} edited node #TEAL%{object_name}#NORMAL %{gist}',
+        :nodedelete  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} deleted node #TEAL%{object_name}#NORMAL %{gist}',
+        :nodecreate  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} created node #TEAL%{object_name}#NORMAL %{gist}',
+        :nodefromfile  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded node #TEAL%{object_name}#NORMAL %{gist}',
+        :noderunlistadd  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} added run_list items to #TEAL%{object_name}: %{object_secondary_name}#NORMAL %{gist}',
+        :noderunlistremove  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} removed run_list items from #TEAL%{object_name}: %{object_secondary_name}#NORMAL %{gist}',
+        :noderunlistset  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} set the  run_list for #TEAL%{object_name} to %{object_secondary_name}#NORMAL %{gist}'
       }
 
       def perform; end
@@ -133,6 +140,79 @@ module KnifeSpork
             :object_name    => object_name,
             :object_secondary_name    => object_secondary_name,
             :gist => databag_gist
+        })
+      end
+
+      def after_nodeedit
+        node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:nodeedit) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => node_gist
+        })
+      end
+
+      def after_nodedelete
+        node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:nodedelete) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => node_gist
+        })
+      end
+
+      def after_nodecreate
+        node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:nodecreate) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => node_gist
+        })
+      end
+
+      def after_nodefromfile
+        node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:nodefromfile) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => node_gist
+        })
+      end
+
+      def after_noderunlistadd
+        node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:noderunlistadd) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :object_secondary_name    => object_secondary_name,
+            :gist => node_gist
+        })
+      end
+
+      def after_noderunlistremove
+        node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:noderunlistremove) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :object_secondary_name    => object_secondary_name,
+            :gist => node_gist
+        })
+      end
+
+      def after_noderunlistset
+        node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:noderunlistset) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :object_secondary_name    => object_secondary_name,
+            :gist => node_gist
         })
       end
 
