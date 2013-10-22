@@ -20,8 +20,8 @@ module KnifeSpork
 
           ui.info cookbook_path
 
-          options = {:tags => tags, :fail_tags => fail_tags, :include_rules => include_rules}
-          review = ::FoodCritic::Linter.new.check([cookbook_path], options)
+          options = {:tags => tags, :fail_tags => fail_tags, :include_rules => include_rules, :cookbook_paths => [cookbook_path]}
+          review = ::FoodCritic::Linter.new.check(options)
 
           if review.failed?
             ui.error "Foodcritic failed!"
