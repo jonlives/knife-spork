@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.name          = "knife-spork"
   gem.require_paths = ["lib"]
 
-  gem.add_runtime_dependency 'chef', '>= 0.10.4'
+  gem.add_runtime_dependency 'chef', '>= 11.0.0'
   gem.add_runtime_dependency 'git', '>= 1.2.5'
   gem.add_runtime_dependency 'app_conf', '>= 0.4.0'
   gem.add_runtime_dependency 'diffy', '>= 3.0.1'
