@@ -51,6 +51,35 @@ module KnifeSpork
         hipchat "#{organization}#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}"
       end
 
+      def after_nodeedit
+        hipchat "#{organization}#{current_user} edited node #{object_name}"
+      end
+
+      def after_nodedelete
+        hipchat "#{organization}#{current_user} deleted node #{object_name}"
+      end
+
+      def after_nodecreate
+        hipchat "#{organization}#{current_user} created node #{object_name}"
+      end
+
+      def after_nodefromfile
+        hipchat "#{organization}#{current_user} uploaded node #{object_name}"
+      end
+
+      def after_noderunlistadd
+        hipchat "#{organization}#{current_user} added run_list items to #{object_name}: #{object_secondary_name}"
+      end
+
+      def after_noderunlistremove
+        hipchat "#{organization}#{current_user} removed run_list items from #{object_name}: #{object_secondary_name}"
+      end
+
+      def after_noderunlistset
+        hipchat "#{organization}#{current_user} set the run_list for #{object_name} to #{object_secondary_name}"
+      end
+
+
       private
       def hipchat(message)
         safe_require 'hipchat'

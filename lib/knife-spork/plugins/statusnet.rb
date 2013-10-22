@@ -51,6 +51,34 @@ module KnifeSpork
         statusnet "#{organization}#{current_user} uploaded data bag item #{object_name}:#{object_secondary_name}"
       end
 
+      def after_nodeedit
+        statusnet "#{organization}#{current_user} edited node #{object_name}"
+      end
+
+      def after_nodedelete
+        statusnet "#{organization}#{current_user} deleted node #{object_name}"
+      end
+
+      def after_nodecreate
+        statusnet "#{organization}#{current_user} created node #{object_name}"
+      end
+
+      def after_nodefromfile
+        statusnet "#{organization}#{current_user} uploaded node #{object_name}"
+      end
+
+      def after_noderunlistadd
+        statusnet "#{organization}#{current_user} added run_list items to #{object_name}: #{object_secondary_name}"
+      end
+
+      def after_noderunlistremove
+        statusnet "#{organization}#{current_user} removed run_list items from #{object_name}: #{object_secondary_name}"
+      end
+
+      def after_noderunlistset
+        statusnet "#{organization}#{current_user} set the run_list for #{object_name} to #{object_secondary_name}"
+      end
+
       private
 
       def statusnet(message)

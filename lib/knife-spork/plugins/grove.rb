@@ -73,7 +73,47 @@ module KnifeSpork
         EOH
       end
 
+      def after_nodeedit
+        grove <<-EOH
+#{current_user} edited node #{object_name}
+        EOH
+      end
 
+      def after_nodedelete
+        grove <<-EOH
+#{current_user} deleted node #{object_name}
+        EOH
+      end
+
+    def after_nodecreate
+        grove <<-EOH
+#{current_user} created node #{object_name}
+        EOH
+      end
+
+      def after_nodefromfile
+        grove <<-EOH
+#{current_user} uploaded node #{object_name}
+        EOH
+      end
+
+      def after_noderunlistadd
+        grove <<-EOH
+#{current_user} added run_list items to #{object_name}: #{object_secondary_name}
+        EOH
+      end
+
+      def after_noderunlistremove
+        grove <<-EOH
+#{current_user} removed run_list items from #{object_name}: #{object_secondary_name}
+        EOH
+      end
+
+      def after_noderunlistset
+        grove <<-EOH
+#{current_user} set the run_list for #{object_name} to #{object_secondary_name}
+        EOH
+      end
 
       private
       def grove(message)
