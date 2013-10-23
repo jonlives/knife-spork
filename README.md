@@ -51,6 +51,8 @@ plugins:
   campfire:
     account: myaccount
     token: a1b2c3d4...
+  foodcritic:
+    tags: ['any']
   hipchat:
     api_token: ABC123
     rooms:
