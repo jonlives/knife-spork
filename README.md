@@ -358,3 +358,34 @@ Saving changes to development.json
 Promotion complete. Don't forget to upload your changed development.json to Chef Server
 ```
 
+Spork Node / Role / Databag Commands
+-------------
+
+Knife spork contains "wrappers" around several stock knife commands for changing nodes, roles, and databags. These commands work exactly as in the original knife, with the addition of being wrapped in Spork's plugin API. This means that for example, when you upload a role using spork you will see an IRC message containing details, and a gist of the role change.
+
+The following  ```data bag``` commands are provided in knife-spork:
+```
+knife spork data bag create
+knife spork data bag delete
+knife spork data bag edit
+knife spork data bag from file
+```
+
+The following  ```node``` commands are provided in knife-spork:
+```
+knife spork node create
+knife spork node delete
+knife spork node edit
+knife spork node from file
+knife spork node run_list add
+knife spork node run_list remove
+knife spork node run_list set
+```
+
+The following  ```role``` commands are provided in knife-spork:
+```
+knife spork role create
+knife spork role delete
+knife spork role edit
+knife spork role from file
+```

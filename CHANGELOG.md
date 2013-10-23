@@ -1,18 +1,20 @@
-## 1.3.0 (28th June, 2013)
+## 1.3.0 (23rd October, 2013)
 
 Features:
 
     - Allow a custom plugin path to be specified in config to load additional plugins from (https://github.com/jonlives/knife-spork/issues/59)
+    - Spork check will prompt for a bump if one is needed (https://github.com/jonlives/knife-spork/issues/82)
     - Spork omni command added to perform bump, upload and promote in a single step (https://github.com/jonlives/knife-spork/issues/49)
-    - Spork role and data bag commands added (https://github.com/jonlives/knife-spork/issues/81)
+    - Spork role, data bag and node commands added (https://github.com/jonlives/knife-spork/issues/81)
 
 Bugfixes:
 
     - Remove legacy code referring to "promote all cookbooks" (https://github.com/jonlives/knife-spork/issues/76)
     - Fix incorrect cookbook version numbers in plugin output when -v used with promote (https://github.com/jonlives/knife-spork/issues/64)
-    - Replaced monkeypatched Hash#diff with an hash_diff method to fix clashes with ActiveSupport deprecation warnings. (https://github.com/jonlives/knife-spork/pull/84)
+    - Replaced monkeypatched Hash#diff with an hash_diff method to fix clashes with ActiveSupport deprecation warnings. (Thanks to @RSO: https://github.com/jonlives/knife-spork/pull/84)
     - Various fixes for Berkshelf issues (Thanks to @RSO and @sethvargo: https://github.com/jonlives/knife-spork/issues/73)
     - Fix load_from_berkshelf method to return a CookbookVersion object (Thanks to @hanskrueger https://github.com/jonlives/knife-spork/pull/90)
+    - Fix foodcritic plugin to work properly with foodcritic > 3.0.0 (Thanks to @juliandunn https://github.com/jonlives/knife-spork/pull/94)
 
 ## 1.2.2 (10th Sept, 2013)
 
