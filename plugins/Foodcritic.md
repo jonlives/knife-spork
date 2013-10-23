@@ -7,7 +7,7 @@ Gem Requirements
 This plugin requires the following gems:
 
 ```ruby
-gem 'foodcritic'
+gem 'foodcritic' >= 3.0.0
 ```
 
 Hooks
