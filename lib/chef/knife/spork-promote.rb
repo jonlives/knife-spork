@@ -61,7 +61,7 @@ module KnifeSpork
         new_environment_json = pretty_print_json(environment.to_hash)
         save_environment_changes(e, new_environment_json)
 
-        if config[:remote]
+        if config[:remote] || spork_config.always_promote_remote
           ui.msg "Uploading #{environment.name}.json to Chef Server"
           save_environment_changes_remote(e)
           ui.info "Promotion complete at #{Time.now}!"
@@ -70,7 +70,7 @@ module KnifeSpork
         end
       end
       run_plugins(:after_promote_local)
-      if config[:remote]
+      if config[:remote] || spork_config.always_promote_remote
         run_plugins(:after_promote_remote)
       end
     end
