@@ -54,7 +54,7 @@ module KnifeSpork
 
       else
         @name_args[1..-1].each do |arg|
-            @object_secondary_name = arg
+            @object_secondary_name = arg.split("/").last
             run_plugins(:before_databagfromfile)
             begin
               pre_databag = load_databag_item(@object_name, @object_secondary_name.gsub(".json",""))
