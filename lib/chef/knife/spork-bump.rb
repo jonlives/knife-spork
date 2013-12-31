@@ -7,10 +7,17 @@ module KnifeSpork
 
     TYPE_INDEX = { :major => 0, :minor => 1, :patch => 2, :manual => 3 }.freeze
 
+    option :cookbook_path,
+           :short => '-o PATH:PATH',
+           :long => '--cookbook-path PATH:PATH',
+           :description => 'A colon-separated path to look for cookbooks in',
+           :proc => lambda { |o| o.split(':') }
+
     banner 'knife spork bump COOKBOOK [major|minor|patch|manual]'
 
     def run
       self.config = Chef::Config.merge!(config)
+      config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 
       if @name_args.empty?
         show_usage
