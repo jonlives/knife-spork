@@ -211,7 +211,7 @@ module KnifeSpork
       def json_diff(a, b)
         pre_json =  JSON.parse(a.respond_to?(:to_json) ? a.to_json : a)
         post_json =  JSON.parse(b.respond_to?(:to_json) ? b.to_json : b)
-        Diffy::Diff.new(JSON.pretty_generate(pre_json), JSON.pretty_generate(post_json), :diff=>"-U 3")
+        Diffy::Diff.new(JSON.pretty_generate(pre_json), JSON.pretty_generate(post_json), :diff=>"-U 3").to_s.gsub(/[()]/, '\\\\\0')
       end
 
       def hash_diff(hash, other)
