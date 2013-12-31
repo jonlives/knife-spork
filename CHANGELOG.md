@@ -1,3 +1,15 @@
+## 1.3.1 (31st Dec, 2013)
+
+Features:
+
+    - Add a cookbook_path option to spork bump (https://github.com/jonlives/knife-spork/issues/92)
+    - Add config option to promote --remote by default (https://github.com/jonlives/knife-spork/issues/95)
+
+Bugfixes:
+
+    - Fix issue with gist generation in the irccat plugin breaking when json diffs were incorrectly escaped ((https://github.com/jonlives/knife-spork/issues/97)
+    - Fix issue with data bag upload when file path is specified (https://github.com/jonlives/knife-spork/issues/98)
+
 ## 1.3.0 (23rd October, 2013)
 
 Features:
