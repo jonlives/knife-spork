@@ -51,7 +51,7 @@ module KnifeSpork
       check_cookbook_uploaded(@cookbook)
 
       @environments.each do |e|
-        environment = load_environment(e)
+        environment = load_environment_from_file(e)
 
 
         promote(environment, @cookbook)
@@ -81,7 +81,7 @@ module KnifeSpork
     end
 
     def save_environment_changes_remote(environment)
-      local_environment = load_environment(environment)
+      local_environment = load_environment_from_file(environment)
       remote_environment = load_remote_environment(environment)
       @environment_diffs ||= Hash.new
       @environment_diffs["#{environment}"] = environment_diff(local_environment, remote_environment)
