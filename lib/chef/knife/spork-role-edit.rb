@@ -5,7 +5,7 @@ module KnifeSpork
   class SporkRoleEdit < Chef::Knife
     include KnifeSpork::Runner
 
-    banner 'knife spork role edit ROLENAME'
+    banner 'knife spork role edit ROLENAME (options)'
 
     def run
       self.config = Chef::Config.merge!(config)
