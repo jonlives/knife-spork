@@ -16,6 +16,26 @@ module KnifeSpork
        	 :long => "--fail",
        	 :description => "If the check fails exit with non-zero exit code"
 
+    option :cookbook_path,
+           :short => '-o PATH:PATH',
+           :long => '--cookbook-path PATH:PATH',
+           :description => 'A colon-separated path to look for cookbooks in',
+           :proc => lambda { |o| o.split(':') }
+
+    if defined?(::Berkshelf)
+      option :berksfile,
+        :short => '-b',
+        :long => 'berksfile',
+        :description => 'Path to a Berksfile to operate off of',
+        :default => File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME)
+
+      option :skip_dependencies,
+        :short => '-s',
+        :long => '--skip-dependencies',
+        :description => 'Berksfile skips resolving source cookbook dependencies',
+        :default => true
+    end
+
     def run
       self.config = Chef::Config.merge!(config)
 
