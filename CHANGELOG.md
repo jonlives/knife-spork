@@ -1,3 +1,10 @@
+## 1.3.2 (5th Feb, 2014)
+
+Features:
+
+    - Add spork environment commands (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/102)
+    - Berkshelf support for bump and check commands (Thanks to @poliva83 https://github.com/jonlives/knife-spork/pull/104)
+
 ## 1.3.1 (31st Dec, 2013)
 
 Features:
