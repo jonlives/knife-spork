@@ -19,6 +19,30 @@ module KnifeSpork
         EOH
       end
 
+      def after_environmentfromfile
+        grove <<-EOH
+#{current_user} uploaded environment #{object_name}
+        EOH
+      end
+
+      def after_environmentedit
+        grove <<-EOH
+#{current_user} edited environment #{object_name}
+        EOH
+      end
+
+      def after_environmentcreate
+        grove <<-EOH
+#{current_user} created environment #{object_name}
+        EOH
+      end
+
+      def after_environmentdelete
+        grove <<-EOH
+#{current_user} deleted environment #{object_name}
+        EOH
+      end
+
       def after_rolefromfile
         grove <<-EOH
 #{current_user} uploaded role #{object_name}

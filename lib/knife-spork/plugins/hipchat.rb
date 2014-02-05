@@ -15,6 +15,22 @@ module KnifeSpork
         hipchat "#{organization}#{current_user} promoted the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")} to #{environments.collect{ |e| "#{e.name}" }.join(", ")}"
       end
 
+      def after_environmentfromfile
+        hipchat "#{organization}#{current_user} uploaded environment #{object_name}"
+      end
+
+      def after_environmentedit
+        hipchat "#{organization}#{current_user} edited environment #{object_name}"
+      end
+
+      def after_environmentcreate
+        hipchat "#{organization}#{current_user} created environment #{object_name}"
+      end
+
+      def after_environmentdelete
+        hipchat "#{organization}#{current_user} deleted environment #{object_name}"
+      end
+
       def after_rolefromfile
         hipchat "#{organization}#{current_user} uploaded role #{object_name}"
       end

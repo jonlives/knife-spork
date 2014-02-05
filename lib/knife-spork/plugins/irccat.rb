@@ -8,6 +8,10 @@ module KnifeSpork
       TEMPLATES = {
         :upload  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded #TEAL%{cookbooks}#NORMAL',
         :promote => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} promoted #TEAL%{cookbooks}#NORMAL to %{environment} %{gist}',
+        :environmentfromfile  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded environment #TEAL%{object_name}#NORMAL %{gist}',
+        :environmentedit  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} edited environment #TEAL%{object_name}#NORMAL %{gist}',
+        :environmentcreate  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} created environment #TEAL%{object_name}#NORMAL %{gist}',
+        :environmentdelete  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} deleted environment #TEAL%{object_name}#NORMAL %{gist}',
         :rolefromfile  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded role #TEAL%{object_name}#NORMAL %{gist}',
         :roleedit  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} edited role #TEAL%{object_name}#NORMAL %{gist}',
         :rolecreate  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} created role #TEAL%{object_name}#NORMAL %{gist}',
@@ -48,6 +52,46 @@ module KnifeSpork
             :gist         => env_gist
           })
         end
+      end
+
+      def after_environmentfromfile
+        environment_gist = object_gist("environment", object_name, object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:environmentfromfile) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => environment_gist
+        })
+      end
+
+      def after_environmentedit
+        environment_gist = object_gist("environment", object_name, object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:environmentedit) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => environment_gist
+        })
+      end
+
+      def after_environmentcreate
+        environment_gist = object_gist("environment", object_name, object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:environmentcreate) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => environment_gist
+        })
+      end
+
+      def after_environmentdelete
+        environment_gist = object_gist("environment", object_name, object_difference) if config.gist  and !object_difference.empty?
+        irccat(template(:environmentdelete) % {
+            :organization => organization,
+            :current_user => current_user,
+            :object_name    => object_name,
+            :gist => environment_gist
+        })
       end
 
       def after_rolefromfile

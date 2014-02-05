@@ -10,7 +10,7 @@ module KnifeSpork
       require 'chef/knife/role_from_file'
     end
 
-    banner 'knife spork role from file FILENAME'
+    banner 'knife spork role from file FILENAME (options)'
 
     def run
       self.config = Chef::Config.merge!(config)

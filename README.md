@@ -368,7 +368,7 @@ Promotion complete. Don't forget to upload your changed development.json to Chef
 Spork Node / Role / Databag Commands
 -------------
 
-Knife spork contains "wrappers" around several stock knife commands for changing nodes, roles, and databags. These commands work exactly as in the original knife, with the addition of being wrapped in Spork's plugin API. This means that for example, when you upload a role using spork you will see an IRC message containing details, and a gist of the role change.
+Knife spork contains "wrappers" around several stock knife commands for changing nodes, roles, environments and databags. These commands work exactly as in the original knife, with the addition of being wrapped in Spork's plugin API. This means that for example, when you upload a role using spork you will see an IRC message containing details, and a gist of the role change.
 
 The following  ```data bag``` commands are provided in knife-spork:
 ```
@@ -395,4 +395,12 @@ knife spork role create
 knife spork role delete
 knife spork role edit
 knife spork role from file
+```
+
+The following  ```environment``` commands are provided in knife-spork:
+```
+knife spork environment create
+knife spork environment delete
+knife spork environment edit
+knife spork environment from file
 ```

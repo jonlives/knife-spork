@@ -41,6 +41,53 @@ module KnifeSpork
         end
       end
 
+      def after_environmentfromfile
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} uploaded environment #{object_name}",
+            :metadata => {
+                :environment_name => object_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_environmentedit
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} edited environment #{object_name}",
+            :metadata => {
+                :environment_name => object_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_environmentcreate
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} created environment #{object_name}",
+            :metadata => {
+                :environment_name => object_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
+
+      def after_environmentdelete
+        event_data = {
+            :tag => 'knife',
+            :username => current_user,
+            :status => "#{organization}#{current_user} deleted environment #{object_name}",
+            :metadata => {
+                :environment_name => object_name,
+            }.to_json
+        }
+        eventinate(event_data)
+      end
 
       def after_rolefromfile
         event_data = {

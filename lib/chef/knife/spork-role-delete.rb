@@ -5,7 +5,7 @@ module KnifeSpork
   class SporkRoleDelete < Chef::Knife
     include KnifeSpork::Runner
 
-    banner 'knife spork role delete ROLENAME'
+    banner 'knife spork role delete ROLENAME (options)'
 
     def run
       self.config = Chef::Config.merge!(config)

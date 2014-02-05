@@ -34,7 +34,7 @@ module KnifeSpork
         # We know cookbooks will only contain one cookbook in the case of promote.
         cookbooks.map{|c|c.version = config[:version]} if config[:version]
 
-        environments = [ @environments || @environment ].flatten.compact.collect{|environment| environment.is_a?(::Chef::Environment) ? environment : load_environment(environment)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
+        environments = [ @environments || @environment ].flatten.compact.collect{|environment| environment.is_a?(::Chef::Environment) ? environment : load_environment_from_file(environment)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environment_diffs = @environment_diffs
 
         KnifeSpork::Plugins.run(
@@ -169,6 +169,7 @@ module KnifeSpork
         cookbook_names.collect{ |cookbook_name| load_cookbook(cookbook_name) }
       end
 
+
       def load_role_from_file(role_name)
         role_loader.object_from_file("#{role_path}/#{role_name}.json")
       end
@@ -190,6 +191,10 @@ module KnifeSpork
       end
 
       def load_environment(environment_name)
+        Chef::Environment.load(environment_name)
+      end
+
+      def load_environment_from_file(environment_name)
         environment_loader.object_from_file("#{environment_path}/#{environment_name}.json")
       end
 

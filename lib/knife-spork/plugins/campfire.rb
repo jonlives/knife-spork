@@ -30,6 +30,38 @@ EOH
         end
       end
 
+      def after_environmentfromfile
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} uploaded environment #{object_name}
+          EOH
+        end
+      end
+
+      def after_environmentedit
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} edited environment #{object_name}
+          EOH
+        end
+      end
+
+      def after_environmentcreate
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} created environment #{object_name}
+          EOH
+        end
+      end
+
+      def after_environmentdelete
+        campfire do |rooms|
+          rooms.paste <<-EOH
+#{organization}#{current_user} deleted environment #{object_name}
+          EOH
+        end
+      end
+
       def after_rolefromfile
         campfire do |rooms|
           rooms.paste <<-EOH
