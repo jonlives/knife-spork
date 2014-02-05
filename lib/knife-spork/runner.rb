@@ -150,7 +150,8 @@ module KnifeSpork
         raise Berkshelf::BerkshelfError, "LockFileNotFound" unless File.exists?(lockfile.filepath)
 
         cookbook = Berkshelf.ui.mute {
-          berksfile.resolve(lockfile.find(name))[:solution].first
+          self.config[:skip_dependencies] ||= false
+          berksfile.resolve(lockfile.find(name), {skip_dependencies: self.config[:skip_dependencies]})[:solution].first
         }
 
         #convert Berkshelf::CachedCookbook to Chef::CookbookVersion

@@ -30,6 +30,14 @@ module KnifeSpork
       :long => '--include-dependencies',
       :description => 'Also upload cookbook dependencies'
 
+    if defined?(::Berkshelf)
+      option :berksfile,
+        :short => '-b',
+        :long => 'berksfile',
+        :description => 'Path to a Berksfile to operate off of',
+        :default => File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME)
+    end
+
     def run
       self.config = Chef::Config.merge!(config)
       config[:cookbook_path] ||= Chef::Config[:cookbook_path]
