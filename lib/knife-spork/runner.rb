@@ -83,7 +83,10 @@ module KnifeSpork
       end
 
       def pretty_print_json(json)
-        JSON.pretty_generate(json)
+        options = spork_config[:json_options] || {}
+        # generate requires a hash where the keys are symbols
+        options = Hash[ options.to_hash.map {|(k,v)| [k.to_sym,v] }] unless options == {}
+        JSON.pretty_generate(json, options.to_hash)
       end
 
       def valid_version?(version)

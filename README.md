@@ -51,6 +51,8 @@ environment_path: "/home/me/environments"
 role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
+json_options:
+  indent: "   "
 plugins:
   campfire:
     account: myaccount
@@ -99,6 +101,8 @@ The `version_change_threshold` directive allows you to customise the threshold u
 #### Always Promote Remote
 The `always_promote_remote` directive allows you to tell spork promote to always act as if the --remote option had been specified. This will also have the same effect on spork omni. This option should only be used if you're sure you want all changes to be uploaded to the server as soon as you run promote.
 
+#### JSON Options
+The `json_options` directive allows you to tell spork to pass options to [pretty_generate](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/json/rdoc/JSON.html#method-i-pretty_generate) to control the format of the resulting json
 
 #### Environment Path
 The `environment_path` allows you to specify the path to where you store your chef environment json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
