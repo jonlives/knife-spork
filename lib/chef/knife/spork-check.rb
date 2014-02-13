@@ -11,6 +11,11 @@ module KnifeSpork
       :short => '--a',
       :long => '--all',
       :description => 'Show all uploaded versions of the cookbook'
+
+    option :autobump,
+      :short => '-b',
+      :long => '--autobump',
+      :description => 'If check shows a bump is needed, skip the prompt and bump'
       
       option :fail,
        	 :long => "--fail",
@@ -78,11 +83,18 @@ module KnifeSpork
         if remote_version == local_version
           if frozen?(remote_version)
             message = "Your local version (#{local_version}) is frozen on the remote server. You'll need to bump before you can upload."
+            message_autobump = "Your local version (#{local_version}) is frozen on the remote server. Autobumping so you can upload."
             if config[:fail]
               fail_and_exit("#{message}")
             else
-              ui.warn("#{message}")
-              answer = ui.ask("Would you like to perform a patch-level bump on the #{@cookbook.name} cookbook now? (Y/N)")
+              answer = nil
+              if config[:autobump]
+                answer = "Y"
+                ui.warn("#{message_autobump}")
+              else
+                ui.warn("#{message}")
+                answer = ui.ask("Would you like to perform a patch-level bump on the #{@cookbook.name} cookbook now? (Y/N)")
+              end
               if answer == "Y" or answer == "y"
                 bump = SporkBump.new
                 bump.name_args = [@cookbook.name]
