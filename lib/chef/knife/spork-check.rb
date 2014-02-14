@@ -13,7 +13,7 @@ module KnifeSpork
       :description => 'Show all uploaded versions of the cookbook'
 
     option :autobump,
-      :short => '-b',
+      :short => '-p',
       :long => '--autobump',
       :description => 'If check shows a bump is needed, skip the prompt and bump'
       
