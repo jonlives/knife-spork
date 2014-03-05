@@ -159,8 +159,13 @@ module KnifeSpork
           berksfile.resolve(lockfile.find(name), {skip_dependencies: self.config[:skip_dependencies]})[:solution].first
         }
 
-        #convert Berkshelf::CachedCookbook to Chef::CookbookVersion
-        ::Chef::CookbookLoader.new(File.dirname(cookbook.path))[name]
+        # convert Berkshelf::CachedCookbook to Chef::CookbookVersion by loading the cookback at the
+        # full path returned by Berkshelf (since a cookbook of name `x` is  not necessarily in a
+        # local directory named `x`.)
+        cookbook_path = cookbook.path
+        chef_search_dir = ::File.dirname(cookbook_path)
+        cookbook_dirname = ::File.basename(cookbook_path)
+        ::Chef::CookbookLoader.new(chef_search_dir).load_cookbook(cookbook_dirname)
 
       end
 
