@@ -115,7 +115,7 @@ module KnifeSpork
       end
 
       def environment_path
-        spork_config[:environment_path] || cookbook_path.gsub("/cookbooks","/environments")
+        spork_config[:environment_path] || Chef::Config.environment_path || cookbook_path.gsub("/cookbooks","/environments")
       end
 
       def role_path
