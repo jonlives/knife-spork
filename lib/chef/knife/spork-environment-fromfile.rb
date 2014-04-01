@@ -24,7 +24,7 @@ module KnifeSpork
       @name_args.each do |arg|
           @object_name = arg.split("/").last
           run_plugins(:before_environmentfromfile)
-          pre_environment = load_environment(@object_name.gsub(".json","").gsub(".rb",""))
+          pre_environment = load_environment_from_file(@object_name.gsub(".json","").gsub(".rb",""))
           environment_from_file
           post_environment = load_environment(@object_name.gsub(".json","").gsub(".rb",""))
           @object_difference = json_diff(pre_environment,post_environment).to_s
