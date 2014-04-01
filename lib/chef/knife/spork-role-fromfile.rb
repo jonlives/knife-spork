@@ -24,7 +24,11 @@ module KnifeSpork
       @name_args.each do |arg|
           @object_name = arg.split("/").last
           run_plugins(:before_rolefromfile)
-          pre_role = load_role_from_file(@object_name.gsub(".json","").gsub(".rb",""))
+          begin
+            pre_role = load_role(@object_name.gsub(".json","").gsub(".rb",""))
+          rescue Net::HTTPServerException => e
+            pre_role = {}
+          end
           role_from_file
           post_role = load_role(@object_name.gsub(".json","").gsub(".rb",""))
           @object_difference = json_diff(pre_role,post_role).to_s
