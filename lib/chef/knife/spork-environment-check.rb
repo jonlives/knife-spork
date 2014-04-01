@@ -6,7 +6,7 @@ module KnifeSpork
   class SporkEnvironmentCheck < Chef::Knife
     include KnifeSpork::Runner
 
-    banner 'knife spork environment check ENVIRONMENT'
+    banner 'knife spork environment check ENVIRONMENT (options)'
 
     def run
       self.config = Chef::Config.merge!(config)
