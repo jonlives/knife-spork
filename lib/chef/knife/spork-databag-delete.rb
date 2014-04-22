@@ -10,7 +10,7 @@ module KnifeSpork
       require 'chef/knife/data_bag_delete'
     end
 
-    banner 'knife data bag delete BAG [ITEM] (options)'
+    banner 'knife spork data bag delete BAG [ITEM] (options)'
 
 
     def run
