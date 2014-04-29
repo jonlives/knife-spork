@@ -16,6 +16,13 @@ module KnifeSpork
           exit 1
         end
 
+        base_options = []
+	base_options = base_options.concat([ "-D" ]) if config.show_name  # Lists the name of the offense along with the description
+	base_options = base_options.concat([ "--auto-correct" ]) if config.autocorrect
+	base_options = base_options.concat([ "--out", config.out_file ]) if config.out_file # Specify a file output rather than STDOUT for the specific errors
+	base_options = base_options.concat([ "--fail-level", config.sev_level ]) if config.sev_level # Specify a severity level for when rubocop should fail
+	base_options = base_options.concat([ "--lint"]) if config.lint  # Only run lint checks
+
         cookbooks.each do |cookbook|
           ui.info "Running rubocop against #{cookbook.name}@#{cookbook.version}..."
 
