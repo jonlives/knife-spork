@@ -34,6 +34,11 @@ module KnifeSpork
            :description => 'Environment to promote the cookbook to',
            :default => nil
 
+    option :omni_promote,
+           :long => '--promote',
+           :description => 'Omni will run promote, overrides config setting',
+           :default => nil
+           
     option :remote,
            :long  => '--remote',
            :description => 'Make omni finish with promote --remote instead of a local promote',
@@ -101,7 +106,9 @@ module KnifeSpork
       ui.msg ""
       upload(cookbook)
       ui.msg ""
-      promote(cookbook)
+      if config[:omni_promote]
+      	promote(cookbook)
+      end
     end
   end
 end

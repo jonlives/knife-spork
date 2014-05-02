@@ -51,6 +51,7 @@ environment_path: "/home/me/environments"
 role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
+omni_promote: true
 plugins:
   campfire:
     account: myaccount
@@ -299,12 +300,14 @@ Alternatively, you can specify any of the following options:
 
 ```--environment ENVIRONMENT```: Environment to promote the cookbook to',
 
+```--no_promote```: Does NOT promote the cookbook',
+
 ```--remote```: Make omni perform a promote --remote instead of a local promote',
 
 #### Usage
 
 ```bash
-knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote]
+knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote, --no_promote]
 ```
 
 #### Example (default options, default_environments set to development and production)
