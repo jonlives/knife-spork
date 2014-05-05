@@ -311,7 +311,7 @@ Alternatively, you can specify any of the following options:
 #### Usage
 
 ```bash
-knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote, --no_promote]
+knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote, --promote]
 ```
 
 #### Example (default options, default_environments set to development and production)
