@@ -52,7 +52,7 @@ role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
 omni_promote: true
-bump_config: true
+bump_comment: true
 plugins:
   campfire:
     account: myaccount
