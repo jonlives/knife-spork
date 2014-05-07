@@ -14,7 +14,7 @@ module KnifeSpork
            :proc => lambda { |o| o.split(':') }
 
     option :bump_comment,
-           :long => '--bump_comment'
+           :long => '--bump_comment',
            :description => 'Bump will prompt for a Change comment, which will be appended to CHANGELOG.md along with the new version # and username',
            :default => nil
 
