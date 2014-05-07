@@ -34,6 +34,11 @@ module KnifeSpork
            :description => 'Environment to promote the cookbook to',
            :default => nil
 
+    option :omni_promote,
+           :long => '--promote',
+           :description => 'Omni will run promote, overrides config setting',
+           :default => nil
+           
     option :remote,
            :long  => '--remote',
            :description => 'Make omni finish with promote --remote instead of a local promote',
@@ -49,6 +54,7 @@ module KnifeSpork
 
     def run
       self.config = Chef::Config.merge!(config)
+      config[:omni_promote] ||= spork_config.omni_promote
 
       if name_args.empty?
         ui.fatal 'You must specify a cookbook name!'
@@ -101,7 +107,9 @@ module KnifeSpork
       ui.msg ""
       upload(cookbook)
       ui.msg ""
-      promote(cookbook)
+      if config[:omni_promote]
+      	promote(cookbook)
+      end
     end
   end
 end
