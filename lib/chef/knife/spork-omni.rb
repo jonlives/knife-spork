@@ -54,6 +54,7 @@ module KnifeSpork
 
     def run
       self.config = Chef::Config.merge!(config)
+      config[:omni_promote] ||= spork_config.omni_promote
 
       if name_args.empty?
         ui.fatal 'You must specify a cookbook name!'
