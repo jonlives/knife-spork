@@ -13,6 +13,11 @@ module KnifeSpork
            :description => 'A colon-separated path to look for cookbooks in',
            :proc => lambda { |o| o.split(':') }
 
+    option :bump_comment,
+           :long => '--bump_comment',
+           :description => 'Bump will prompt for a Change comment, which will be appended to CHANGELOG.md along with the new version # and username',
+           :default => nil
+
     if defined?(::Berkshelf)
       option :berksfile,
         :short => '-b',
@@ -70,6 +75,17 @@ module KnifeSpork
       new_contents = File.read(metadata_file).gsub(/(version\s+['"])[0-9\.]+(['"])/, "\\1#{new_version}\\2")
       File.open(metadata_file, 'w'){ |f| f.write(new_contents) }
 
+      if config[:bump_comment]
+        changelog_file =  "#{@cookbook.root_dir}/CHANGELOG.md"
+        ui.info "Enter Change Log comment, then press Ctrl-D:  "
+        change_comment = $stdin.read
+        File.open(changelog_file, 'a') { |cl|
+          cl.write("\n#{new_version}\n")
+          cl.write("---------\n")
+          cl.write("#{ENV['USER']} - #{change_comment}\n")
+        }
+      end
+         
       ui.info "Successfully bumped #{@cookbook.name} to v#{new_version}!"
     end
 
