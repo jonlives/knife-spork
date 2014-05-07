@@ -51,6 +51,7 @@ environment_path: "/home/me/environments"
 role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
+omni_promote: true
 plugins:
   campfire:
     account: myaccount
@@ -99,6 +100,8 @@ The `version_change_threshold` directive allows you to customise the threshold u
 #### Always Promote Remote
 The `always_promote_remote` directive allows you to tell spork promote to always act as if the --remote option had been specified. This will also have the same effect on spork omni. This option should only be used if you're sure you want all changes to be uploaded to the server as soon as you run promote.
 
+#### Omni Promote
+The omni_promote directive tells spork omni whether or not to promote your cookbook to the provided environment.  True(default) means omni will run the promote.  False means omni will skip the promote step.  The bump and upload steps will still be performned.  A setting of false can be overridden on the command line with the --promote option.
 
 #### Environment Path
 The `environment_path` allows you to specify the path to where you store your chef environment json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
@@ -289,6 +292,8 @@ As omni is designed for use only in those cases where you want to perform all th
 
 If you run omni with no extra options, it will default to performing a ```patch``` level bump, and promote locally to the environments listed in the ```default_environments``` variable in your spork configuration file.
 
+Omni can be configured to skip the promote step by specifing "omni_promote: false" in the config file.  By default, this is set to true.
+
 Alternatively, you can specify any of the following options:
 
 ```--cookbook-path PATH:PATH```: A colon-separated path to look for cookbooks in
@@ -299,12 +304,14 @@ Alternatively, you can specify any of the following options:
 
 ```--environment ENVIRONMENT```: Environment to promote the cookbook to',
 
+```--promote```: Omni will run promote, overrides config setting.
+
 ```--remote```: Make omni perform a promote --remote instead of a local promote',
 
 #### Usage
 
 ```bash
-knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote]
+knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote, --promote]
 ```
 
 #### Example (default options, default_environments set to development and production)
