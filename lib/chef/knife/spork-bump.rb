@@ -32,11 +32,12 @@ module KnifeSpork
         :default => true
     end
 
-    banner 'knife spork bump COOKBOOK [major|minor|patch|manual]'
+    banner 'knife spork bump COOKBOOK [major|minor|patch|manual] [--bump_comment]'
 
     def run
       self.config = Chef::Config.merge!(config)
       config[:cookbook_path] ||= Chef::Config[:cookbook_path]
+      config[:bump_comment] ||= spork_config.bump_comment
 
       if @name_args.empty?
         show_usage
