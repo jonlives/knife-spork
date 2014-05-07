@@ -211,7 +211,9 @@ Everything looks good!
 
 Spork Bump
 ----------
-This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` file. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
+This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` & 'CHANGELOG.md' files. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
+
+After updating the metadata.rb file, the user will be promted to enter thier change comment.  This will be appended to the CHANGELOG.md file along with the new version, and the current username.
 
 #### Usage
 ```bash
@@ -221,18 +223,24 @@ knife spork bump COOKBOOK [major | minor | patch | manual x.x.x]
 #### Example (No patch level specified - defaulting to patch)
 ```text
 $ knife spork bump apache2
+Enter Change Log comment, then press Ctrl-D:
+Bug #111 fixed.
 Successfully bumped apache2 to v2.0.4!
 ```
 
 #### Example (Bumping patch level)
 ```text
 $ knife spork bump apache2 patch
+Enter Change Log comment, then press Ctrl-D:
+Bug #111 fixed.
 Successfully bumped apache2 to v2.0.4!
 ```
 
 #### Example (Manually setting version)
 ```text
 $ knife spork bump apache2 manual 1.0.13
+Enter Change Log comment, then press Ctrl-D:
+Bug #111 fixed.
 Successfully bumped apache2 to v1.0.13!
 ```
 

@@ -70,6 +70,15 @@ module KnifeSpork
       new_contents = File.read(metadata_file).gsub(/(version\s+['"])[0-9\.]+(['"])/, "\\1#{new_version}\\2")
       File.open(metadata_file, 'w'){ |f| f.write(new_contents) }
 
+      changelog_file =  "#{@cookbook.root_dir}/CHANGELOG.md"
+      ui.info "Enter Change Log comment, then press Ctrl-D:  "
+      change_comment = $stdin.read
+      File.open(changelog_file, 'a') { |cl|
+        cl.write("\n#{new_version}\n")
+        cl.write("---------\n")
+        cl.write("#{ENV['USER']} - #{change_comment}\n")
+      }
+         
       ui.info "Successfully bumped #{@cookbook.name} to v#{new_version}!"
     end
 
