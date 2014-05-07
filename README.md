@@ -51,6 +51,7 @@ environment_path: "/home/me/environments"
 role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
+bump_config: true
 plugins:
   campfire:
     account: myaccount
@@ -99,6 +100,8 @@ The `version_change_threshold` directive allows you to customise the threshold u
 #### Always Promote Remote
 The `always_promote_remote` directive allows you to tell spork promote to always act as if the --remote option had been specified. This will also have the same effect on spork omni. This option should only be used if you're sure you want all changes to be uploaded to the server as soon as you run promote.
 
+#### Bump Comment
+The 'bump_comment` directive tells spork to always prompt the user for a comment reguarding the changes to this version of the cookbook. This comment will be appended to the CHANGELOG.md file along with the new version # and the user name.  This can also be done with the "--bump_comment" on the command line.
 
 #### Environment Path
 The `environment_path` allows you to specify the path to where you store your chef environment json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
@@ -213,11 +216,11 @@ Spork Bump
 ----------
 This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` & 'CHANGELOG.md' files. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
 
-After updating the metadata.rb file, the user will be promted to enter thier change comment.  This will be appended to the CHANGELOG.md file along with the new version, and the current username.
+Bump can also be configured promt the user to enter a comment reguarding thier change.  This comment will be appended to the CHANGELOG.md file along with the new version, and the current username.
 
 #### Usage
 ```bash
-knife spork bump COOKBOOK [major | minor | patch | manual x.x.x]
+knife spork bump COOKBOOK [major | minor | patch | manual x.x.x] [--bump_comment]
 ````
 
 #### Example (No patch level specified - defaulting to patch)
@@ -226,6 +229,12 @@ $ knife spork bump apache2
 Enter Change Log comment, then press Ctrl-D:
 Bug #111 fixed.
 Successfully bumped apache2 to v2.0.4!
+```
+``` CHANGELOG.md will be appended with the following:
+
+2.0.4
+------
+<user> - Bug #111 fixed.
 ```
 
 #### Example (Bumping patch level)
