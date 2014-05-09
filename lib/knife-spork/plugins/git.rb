@@ -45,8 +45,10 @@ module KnifeSpork
           git_add(environment_path,"#{environment}.json")
         end
         
-        git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
-        git_push(environment_path)
+        unless config.auto_push.nil? 
+          git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
+          git_push(environment_path)
+        end
       end
 
       private
@@ -55,7 +57,7 @@ module KnifeSpork
         log = Logger.new(STDOUT)
         log.level = Logger::WARN
         @git ||= begin
-          ::Git.open(`pwd`, :log => log)
+          ::Git.open('.', :log => log)
         rescue
           ui.error 'You are not currently in a git repository. Please ensure you are in a git repo, a repo subdirectory, or remove the git plugin from your KnifeSpork configuration!'
           exit(0)
@@ -98,7 +100,7 @@ module KnifeSpork
 
       def git_add(filepath,filename)
         if is_repo?(filepath)
-          ui.msg "Git: add'ing #{filepath}/#{filename}"
+          ui.msg "Git add'ing #{filepath}/#{filename}"
           output = IO.popen("cd #{filepath} && git add #{filename}")
           Process.wait
           exit_code = $?
