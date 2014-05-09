@@ -44,6 +44,9 @@ module KnifeSpork
         environments.each do |environment|
           git_add(environment_path,"#{environment}.json")
         end
+        
+        git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
+        git_push(environment_path)
       end
 
       private
@@ -52,7 +55,7 @@ module KnifeSpork
         log = Logger.new(STDOUT)
         log.level = Logger::WARN
         @git ||= begin
-          ::Git.open('.', :log => log)
+          ::Git.open(`pwd`, :log => log)
         rescue
           ui.error 'You are not currently in a git repository. Please ensure you are in a git repo, a repo subdirectory, or remove the git plugin from your KnifeSpork configuration!'
           exit(0)
@@ -105,21 +108,34 @@ module KnifeSpork
           end
         end
       end
-
-      # Commit changes, if any
-      def git_commit
+      
+      def git_commit(filepath, msg)
         begin
-          git.add('.')
-          `git ls-files --deleted`.chomp.split("\n").each{ |f| git.remove(f) }
-          git.commit_all "[KnifeSpork] Bumping cookbooks:\n#{cookbooks.collect{|c| "  #{c.name}@#{c.version}"}.join("\n")}"
-        rescue ::Git::GitExecuteError; end
+          if is_repo?(filepath)
+            ui.msg "Git: Committing changes..."
+            output = IO.popen("cd #{filepath} && git commit -m '#{msg}'")
+            Process.wait
+            exit_code = $?
+            if !exit_code.exitstatus ==  0
+                ui.error "#{output.read()}\n"
+                exit 1
+            end
+          end
+          #git.commit_all msg  
+        rescue ::Git::GitExecuteError; 
+        end
       end
 
-      def git_push(tags = false)
-        begin
-          git.push remote, branch, tags
-        rescue ::Git::GitExecuteError => e
-          ui.error "Could not push to remote #{remote}/#{branch}. Does it exist?"
+      def git_push(path)
+        if is_repo?(path)
+          ui.msg "Git: Pushing to Master"
+          output = IO.popen("git push origin master 2>&1")
+          Process.wait
+          exit_code = $?
+          if !exit_code.exitstatus ==  0
+            ui.error "#{output.read()}\n"
+            exit 1
+          end
         end
       end
 
