@@ -2,6 +2,7 @@
 
 Features:
     - Have runner check Chef::Config for environment_path (Thanks to @cstewart87 https://github.com/jonlives/knife-spork/pull/114)
+    - Have spork check autobump when -y option given (Thanks to @slingcode https://github.com/jonlives/knife-spork/pull/108)
 
 Bugfixes:
     - Fix exception when trying to load non existent role or env from file (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/116)

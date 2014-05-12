@@ -12,14 +12,9 @@ module KnifeSpork
       :long => '--all',
       :description => 'Show all uploaded versions of the cookbook'
 
-    option :autobump,
-      :short => '-p',
-      :long => '--autobump',
-      :description => 'If check shows a bump is needed, skip the prompt and bump'
-      
-      option :fail,
-       	 :long => "--fail",
-       	 :description => "If the check fails exit with non-zero exit code"
+    option :fail,
+       :long => "--fail",
+       :description => "If the check fails exit with non-zero exit code"
 
     option :cookbook_path,
            :short => '-o PATH:PATH',
@@ -88,16 +83,15 @@ module KnifeSpork
               fail_and_exit("#{message}")
             else
               answer = nil
-              if config[:autobump]
-                answer = "Y"
-                ui.warn("#{message_autobump}")
-              else
+              unless config[:yes]
                 ui.warn("#{message}")
                 answer = ui.ask("Would you like to perform a patch-level bump on the #{@cookbook.name} cookbook now? (Y/N)")
+              else
+                ui.warn message_autobump
               end
-              if answer == "Y" or answer == "y"
+              if config[:yes] or answer == "Y" or answer == "y"
                 bump = SporkBump.new
-                bump.name_args = [@cookbook.name]
+                bump.name_args = [@cookbook.name,"patch"]
                 bump.run
               else
                 ui.info "Skipping bump..."
