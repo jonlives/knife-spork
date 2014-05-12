@@ -4,6 +4,7 @@ Features:
 
 
 Bugfixes:
+    - Fix exception when trying to load non existent role or env from file (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/116)
     - Fix incorrect error message when uploading frozen cookbook (https://github.com/jonlives/knife-spork/issues/117)
 
 ## 1.3.2 (5th Feb, 2014)
