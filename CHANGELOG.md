@@ -1,7 +1,7 @@
 ## 1.3.3 (nth May, 2014)
 
 Features:
-
+    - Have runner check Chef::Config for environment_path (Thanks to @cstewart87 https://github.com/jonlives/knife-spork/pull/114)
 
 Bugfixes:
     - Fix exception when trying to load non existent role or env from file (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/116)
