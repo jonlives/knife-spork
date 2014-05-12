@@ -22,13 +22,17 @@ module KnifeSpork
       end
 
       @name_args.each do |arg|
-          @object_name = arg.split("/").last
-          run_plugins(:before_environmentfromfile)
+        @object_name = arg.split("/").last
+        run_plugins(:before_environmentfromfile)
+        begin
           pre_environment = load_environment(@object_name.gsub(".json","").gsub(".rb",""))
-          environment_from_file
-          post_environment = load_environment(@object_name.gsub(".json","").gsub(".rb",""))
-          @object_difference = json_diff(pre_environment,post_environment).to_s
-          run_plugins(:after_environmentfromfile)
+        rescue Net::HTTPServerException => e
+          pre_environment = {}
+        end
+        environment_from_file
+        post_environment = load_environment(@object_name.gsub(".json","").gsub(".rb",""))
+        @object_difference = json_diff(pre_environment,post_environment).to_s
+        run_plugins(:after_environmentfromfile)
       end
     end
 
