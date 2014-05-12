@@ -1,3 +1,11 @@
+## 1.3.3 (nth May, 2014)
+
+Features:
+
+
+Bugfixes:
+    - Fix incorrect error message when uploading frozen cookbook (https://github.com/jonlives/knife-spork/issues/117)
+
 ## 1.3.2 (5th Feb, 2014)
 
 Features:

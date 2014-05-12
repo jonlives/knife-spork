@@ -78,18 +78,23 @@ module KnifeSpork
           check_dependencies(cookbook)
           if name_args.include?(cookbook.name.to_s)
             uploader = Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path)
-            if uploader.respond_to?(:upload_cookbooks)
-              # Chef >= 10.14.0
-              uploader.upload_cookbooks
-              ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
-              cookbook.freeze_version
-              uploader.upload_cookbooks
-            else
-              uploader.upload_cookbook
-              ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
-              cookbook.freeze_version
-              uploader.upload_cookbook
+            begin
+              if uploader.respond_to?(:upload_cookbooks)
+                # Chef >= 10.14.0
+                uploader.upload_cookbooks
+                ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
+                cookbook.freeze_version
+                uploader.upload_cookbooks
+              else
+                uploader.upload_cookbook
+                ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
+                cookbook.freeze_version
+                uploader.upload_cookbook
 
+              end
+            rescue Chef::Exceptions::CookbookFrozen => msg
+              ui.error "#{cookbook.name}@#{cookbook.version} is frozen. Please bump your version number before continuing!"
+              exit(1)
             end
           end
         rescue Net::HTTPServerException => e
