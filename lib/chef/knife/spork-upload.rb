@@ -1,13 +1,15 @@
 require 'chef/knife'
-require 'chef/exceptions'
-require 'chef/cookbook_loader'
-require 'chef/cookbook_uploader'
-require 'knife-spork/runner'
-require 'socket'
 
 module KnifeSpork
   class SporkUpload < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'chef/exceptions'
+      require 'chef/cookbook_loader'
+      require 'chef/cookbook_uploader'
+      require 'knife-spork/runner'
+      require 'socket'
+    end
 
     CHECKSUM = 'checksum'
     MATCH_CHECKSUM = /[0-9a-f]{32,}/
@@ -39,6 +41,7 @@ module KnifeSpork
     end
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
       config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 

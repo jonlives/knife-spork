@@ -1,9 +1,11 @@
 require 'chef/knife'
-require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkCheck < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+    end
 
     banner 'knife spork check COOKBOOK (options)'
 
@@ -37,6 +39,7 @@ module KnifeSpork
     end
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if name_args.empty?

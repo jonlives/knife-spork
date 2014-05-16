@@ -1,18 +1,18 @@
 require 'chef/knife'
-require 'knife-spork/runner'
-require 'json'
 
 module KnifeSpork
   class SporkRoleFromFile < Chef::Knife
-    include KnifeSpork::Runner
 
     deps do
+      require 'knife-spork/runner'
+      require 'json'
       require 'chef/knife/role_from_file'
     end
 
     banner 'knife spork role from file FILENAME (options)'
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if @name_args.empty?

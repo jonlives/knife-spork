@@ -1,12 +1,11 @@
 require 'chef/knife'
-require 'knife-spork/runner'
-require 'json'
 
 module KnifeSpork
   class SporkDataBagCreate < Chef::Knife
-    include KnifeSpork::Runner
 
     deps do
+      require 'knife-spork/runner'
+      require 'json'
       require 'chef/knife/data_bag_create'
     end
 
@@ -22,6 +21,7 @@ module KnifeSpork
            :description => "A file containing the secret key to use to encrypt data bag item values"
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if @name_args.nil?
