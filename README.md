@@ -52,7 +52,7 @@ role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
 json_options:
-  indent: "   "
+  indent: "    "
 plugins:
   campfire:
     account: myaccount
