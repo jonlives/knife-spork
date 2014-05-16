@@ -152,8 +152,7 @@ module KnifeSpork
       validate_version!(config[:version])
       version = config[:version] || load_cookbook(cookbook_name).version
 
-      environment = config[:environment]
-      api_endpoint = environment ? "environments/#{environment}/cookbooks/#{cookbook_name}/#{version}" : "cookbooks/#{cookbook_name}/#{version}"
+      api_endpoint = "cookbooks/#{cookbook_name}/#{version}"
 
       begin
         cookbooks = rest.get_rest(api_endpoint)
