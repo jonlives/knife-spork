@@ -57,9 +57,13 @@ module KnifeSpork
         log = Logger.new(STDOUT)
         log.level = Logger::WARN
         @git ||= begin
-          ::Git.open('.', :log => log)
-        rescue
-          ui.error 'You are not currently in a git repository. Please ensure you are in a git repo, a repo subdirectory, or remove the git plugin from your KnifeSpork configuration!'
+          cwd = `pwd`.chomp
+          if is_submodule?(cwd)
+            cwd = get_parent_dir(cwd)  
+          end 
+          ::Git.open(cwd, :log => log)
+        rescue Exception => e  
+          ui.error "You are not currently in a git repository #{cwd}. Please ensure you are in a git repo, a repo subdirectory, or remove the git plugin from your KnifeSpork configuration!"
           exit(0)
         end
       end
@@ -115,15 +119,8 @@ module KnifeSpork
         begin
           if is_repo?(filepath)
             ui.msg "Git: Committing changes..."
-            output = IO.popen("cd #{filepath} && git commit -m '#{msg}'")
-            Process.wait
-            exit_code = $?
-            if !exit_code.exitstatus ==  0
-                ui.error "#{output.read()}\n"
-                exit 1
-            end
+            git.commit_all msg
           end
-          #git.commit_all msg  
         rescue ::Git::GitExecuteError; 
         end
       end
