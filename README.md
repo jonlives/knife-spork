@@ -365,6 +365,36 @@ Saving changes to development.json
 Promotion complete. Don't forget to upload your changed development.json to Chef Server
 ```
 
+Spork Environnent Check
+-------------
+
+Environment check provides the ability to validate a local chef environment file is locked to versions that actually exist on the chef server.  Running this check prior to uploading your environment files is recommended as it can prevent your chef server from becoming unresponsive due to a version constraint that will never be valid.
+
+If you run environment check with no options it will collect all invalid cookbook versions before reporting a failure.
+
+Alternatively, you can specify any of the following options:
+
+```-f, --fatal```: Quit on first invalid constraint located
+
+#### Usage
+
+```knife spork environment check ENVIRONMENT (options)```
+
+#### Example of a passing chef environment check with no options
+
+```text
+$ knife spork environment check production
+
+Checking constraints for environment: production
+Environment production looks good
+```
+
+#### Example of multiple invalid cookbooks with no options
+
+
+#### Example of running with the --fatal flag with the same invalid cookbooks from previous example
+
+
 Spork Node / Role / Databag Commands
 -------------
 
@@ -403,5 +433,4 @@ knife spork environment create
 knife spork environment delete
 knife spork environment edit
 knife spork environment from file
-knife spork environment check # Validates locked cookbook versions actually exist on the chef server
 ```
