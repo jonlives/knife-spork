@@ -6,6 +6,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Jon Cowie"]
   gem.email         = 'jonlives@gmail.com'
   gem.homepage      = 'https://github.com/jonlives/knife-spork'
+  gem.licenses      = ['GPL']
   gem.summary       = "A workflow plugin to help many devs work with the same chef repo/server"
   gem.description   = "A workflow plugin to help many devs work with the same chef repo/server"
 
