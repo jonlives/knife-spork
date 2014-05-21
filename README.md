@@ -403,4 +403,5 @@ knife spork environment create
 knife spork environment delete
 knife spork environment edit
 knife spork environment from file
+knife spork environment check # Validates locked cookbook versions actually exist on the chef server
 ```
