@@ -1,6 +1,7 @@
 ## 1.3.3 (nth May, 2014)
 
 Features:
+    - Added new preserve_constraint_operators config flag to make spork promote preserve existing version constraint operators (https://github.com/jonlives/knife-spork/issues/101)
     - Have runner check Chef::Config for environment_path (Thanks to @cstewart87 https://github.com/jonlives/knife-spork/pull/114)
     - Have spork check autobump when -y option given (Thanks to @slingcode https://github.com/jonlives/knife-spork/pull/108)
     - Add ability to pass options to JSON.pretty_generate (Thanks to @halcyonCorsair https://github.com/jonlives/knife-spork/pull/105)
