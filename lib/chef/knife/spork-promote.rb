@@ -79,7 +79,13 @@ module KnifeSpork
 
     def update_version_constraints(environment, cookbook, new_version)
       validate_version!(new_version)
-      environment.cookbook_versions[cookbook] = "= #{new_version}"
+      if spork_config.preserve_constraint_operators
+        constraint_operator = environment.cookbook_versions[cookbook].split.first
+        ui.msg "Preserving existing version constraint operator: #{constraint_operator}"
+      else
+        constraint_operator = "="
+      end
+      environment.cookbook_versions[cookbook] = "#{constraint_operator} #{new_version}"
     end
 
     def save_environment_changes_remote(environment)

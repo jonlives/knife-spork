@@ -47,6 +47,7 @@ environment_groups:
     - user_testing
     - acceptance_testing
 version_change_threshold: 2
+preserve_constraint_operators: true
 environment_path: "/home/me/environments"
 role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
@@ -97,6 +98,9 @@ The `environment_groups` directive allows you to specify a list of environments 
 
 #### Version Change Threshold
 The `version_change_threshold` directive allows you to customise the threshold used by a safety check in spork promote which will prompt for confirmation if you're promoting a cookbook by more than version_change_threshold versions. This defaults to 2 if not set, ie promoting a cookbook from v1.0.1 to v 1.0.2 will not trip this check, wheras promoting from v1.0.1 to v1.0.3 will.
+
+#### Preserve Constraint Operators
+The `preserve_constraint_operators` directive causes spork promote to preserve existing version constraint operators in your environment files, only updating the version number. This directive is disabled by default, which causes spork to always use the `=` constraint.
 
 #### Always Promote Remote
 The `always_promote_remote` directive allows you to tell spork promote to always act as if the --remote option had been specified. This will also have the same effect on spork omni. This option should only be used if you're sure you want all changes to be uploaded to the server as soon as you run promote.
