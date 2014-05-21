@@ -1,15 +1,22 @@
 require 'chef/knife'
-require 'chef/exceptions'
-require 'knife-spork/runner'
-require 'pry'
 
 module KnifeSpork
   class SporkEnvironmentCheck < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+      require 'chef/exceptions'
+    end
 
     banner 'knife spork environment check ENVIRONMENT (options)'
 
+    option :fatal,
+           :short => '-f PATH:PATH',
+           :long => '--fatal',
+           :description => 'Quit on first invalid constraint located'
+
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       #First load so plugins etc know what to work with
@@ -59,7 +66,9 @@ module KnifeSpork
 
     def fail_and_exit(cookbook_name, version)
       ui.error "#{cookbook_name}@#{version} does not exist on Chef Server! Upload the cookbook first by running:\n\n\tknife spork upload #{cookbook_name}\n\n"
-      exit(1)
+      if config[:fatal]
+        exit(1)
+      end
     end
   end
 end
