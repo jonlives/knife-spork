@@ -4,6 +4,7 @@ Features:
     - Have runner check Chef::Config for environment_path (Thanks to @cstewart87 https://github.com/jonlives/knife-spork/pull/114)
     - Have spork check autobump when -y option given (Thanks to @slingcode https://github.com/jonlives/knife-spork/pull/108)
     - Add ability to pass options to JSON.pretty_generate (Thanks to @halcyonCorsair https://github.com/jonlives/knife-spork/pull/105)
+    - Spork check environment command to validate constraints specified in environments (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/115)
 
 Bugfixes:
     - Fix exception when trying to load non existent role or env from file (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/116)
