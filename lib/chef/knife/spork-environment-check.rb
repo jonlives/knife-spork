@@ -11,7 +11,7 @@ module KnifeSpork
     banner 'knife spork environment check ENVIRONMENT (options)'
 
     option :fatal,
-           :short => '-f PATH:PATH',
+           :short => '-f',
            :long => '--fatal',
            :description => 'Quit on first invalid constraint located'
 
@@ -20,34 +20,45 @@ module KnifeSpork
       self.config = Chef::Config.merge!(config)
 
       #First load so plugins etc know what to work with
-      @environments, _ = load_environments_and_cookbook
+      @environments = verify_and_load_environments
 
       run_plugins(:before_environmentcheck)
 
       #Reload cookbook and env in case a VCS plugin found updates
-      @environments, _ = load_environments_and_cookbook
+      @environments = verify_and_load_environments
 
-      check_environment
+      check_environments
       run_plugins(:after_environmentcheck)
     end
 
     private
 
-    def check_environment
-      @environments.flatten.each do |e|
+    def check_environments
+      @environments.each do |e|
+        env_status = true
+        ui.info "\nChecking constraints for environment: #{e}\n"
         environment = load_environment_from_file(e)
         cookbook_versions = environment.cookbook_versions
 
         cookbook_versions.each do |cookbook, version_constraint|
           vc = Chef::VersionConstraint.new(version_constraint)
-          check_cookbook_uploaded(cookbook, vc.version)
+          status = check_cookbook_uploaded(environment, cookbook, vc.version)
+          if !status
+            fail_and_exit(cookbook, vc.version)
+            env_status = status
+          end
         end
-        ui.msg "#{e} looks good"
+
+        if env_status
+          ui.msg "Environment #{e} looks good"
+        else
+          ui.fatal "Environment #{e} has constraints that point to non existent cookbook versions."
+          exit 1
+        end
       end
     end
 
-    def check_cookbook_uploaded(cookbook_name, version)
-      environment = config[:environment]
+    def check_cookbook_uploaded(environment, cookbook_name, version)
       api_endpoint = environment ? "environments/#{environment}/cookbooks/#{cookbook_name}" : "cookbooks/#{cookbook_name}"
 
       begin
@@ -56,18 +67,23 @@ module KnifeSpork
           cv['version'] == version.to_s
         end
 
-        unless results
-          fail_and_exit(cookbook_name, version)
+        if results
+          return true
+        else
+          return false
         end
       rescue Net::HTTPServerException
-        fail_and_exit(cookbook_name, version)
+        false
       end
     end
 
     def fail_and_exit(cookbook_name, version)
-      ui.error "#{cookbook_name}@#{version} does not exist on Chef Server! Upload the cookbook first by running:\n\n\tknife spork upload #{cookbook_name}\n\n"
+      message = "#{cookbook_name}@#{version} does not exist on Chef Server! Upload the cookbook first by running:\n\n\tknife spork upload #{cookbook_name}\n\n"
       if config[:fatal]
-        exit(1)
+        ui.fatal message
+        exit 1
+      else
+        ui.error message
       end
     end
   end
