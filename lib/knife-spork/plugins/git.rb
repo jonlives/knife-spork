@@ -47,7 +47,14 @@ module KnifeSpork
         
         unless config.auto_push.nil? 
           git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
-          git_push(environment_path)
+
+          branch =  if config.branch.nil?
+                      "master"
+                    else
+                      config.branch
+                    end
+
+          git_push(branch)
         end
       end
 
@@ -125,16 +132,12 @@ module KnifeSpork
         end
       end
 
-      def git_push(path)
-        if is_repo?(path)
-          ui.msg "Git: Pushing to Master"
-          output = IO.popen("git push origin master 2>&1")
-          Process.wait
-          exit_code = $?
-          if !exit_code.exitstatus ==  0
-            ui.error "#{output.read()}\n"
-            exit 1
-          end
+      def git_push(branch)
+        begin
+            ui.msg "Git: Pushing to Master"
+            git.push "origin", branch
+        rescue ::Git::GitExecuteError => e
+          ui.error "Could not push to master: #{e.message}"
         end
       end
 
