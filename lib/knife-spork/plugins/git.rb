@@ -57,7 +57,7 @@ module KnifeSpork
         log = Logger.new(STDOUT)
         log.level = Logger::WARN
         @git ||= begin
-          cwd = `pwd`.chomp
+          cwd = FileUtils.pwd()
           if is_submodule?(cwd)
             cwd = get_parent_dir(cwd)  
           end 
