@@ -42,7 +42,7 @@ module KnifeSpork
 
         cookbook_versions.each do |cookbook, version_constraint|
           vc = Chef::VersionConstraint.new(version_constraint)
-          status = check_cookbook_uploaded(environment, cookbook, vc.version)
+          status = check_cookbook_uploaded(cookbook, vc.version)
           if !status
             fail_and_exit(cookbook, vc.version)
             env_status = status
@@ -58,8 +58,8 @@ module KnifeSpork
       end
     end
 
-    def check_cookbook_uploaded(environment, cookbook_name, version)
-      api_endpoint = environment ? "environments/#{environment}/cookbooks/#{cookbook_name}" : "cookbooks/#{cookbook_name}"
+    def check_cookbook_uploaded(cookbook_name, version)
+      api_endpoint = "cookbooks/#{cookbook_name}"
 
       begin
         cookbook = rest.get_rest(api_endpoint)
