@@ -1,3 +1,9 @@
+## 1.3.4 (2nd June, 2014)
+
+Bugfixes:
+
+    - Fix incorrect endpoint in spork environment check (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/128)
+    
 ## 1.3.3 (23rd May, 2014)
 
 Features:
