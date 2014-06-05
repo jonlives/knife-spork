@@ -5,6 +5,9 @@ require 'json'
 require 'chef/cookbook_loader'
 require 'chef/knife/core/object_loader'
 require 'knife-spork/plugins'
+begin
+  require 'berkshelf'
+rescue LoadError; end
 
 module KnifeSpork
   module Runner

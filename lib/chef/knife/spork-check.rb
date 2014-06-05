@@ -5,9 +5,6 @@ module KnifeSpork
 
     deps do
       require 'knife-spork/runner'
-      begin
-        require 'berkshelf'
-      rescue LoadError; end
     end
 
     banner 'knife spork check COOKBOOK (options)'
