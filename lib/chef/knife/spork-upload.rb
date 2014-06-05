@@ -9,6 +9,9 @@ module KnifeSpork
       require 'chef/cookbook_uploader'
       require 'knife-spork/runner'
       require 'socket'
+      begin
+        require 'berkshelf'
+      rescue LoadError; end
     end
 
     CHECKSUM = 'checksum'

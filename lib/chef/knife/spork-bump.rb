@@ -5,6 +5,9 @@ module KnifeSpork
 
     deps do
       require 'knife-spork/runner'
+      begin
+        require 'berkshelf'
+      rescue LoadError; end
     end
 
     TYPE_INDEX = { :major => 0, :minor => 1, :patch => 2, :manual => 3 }.freeze
