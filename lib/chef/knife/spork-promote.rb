@@ -1,4 +1,7 @@
 require 'chef/knife'
+begin
+  require 'berkshelf'
+rescue LoadError; end
 
 module KnifeSpork
   class SporkPromote < Chef::Knife
