@@ -88,6 +88,11 @@ plugins:
     port: 2003
   eventinator:
     url: http://eventinator.mydomain.com/events/oneshot
+  slack:
+    api_token: abc123
+    channel: "#sysops"
+    teamname: myteam
+    username: knife
 ```
 
 #### Default Environments
@@ -137,7 +142,7 @@ knife spork info
 ```text
 $ knife spork info
 Config Hash:
-{"plugins"=>{"git"=>{"enabled"=>true}, "irccat"=>{"server"=>"irccat.mydomain.com", "port"=>12345, "gist"=>"usr/bin/gist", "channel"=>["#chef-announce"]}, "graphite"=>{"server"=>"graphite.mydomain.com", "port"=>2003}, "eventinator"=>{"url"=>"http://eventinator.mydomain.com/events/oneshot"}}, "default_environments"=>["development", "production"], "version_change_threshold"=>2, "pplugins"=>{"foodcritic"=>{"fail_tags"=>["style,correctness,test"], "tags"=>["~portability"], "include_rules"=>["config/rules.rb"]}}}
+{"plugins"=>{"git"=>{"enabled"=>true}, "irccat"=>{"server"=>"irccat.mydomain.com", "port"=>12345, "gist"=>"usr/bin/gist", "channel"=>["#chef-announce"]}, "graphite"=>{"server"=>"graphite.mydomain.com", "port"=>2003}, "slack"=>{"api_token"=>"abc123", "channel"=>"random", "teamname"=>"myteam"}, "eventinator"=>{"url"=>"http://eventinator.mydomain.com/events/oneshot"}}, "default_environments"=>["development", "production"], "version_change_threshold"=>2, "pplugins"=>{"foodcritic"=>{"fail_tags"=>["style,correctness,test"], "tags"=>["~portability"], "include_rules"=>["config/rules.rb"]}}}
 
 Plugins:
 KnifeSpork::Plugins::Campfire: disabled
@@ -146,6 +151,7 @@ KnifeSpork::Plugins::Foodcritic: disabled
 KnifeSpork::Plugins::Git: enabled
 KnifeSpork::Plugins::Graphite: enabled
 KnifeSpork::Plugins::HipChat: disabled
+KnifeSpork::Plugins::Slack: enabled
 KnifeSpork::Plugins::Irccat: enabled
 ```
 
