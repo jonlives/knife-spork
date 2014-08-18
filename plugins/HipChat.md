@@ -20,7 +20,9 @@ Configuration
 ```yaml
 plugins:
   hipchat:
+    server_url: https://api.hipchat.com
     api_token: ABC123
+    api_version: v1
     rooms:
       - General
       - Web Operations
@@ -28,8 +30,18 @@ plugins:
     color: yellow
 ```
 
+#### server_url
+The URL of the HipChat API server. Default: 'https://api.hipchat.com'
+
+- Type: `String`
+
 #### api_token
 Your HipChat API token.
+
+- Type: `String`
+
+#### api_version
+Which version of the HipChat API to use. Default: 'v1'
 
 - Type: `String`
 
@@ -44,7 +56,7 @@ Boolean value indicating whether the room should be notified.
 - Type: `Boolean`
 
 #### color
-THe color of the message.
+The color of the message.
 
 - Type: `String`
 - Acceptable Values: `[yellow, red, green, purple, random]`
