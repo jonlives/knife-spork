@@ -9,7 +9,7 @@ module KnifeSpork
       require 'chef/knife/data_bag_create'
     end
 
-    banner 'knife data bag create BAG [ITEM] (options)'
+    banner 'knife spork data bag create BAG [ITEM] (options)'
 
     option :secret,
            :short => "-s SECRET",
