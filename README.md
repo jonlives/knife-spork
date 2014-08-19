@@ -420,8 +420,8 @@ This is entirely based off of the Foodcritic plugin.
 
 #### Usage
 ```ruby
-knife check <cookbook>
-knife upload <cookbook>
+knife spork check <cookbook>
+knife spork upload <cookbook>
 ```
 
 #### Example
@@ -438,7 +438,7 @@ Remote Versions: (* indicates frozen)
 
 ERROR: The version 3.3.3 exists on the server and is not frozen. Uploading will overwrite!
 Running rubocop against chef-client@3.3.3...
-/home/cruhl/chef-repo/cookbooks/chef-client
+/home/chef-repo/cookbooks/chef-client
 Inspecting 25 files
 ....CCCCC.CWCCCCCWCCCWCCC
 
