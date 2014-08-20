@@ -1,12 +1,11 @@
 require 'chef/knife'
-require 'knife-spork/runner'
-require 'json'
 
 module KnifeSpork
   class SporkDataBagFromFile < Chef::Knife
-    include KnifeSpork::Runner
 
     deps do
+      require 'knife-spork/runner'
+      require 'json'
       require 'chef/knife/data_bag_from_file'
     end
 
@@ -27,6 +26,7 @@ module KnifeSpork
            :description => "Upload all data bags"
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       @object_name = @name_args.first

@@ -1,9 +1,11 @@
 require 'chef/knife'
-require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkRoleCreate < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+    end
 
     banner 'knife spork role create ROLE (options)'
 
@@ -13,6 +15,7 @@ module KnifeSpork
            :description => "The role description"
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if @name_args.empty?

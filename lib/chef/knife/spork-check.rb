@@ -1,9 +1,11 @@
 require 'chef/knife'
-require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkCheck < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+    end
 
     banner 'knife spork check COOKBOOK (options)'
 
@@ -11,10 +13,10 @@ module KnifeSpork
       :short => '--a',
       :long => '--all',
       :description => 'Show all uploaded versions of the cookbook'
-      
-      option :fail,
-       	 :long => "--fail",
-       	 :description => "If the check fails exit with non-zero exit code"
+
+    option :fail,
+       :long => "--fail",
+       :description => "If the check fails exit with non-zero exit code"
 
     option :cookbook_path,
            :short => '-o PATH:PATH',
@@ -37,6 +39,7 @@ module KnifeSpork
     end
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if name_args.empty?
@@ -78,14 +81,20 @@ module KnifeSpork
         if remote_version == local_version
           if frozen?(remote_version)
             message = "Your local version (#{local_version}) is frozen on the remote server. You'll need to bump before you can upload."
+            message_autobump = "Your local version (#{local_version}) is frozen on the remote server. Autobumping so you can upload."
             if config[:fail]
               fail_and_exit("#{message}")
             else
-              ui.warn("#{message}")
-              answer = ui.ask("Would you like to perform a patch-level bump on the #{@cookbook.name} cookbook now? (Y/N)")
-              if answer == "Y" or answer == "y"
+              answer = nil
+              unless config[:yes]
+                ui.warn("#{message}")
+                answer = ui.ask("Would you like to perform a patch-level bump on the #{@cookbook.name} cookbook now? (Y/N)")
+              else
+                ui.warn message_autobump
+              end
+              if config[:yes] or answer == "Y" or answer == "y"
                 bump = SporkBump.new
-                bump.name_args = [@cookbook.name]
+                bump.name_args = [@cookbook.name,"patch"]
                 bump.run
               else
                 ui.info "Skipping bump..."

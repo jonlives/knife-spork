@@ -1,14 +1,17 @@
 require 'chef/knife'
-require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkNodeFromFile < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+    end
 
     banner 'knife spork node from file FILE (options)'
 
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if @name_args.empty?
