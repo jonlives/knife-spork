@@ -379,7 +379,7 @@ Saving changes to development.json
 Promotion complete. Don't forget to upload your changed development.json to Chef Server
 ```
 
-Spork Environnent Check
+Spork Environment Check
 -------------
 Environment check provides the ability to validate a local chef environment file is locked to versions that actually exist on the chef server.  Running this check prior to uploading your environment files is recommended as it can prevent your chef server from becoming unresponsive due to a version constraint that will never be valid.
 
