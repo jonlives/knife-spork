@@ -93,6 +93,13 @@ plugins:
     channel: "#sysops"
     teamname: myteam
     username: knife
+  rubocop:
+    epic_fail: true
+    show_name: false
+    autocorrect: false
+    out_file: <file>
+    sev_level: <C|W|E>
+    lint: false
 ```
 
 #### Default Environments
