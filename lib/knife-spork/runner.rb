@@ -134,6 +134,10 @@ module KnifeSpork
         [config[:cookbook_path] ||= ::Chef::Config.cookbook_path].flatten[0]
       end
 
+      def omni_promote
+        spork_config[:omni_promote] || true
+      end
+
       def environment_path
         spork_config[:environment_path] || Chef::Config.environment_path.first || cookbook_path.gsub("/cookbooks","/environments")
       end
@@ -144,6 +148,10 @@ module KnifeSpork
 
       def all_cookbooks
         ::Chef::CookbookLoader.new(::Chef::Config.cookbook_path)
+      end
+
+      def bump_comment
+        spork_config[:bump_comment] || false
       end
 
       def load_cookbook(name)

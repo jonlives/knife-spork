@@ -88,6 +88,13 @@ plugins:
     port: 2003
   eventinator:
     url: http://eventinator.mydomain.com/events/oneshot
+  rubocop:
+    epic_fail: true
+    show_name: false
+    autocorrect: false
+    out_file: <file>
+    sev_level: <C|W|E>
+    lint: false
 ```
 
 #### Default Environments
@@ -464,4 +471,52 @@ knife spork environment create
 knife spork environment delete
 knife spork environment edit
 knife spork environment from file
+```
+
+Spork Rubocop
+-------------
+Automatically runs rubocop against your cookbooks on check and upload.
+This is entirely based off of the Foodcritic plugin.
+
+
+#### Usage
+```ruby
+knife spork check <cookbook>
+knife spork upload <cookbook>
+```
+
+#### Example
+``` ruby
+chef_workstation01$ knife spork check chef-client
+Checking versions for cookbook chef-client...
+
+Local Version:
+  3.3.3
+
+Remote Versions: (* indicates frozen)
+  3.3.3
+  3.2.0
+
+ERROR: The version 3.3.3 exists on the server and is not frozen. Uploading will overwrite!
+Running rubocop against chef-client@3.3.3...
+/home/chef-repo/cookbooks/chef-client
+Inspecting 25 files
+....CCCCC.CWCCCCCWCCCWCCC
+
+Offenses:
+
+chef-client/files/default/tests/minitest/config_test.rb:22:53: C: Prefer single-quoted strings when you don't need string interpolation or special symbols.
+    file(File.join(node['chef_client']['conf_dir'], "client.rb")).must_exist
+                                                    ^^^^^^^^^^^
+chef-client/libraries/helpers.rb:35:72: C: Prefer single-quoted strings when you don't need string interpolation or special symbols.
+          Chef::Log.debug("Node has Chef Server Recipe? #{node.recipe?("chef-server")}")
+                                                                       ^^^^^^^^^^^^^
+chef-client/libraries/helpers.rb:36:70: C: Prefer single-quoted strings when you don't need string interpolation or special symbols.
+          Chef::Log.debug("Node has Chef Server Executable? #{system("which chef-server > /dev/null 2>&1")}")
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+chef-client/libraries/helpers.rb:37:74: C: Prefer single-quoted strings when you don't need string interpolation or special symbols.
+          Chef::Log.debug("Node has Chef Server Ctl Executable? #{system("which chef-server-ctl > /dev/null 2>&1")}")
+                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+
 ```

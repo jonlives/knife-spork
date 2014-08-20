@@ -37,6 +37,7 @@ module KnifeSpork
       def after_bump
         cookbooks.each do |cookbook|
           git_add(cookbook_path_for(cookbook),"metadata.rb")
+          git_add(cookbook_path_for(cookbook),"CHANGELOG.md")
         end
       end
 
