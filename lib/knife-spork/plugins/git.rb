@@ -45,8 +45,14 @@ module KnifeSpork
           git_add(environment_path,"#{environment}.json")
         end
         unless config.auto_push.nil? 
+          branch =  if cli_params.has_key?("branch")
+                      cli_params[:branch]
+                    else 
+                      "master"
+                    end
+
           git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
-          git_push(cli_params[:branch])
+          git_push(branch)
         end
       end
 
