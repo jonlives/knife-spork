@@ -289,6 +289,15 @@ module KnifeSpork
           exit(1)
         end
       end
+
+      def unload_berkshelf_if_specified
+        # Temporary fix for #138 to allow Berkshelf functionality
+        # to be bypassed until #85 has been completed and Berkshelf 3 support added
+        if spork_config.skip_berkshelf
+          ui.warn "Unloading Berkshelf as skip_berkshelf option found in config"
+          Object.send(:remove_const, :Berkshelf)
+        end
+      end
     end
 
     def self.included(receiver)

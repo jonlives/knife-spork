@@ -42,6 +42,10 @@ module KnifeSpork
         exit 1
       end
 
+      # Temporary fix for #138 to allow Berkshelf functionality
+      # to be bypassed until #85 has been completed and Berkshelf 3 support added
+      unload_berkshelf_if_specified
+
       #First load so plugins etc know what to work with
       @cookbook = load_cookbook(name_args.first)
 

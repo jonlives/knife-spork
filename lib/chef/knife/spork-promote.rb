@@ -1,4 +1,7 @@
 require 'chef/knife'
+begin
+  require 'berkshelf'
+rescue LoadError; end
 
 module KnifeSpork
   class SporkPromote < Chef::Knife
@@ -6,9 +9,6 @@ module KnifeSpork
     deps do
       require 'chef/exceptions'
       require 'knife-spork/runner'
-      begin
-        require 'berkshelf'
-      rescue LoadError; end
     end
 
     banner 'knife spork promote ENVIRONMENT COOKBOOK (options)'
@@ -41,6 +41,10 @@ module KnifeSpork
         ui.error("You must specify the cookbook and environment to promote to")
         exit 1
       end
+
+      # Temporary fix for #138 to allow Berkshelf functionality
+      # to be bypassed until #85 has been completed and Berkshelf 3 support added
+      unload_berkshelf_if_specified
 
       #First load so plugins etc know what to work with
       @environments, @cookbook = load_environments_and_cookbook

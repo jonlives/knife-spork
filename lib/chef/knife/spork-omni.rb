@@ -1,13 +1,13 @@
 require 'chef/knife'
+begin
+  require 'berkshelf'
+rescue LoadError; end
 
 module KnifeSpork
   class SporkOmni < Chef::Knife
 
     deps do
       require 'knife-spork/runner'
-      begin
-        require 'berkshelf'
-      rescue LoadError; end
     end
 
     banner 'knife spork omni COOKBOOK (options)'
@@ -57,6 +57,10 @@ module KnifeSpork
         show_usage
         exit(1)
       end
+
+      # Temporary fix for #138 to allow Berkshelf functionality
+      # to be bypassed until #85 has been completed and Berkshelf 3 support added
+      unload_berkshelf_if_specified
 
       cookbook = name_args.first
 

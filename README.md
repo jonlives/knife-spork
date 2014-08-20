@@ -52,6 +52,7 @@ environment_path: "/home/me/environments"
 role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
+skip_berkshelf: false
 json_options:
   indent: "    "
 plugins:
@@ -116,6 +117,9 @@ The `preserve_constraint_operators` directive causes spork promote to preserve e
 
 #### Always Promote Remote
 The `always_promote_remote` directive allows you to tell spork promote to always act as if the --remote option had been specified. This will also have the same effect on spork omni. This option should only be used if you're sure you want all changes to be uploaded to the server as soon as you run promote.
+
+#### Skip Berkshelf
+The `skip_berkshelf` directive is a temporary flag added in [#138](https://github.com/jonlives/knife-spork/issues/138) to allow Berkshelf functionality to be optionally bypassed until Berkshelf 3 support has been added to knife-spork per [#85](https://github.com/jonlives/knife-spork/issues/85). It simply removed the :Berkshelf constant from the namespace used by knife-spork.
 
 #### JSON Options
 The `json_options` directive allows you to tell spork to pass options to [pretty_generate](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/json/rdoc/JSON.html#method-i-pretty_generate) to control the format of the resulting json
