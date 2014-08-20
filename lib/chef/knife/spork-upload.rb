@@ -1,13 +1,15 @@
 require 'chef/knife'
-require 'chef/exceptions'
-require 'chef/cookbook_loader'
-require 'chef/cookbook_uploader'
-require 'knife-spork/runner'
-require 'socket'
 
 module KnifeSpork
   class SporkUpload < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'chef/exceptions'
+      require 'chef/cookbook_loader'
+      require 'chef/cookbook_uploader'
+      require 'knife-spork/runner'
+      require 'socket'
+    end
 
     CHECKSUM = 'checksum'
     MATCH_CHECKSUM = /[0-9a-f]{32,}/
@@ -39,6 +41,7 @@ module KnifeSpork
     end
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
       config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 
@@ -78,18 +81,23 @@ module KnifeSpork
           check_dependencies(cookbook)
           if name_args.include?(cookbook.name.to_s)
             uploader = Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path)
-            if uploader.respond_to?(:upload_cookbooks)
-              # Chef >= 10.14.0
-              uploader.upload_cookbooks
-              ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
-              cookbook.freeze_version
-              uploader.upload_cookbooks
-            else
-              uploader.upload_cookbook
-              ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
-              cookbook.freeze_version
-              uploader.upload_cookbook
+            begin
+              if uploader.respond_to?(:upload_cookbooks)
+                # Chef >= 10.14.0
+                uploader.upload_cookbooks
+                ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
+                cookbook.freeze_version
+                uploader.upload_cookbooks
+              else
+                uploader.upload_cookbook
+                ui.info "Freezing #{cookbook.name} at #{cookbook.version}..."
+                cookbook.freeze_version
+                uploader.upload_cookbook
 
+              end
+            rescue Chef::Exceptions::CookbookFrozen => msg
+              ui.error "#{cookbook.name}@#{cookbook.version} is frozen. Please bump your version number before continuing!"
+              exit(1)
             end
           end
         rescue Net::HTTPServerException => e

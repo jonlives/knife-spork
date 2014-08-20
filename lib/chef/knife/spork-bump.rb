@@ -1,9 +1,11 @@
 require 'chef/knife'
-require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkBump < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+    end
 
     TYPE_INDEX = { :major => 0, :minor => 1, :patch => 2, :manual => 3 }.freeze
 
@@ -35,6 +37,7 @@ module KnifeSpork
     banner 'knife spork bump COOKBOOK [major|minor|patch|manual]'
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
       config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 
@@ -56,6 +59,7 @@ module KnifeSpork
     end
 
     private
+
     def bump
       old_version = @cookbook.version
 

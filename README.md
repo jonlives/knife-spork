@@ -47,12 +47,13 @@ environment_groups:
     - user_testing
     - acceptance_testing
 version_change_threshold: 2
+preserve_constraint_operators: true
 environment_path: "/home/me/environments"
 role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
-omni_promote: true
-bump_comment: true
+json_options:
+  indent: "    "
 plugins:
   campfire:
     account: myaccount
@@ -98,14 +99,14 @@ The `environment_groups` directive allows you to specify a list of environments 
 #### Version Change Threshold
 The `version_change_threshold` directive allows you to customise the threshold used by a safety check in spork promote which will prompt for confirmation if you're promoting a cookbook by more than version_change_threshold versions. This defaults to 2 if not set, ie promoting a cookbook from v1.0.1 to v 1.0.2 will not trip this check, wheras promoting from v1.0.1 to v1.0.3 will.
 
+#### Preserve Constraint Operators
+The `preserve_constraint_operators` directive causes spork promote to preserve existing version constraint operators in your environment files, only updating the version number. This directive is disabled by default, which causes spork to always use the `=` constraint.
+
 #### Always Promote Remote
 The `always_promote_remote` directive allows you to tell spork promote to always act as if the --remote option had been specified. This will also have the same effect on spork omni. This option should only be used if you're sure you want all changes to be uploaded to the server as soon as you run promote.
 
-#### Omni Promote
-The omni_promote directive tells spork omni whether or not to promote your cookbook to the provided environment.  True(default) means omni will run the promote.  False means omni will skip the promote step.  The bump and upload steps will still be performned.  A setting of false can be overridden on the command line with the --promote option.
-
-#### Bump Comment
-The 'bump_comment` directive tells spork to always prompt the user for a comment reguarding the changes to this version of the cookbook. This comment will be appended to the CHANGELOG.md file along with the new version # and the user name.  This can also be done with the "--bump_comment" on the command line.
+#### JSON Options
+The `json_options` directive allows you to tell spork to pass options to [pretty_generate](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/json/rdoc/JSON.html#method-i-pretty_generate) to control the format of the resulting json
 
 #### Environment Path
 The `environment_path` allows you to specify the path to where you store your chef environment json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
@@ -218,28 +219,17 @@ Everything looks good!
 
 Spork Bump
 ----------
-This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` & 'CHANGELOG.md' files. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
-
-Bump can also be configured promt the user to enter a comment reguarding thier change.  This comment will be appended to the CHANGELOG.md file along with the new version, and the current username.
-This can be done by using the '--bump_comment' on the command line or by setting the bump_comment: directive to true.
+This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` file. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
 
 #### Usage
 ```bash
-knife spork bump COOKBOOK [major | minor | patch | manual x.x.x] [--bump_comment]
+knife spork bump COOKBOOK [major | minor | patch | manual x.x.x]
 ````
 
 #### Example (No patch level specified - defaulting to patch)
 ```text
-$ knife spork bump apache2 --bump_comment
-Enter Change Log comment, then press Ctrl-D:
-Bug #111 fixed.
+$ knife spork bump apache2
 Successfully bumped apache2 to v2.0.4!
-```
-``` CHANGELOG.md will be appended with the following:
-
-2.0.4
-------
-<user> - Bug #111 fixed.
 ```
 
 #### Example (Bumping patch level)
@@ -307,8 +297,6 @@ As omni is designed for use only in those cases where you want to perform all th
 
 If you run omni with no extra options, it will default to performing a ```patch``` level bump, and promote locally to the environments listed in the ```default_environments``` variable in your spork configuration file.
 
-Omni can be configured to skip the promote step by specifing "omni_promote: false" in the config file.  By default, this is set to true.
-
 Alternatively, you can specify any of the following options:
 
 ```--cookbook-path PATH:PATH```: A colon-separated path to look for cookbooks in
@@ -319,14 +307,12 @@ Alternatively, you can specify any of the following options:
 
 ```--environment ENVIRONMENT```: Environment to promote the cookbook to',
 
-```--promote```: Omni will run promote, overrides config setting.
-
 ```--remote```: Make omni perform a promote --remote instead of a local promote',
 
 #### Usage
 
 ```bash
-knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote, --promote]
+knife spork omni COOKBOOK [--bump-level, --cookbook-path, --include-dependencies, --environment, --remote]
 ```
 
 #### Example (default options, default_environments set to development and production)
@@ -385,6 +371,59 @@ OMNI: Promoting apache2
 Adding version constraint apache2 = 0.4.0
 Saving changes to development.json
 Promotion complete. Don't forget to upload your changed development.json to Chef Server
+```
+
+Spork Environnent Check
+-------------
+Environment check provides the ability to validate a local chef environment file is locked to versions that actually exist on the chef server.  Running this check prior to uploading your environment files is recommended as it can prevent your chef server from becoming unresponsive due to a version constraint that will never be valid.
+
+If you run environment check with no options it will collect all invalid cookbook versions before reporting a failure.
+
+Alternatively, you can specify any of the following options:
+
+```-f, --fatal```: Quit on first invalid constraint located
+
+#### Usage
+
+```bash
+knife spork environment check ENVIRONMENT (options)
+```
+
+#### Example of a passing chef environment check with no options
+
+```text
+$ knife spork environment check production
+
+Checking constraints for environment: production
+Environment production looks good
+```
+
+#### Example of multiple invalid cookbooks with no options
+
+```text
+$ knife spork environment check production
+
+Checking constraints for environment: production
+ERROR: mysql@10.2.0 does not exist on Chef Server! Upload the cookbook first by running:
+
+	knife spork upload mysql
+
+ERROR: rbenv@10.7.1 does not exist on Chef Server! Upload the cookbook first by running:
+
+	knife spork upload rbenv
+
+FATAL: Environment production has constraints that point to non existent cookbook versions.
+```
+
+#### Example of running with the --fatal flag with the same invalid cookbooks from previous example
+
+```text
+$ knife spork environment check production
+
+Checking constraints for environment: production
+FATAL: mysql@10.2.0 does not exist on Chef Server! Upload the cookbook first by running:
+
+	knife spork upload mysql
 ```
 
 Spork Node / Role / Databag Commands

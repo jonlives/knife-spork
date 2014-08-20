@@ -1,18 +1,18 @@
 require 'chef/knife'
-require 'knife-spork/runner'
-require 'json'
 
 module KnifeSpork
   class SporkRoleFromFile < Chef::Knife
-    include KnifeSpork::Runner
 
     deps do
+      require 'knife-spork/runner'
+      require 'json'
       require 'chef/knife/role_from_file'
     end
 
     banner 'knife spork role from file FILENAME (options)'
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if @name_args.empty?
@@ -24,7 +24,11 @@ module KnifeSpork
       @name_args.each do |arg|
           @object_name = arg.split("/").last
           run_plugins(:before_rolefromfile)
-          pre_role = load_role(@object_name.gsub(".json","").gsub(".rb",""))
+          begin
+            pre_role = load_role(@object_name.gsub(".json","").gsub(".rb",""))
+          rescue Net::HTTPServerException => e
+            pre_role = {}
+          end
           role_from_file
           post_role = load_role(@object_name.gsub(".json","").gsub(".rb",""))
           @object_difference = json_diff(pre_role,post_role).to_s

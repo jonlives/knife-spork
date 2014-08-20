@@ -1,13 +1,14 @@
 require 'chef/knife'
-require 'knife-spork/runner'
-
-begin
-  require 'berkshelf'
-rescue LoadError; end
 
 module KnifeSpork
   class SporkOmni < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+      begin
+        require 'berkshelf'
+      rescue LoadError; end
+    end
 
     banner 'knife spork omni COOKBOOK (options)'
 
@@ -53,6 +54,7 @@ module KnifeSpork
     end
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if name_args.empty?
