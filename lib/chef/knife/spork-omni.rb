@@ -1,13 +1,14 @@
 require 'chef/knife'
-require 'knife-spork/runner'
-
-begin
-  require 'berkshelf'
-rescue LoadError; end
 
 module KnifeSpork
   class SporkOmni < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+      begin
+        require 'berkshelf'
+      rescue LoadError; end
+    end
 
     banner 'knife spork omni COOKBOOK (options)'
 
@@ -34,6 +35,11 @@ module KnifeSpork
            :description => 'Environment to promote the cookbook to',
            :default => nil
 
+    option :omni_promote,
+           :long => '--promote',
+           :description => 'Omni will run promote, overrides config setting',
+           :default => nil
+           
     option :remote,
            :long  => '--remote',
            :description => 'Make omni finish with promote --remote instead of a local promote',
@@ -48,6 +54,7 @@ module KnifeSpork
     end
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if name_args.empty?
@@ -101,7 +108,9 @@ module KnifeSpork
       ui.msg ""
       upload(cookbook)
       ui.msg ""
-      promote(cookbook)
+      if config[:omni_promote]
+      	promote(cookbook)
+      end
     end
   end
 end

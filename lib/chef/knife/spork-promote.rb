@@ -1,14 +1,15 @@
 require 'chef/knife'
-require 'chef/exceptions'
-require 'knife-spork/runner'
-
-begin
-  require 'berkshelf'
-rescue LoadError; end
 
 module KnifeSpork
   class SporkPromote < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'chef/exceptions'
+      require 'knife-spork/runner'
+      begin
+        require 'berkshelf'
+      rescue LoadError; end
+    end
 
     banner 'knife spork promote ENVIRONMENT COOKBOOK (options)'
 
@@ -32,6 +33,7 @@ module KnifeSpork
     end
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if @name_args.empty?
@@ -77,7 +79,13 @@ module KnifeSpork
 
     def update_version_constraints(environment, cookbook, new_version)
       validate_version!(new_version)
-      environment.cookbook_versions[cookbook] = "= #{new_version}"
+      if spork_config.preserve_constraint_operators
+        constraint_operator = environment.cookbook_versions[cookbook].split.first
+        ui.msg "Preserving existing version constraint operator: #{constraint_operator}"
+      else
+        constraint_operator = "="
+      end
+      environment.cookbook_versions[cookbook] = "#{constraint_operator} #{new_version}"
     end
 
     def save_environment_changes_remote(environment)
@@ -152,8 +160,7 @@ module KnifeSpork
       validate_version!(config[:version])
       version = config[:version] || load_cookbook(cookbook_name).version
 
-      environment = config[:environment]
-      api_endpoint = environment ? "environments/#{environment}/cookbooks/#{cookbook_name}/#{version}" : "cookbooks/#{cookbook_name}/#{version}"
+      api_endpoint = "cookbooks/#{cookbook_name}/#{version}"
 
       begin
         cookbooks = rest.get_rest(api_endpoint)

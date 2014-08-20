@@ -1,10 +1,12 @@
 require 'chef/knife'
-require 'chef/knife/core/node_editor'
-require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkNodeEdit < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'chef/knife/core/node_editor'
+      require 'knife-spork/runner'
+    end
 
     banner 'knife spork node edit NODE (options)'
 
@@ -15,6 +17,7 @@ module KnifeSpork
            :description => "Display all attributes when editing"
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if @name_args.empty?

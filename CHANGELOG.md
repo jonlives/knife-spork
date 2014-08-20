@@ -1,3 +1,25 @@
+## 1.3.4 (2nd June, 2014)
+
+Bugfixes:
+
+    - Fix incorrect endpoint in spork environment check (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/128)
+    
+## 1.3.3 (23rd May, 2014)
+
+Features:
+
+    - Added new preserve_constraint_operators config flag to make spork promote preserve existing version constraint operators (https://github.com/jonlives/knife-spork/issues/101)
+    - Have runner check Chef::Config for environment_path (Thanks to @cstewart87 https://github.com/jonlives/knife-spork/pull/114)
+    - Have spork check autobump when -y option given (Thanks to @slingcode https://github.com/jonlives/knife-spork/pull/108)
+    - Add ability to pass options to JSON.pretty_generate (Thanks to @halcyonCorsair https://github.com/jonlives/knife-spork/pull/105)
+    - Spork check environment command to validate constraints specified in environments (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/115)
+
+Bugfixes:
+
+    - Fix exception when trying to load non existent role or env from file (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/116)
+    - Fix incorrect error message when uploading frozen cookbook (https://github.com/jonlives/knife-spork/issues/117)
+    - Fix invalid API endpoint in cookbook upload check when environment specified in knife.rb (https://github.com/jonlives/knife-spork/issues/106)
+
 ## 1.3.2 (5th Feb, 2014)
 
 Features:

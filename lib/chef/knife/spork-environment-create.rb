@@ -1,9 +1,11 @@
 require 'chef/knife'
-require 'knife-spork/runner'
 
 module KnifeSpork
   class SporkEnvironmentCreate < Chef::Knife
-    include KnifeSpork::Runner
+
+    deps do
+      require 'knife-spork/runner'
+    end
 
     banner 'knife spork environment create ENVIRONMENT (options)'
 
@@ -13,6 +15,7 @@ module KnifeSpork
            :description => "The environment description"
 
     def run
+      self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       if @name_args.empty?
