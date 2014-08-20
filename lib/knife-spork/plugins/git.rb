@@ -44,17 +44,9 @@ module KnifeSpork
         environments.each do |environment|
           git_add(environment_path,"#{environment}.json")
         end
-        
         unless config.auto_push.nil? 
           git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
-
-          branch =  if config.branch.nil?
-                      "master"
-                    else
-                      config.branch
-                    end
-
-          git_push(branch)
+          git_push(cli_params[:branch])
         end
       end
 
@@ -134,7 +126,7 @@ module KnifeSpork
 
       def git_push(branch)
         begin
-            ui.msg "Git: Pushing to Master"
+            ui.msg "Git: Pushing to #{branch}"
             git.push "origin", branch
         rescue ::Git::GitExecuteError => e
           ui.error "Could not push to master: #{e.message}"

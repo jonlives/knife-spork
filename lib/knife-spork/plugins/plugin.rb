@@ -91,6 +91,10 @@ module KnifeSpork
         (begin `git config user.name`.chomp; rescue nil; end || ENV['USERNAME'] || ENV['USER']).strip
       end
 
+      def cli_params
+        @options[:cli_params] 
+      end
+
       # Wrapper method around require that attempts to include the associated file. If it does not exist
       # or cannot be loaded, an nice error is produced instead of blowing up.
       def safe_require(file)
