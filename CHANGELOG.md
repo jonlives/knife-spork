@@ -1,3 +1,19 @@
+## 1.4.0 (Footh August, 2014)
+
+Bugfixes:
+
+    - Fix bug with preserve_constraint_operators functionality (https://github.com/jonlives/knife-spork/issues/131)
+    - Fix incorrect data bag banner message (Thanks to @jperry https://github.com/jonlives/knife-spork/pull/119)
+    - Fix error when calculating environment path when "cookbooks" occurs in cookbook_path outside of the last position (https://github.com/jonlives/knife-spork/issues/137)
+    - Fix spelling error in README (Thanks to @jrwesolo https://github.com/jonlives/knife-spork/pull/136)
+
+Features:
+    
+    - Hipchat plugin now supports custom server URL and API version (Thanks to @hrak https://github.com/jonlives/knife-spork/pull/135)
+    - Slack plugin (Thanks to @chrisferry https://github.com/jonlives/knife-spork/pull/134)
+    - Add skip_berkshelf flag to allow Berkshelf operations to be skipped even when Berkshelf is loaded (https://github.com/jonlives/knife-spork/issues/138)
+    
+    
 ## 1.3.4 (2nd June, 2014)
 
 Bugfixes:
