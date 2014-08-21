@@ -1,4 +1,4 @@
-## 1.4.0 (Footh August, 2014)
+## 1.4.0 (21st August, 2014)
 
 Bugfixes:
 
