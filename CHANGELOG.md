@@ -1,3 +1,10 @@
+## 1.4.1 (21st August, 2014)
+
+Bugfixes:
+
+    - Fix bug with preserving constraint operators on new cookbooks (https://github.com/jonlives/knife-spork/issues/139)
+    
+
 ## 1.4.0 (21st August, 2014)
 
 Bugfixes:
