@@ -11,6 +11,7 @@ Features:
     
     - Hipchat plugin now supports custom server URL and API version (Thanks to @hrak https://github.com/jonlives/knife-spork/pull/135)
     - Slack plugin (Thanks to @chrisferry https://github.com/jonlives/knife-spork/pull/134)
+    - Rubocop plugin (Thanks to @chazzly https://github.com/jonlives/knife-spork/pull/120)
     - Add skip_berkshelf flag to allow Berkshelf operations to be skipped even when Berkshelf is loaded (https://github.com/jonlives/knife-spork/issues/138)
     
     
