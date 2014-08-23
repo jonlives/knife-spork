@@ -48,8 +48,7 @@ module KnifeSpork
           :object_name => @object_name,
           :object_secondary_name => @object_secondary_name,
           :object_difference => @object_difference,
-          :ui => ui,
-          :cli_params => config 
+          :ui => ui
         )
       end
 

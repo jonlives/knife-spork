@@ -23,11 +23,6 @@ module KnifeSpork
       :description => 'Save the environment to the chef server in addition to the local JSON file',
       :default => nil
 
-    option :branch,
-      :long  => '--branch BRANCH',
-      :description => 'If github and auto_push are on, the branch to push commits to',
-      :default => 'master'
-
     if defined?(::Berkshelf)
       option :berksfile,
         :short => '-b',

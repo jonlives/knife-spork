@@ -45,8 +45,8 @@ module KnifeSpork
           git_add(environment_path,"#{environment}.json")
         end
         unless config.auto_push.nil? 
-          branch =  if cli_params.has_key?("branch")
-                      cli_params[:branch]
+          branch =  if not config.branch.nil?
+                      config[:branch] 
                     else 
                       "master"
                     end
