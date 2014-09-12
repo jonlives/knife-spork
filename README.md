@@ -94,6 +94,7 @@ plugins:
     channel: "#sysops"
     teamname: myteam
     username: knife
+    icon_url: http://example.com/image.jpg
   rubocop:
     epic_fail: true
     show_name: false
@@ -153,7 +154,7 @@ knife spork info
 ```text
 $ knife spork info
 Config Hash:
-{"plugins"=>{"git"=>{"enabled"=>true}, "irccat"=>{"server"=>"irccat.mydomain.com", "port"=>12345, "gist"=>"usr/bin/gist", "channel"=>["#chef-announce"]}, "graphite"=>{"server"=>"graphite.mydomain.com", "port"=>2003}, "slack"=>{"api_token"=>"abc123", "channel"=>"random", "teamname"=>"myteam"}, "eventinator"=>{"url"=>"http://eventinator.mydomain.com/events/oneshot"}}, "default_environments"=>["development", "production"], "version_change_threshold"=>2, "pplugins"=>{"foodcritic"=>{"fail_tags"=>["style,correctness,test"], "tags"=>["~portability"], "include_rules"=>["config/rules.rb"]}}}
+{"plugins"=>{"git"=>{"enabled"=>true}, "irccat"=>{"server"=>"irccat.mydomain.com", "port"=>12345, "gist"=>"usr/bin/gist", "channel"=>["#chef-announce"]}, "graphite"=>{"server"=>"graphite.mydomain.com", "port"=>2003}, "slack"=>{"api_token"=>"abc123", "channel"=>"random", "teamname"=>"myteam", "icon_url"=>"http://example.com/image.jpg"}, "eventinator"=>{"url"=>"http://eventinator.mydomain.com/events/oneshot"}}, "default_environments"=>["development", "production"], "version_change_threshold"=>2, "pplugins"=>{"foodcritic"=>{"fail_tags"=>["style,correctness,test"], "tags"=>["~portability"], "include_rules"=>["config/rules.rb"]}}}
 
 Plugins:
 KnifeSpork::Plugins::Campfire: disabled
