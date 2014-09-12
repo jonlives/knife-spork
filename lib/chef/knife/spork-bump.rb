@@ -28,12 +28,18 @@ module KnifeSpork
       :description => 'Berksfile skips resolving source cookbook dependencies',
       :default => true
 
-    banner 'knife spork bump COOKBOOK [major|minor|patch|manual]'
+    option :bump_comment,
+           :long => '--bump_comment',
+           :description => 'Bump will prompt for a Change comment, which will be appended to CHANGELOG.md along with the new version # and username',
+           :default => nil
+
+    banner 'knife spork bump COOKBOOK [major|minor|patch|manual] [--bump_comment]'
 
     def run
       self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
       config[:cookbook_path] ||= Chef::Config[:cookbook_path]
+      config[:bump_comment] ||= spork_config.bump_comment
 
       if @name_args.empty?
         show_usage
@@ -76,6 +82,17 @@ module KnifeSpork
       metadata_file = "#{@cookbook.root_dir}/metadata.rb"
       new_contents = File.read(metadata_file).gsub(/(version\s+['"])[0-9\.]+(['"])/, "\\1#{new_version}\\2")
       File.open(metadata_file, 'w'){ |f| f.write(new_contents) }
+
+      if config[:bump_comment]
+        changelog_file =  "#{@cookbook.root_dir}/CHANGELOG.md"
+        ui.info "Enter Change Log comment, then press Ctrl-D:  "
+        change_comment = $stdin.read
+        File.open(changelog_file, 'a') { |cl|
+          cl.write("\n#{new_version}\n")
+          cl.write("---------\n")
+          cl.write("#{ENV['USER']} - #{change_comment}\n")
+        }
+      end
 
       ui.info "Successfully bumped #{@cookbook.name} to v#{new_version}!"
     end

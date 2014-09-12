@@ -173,6 +173,10 @@ module KnifeSpork
         ::Chef::CookbookLoader.new(::Chef::Config.cookbook_path)
       end
 
+      def bump_comment
+        spork_config[:bump_comment] || false
+      end
+
       def load_cookbook(name)
         return name if name.is_a?(Chef::CookbookVersion)
 
