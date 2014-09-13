@@ -44,6 +44,16 @@ module KnifeSpork
         environments.each do |environment|
           git_add(environment_path,"#{environment}.json")
         end
+        unless config.auto_push.nil? 
+          branch =  if not config.branch.nil?
+                      config[:branch] 
+                    else 
+                      "master"
+                    end
+
+          git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
+          git_push(branch)
+        end
       end
 
       private
@@ -52,9 +62,13 @@ module KnifeSpork
         log = Logger.new(STDOUT)
         log.level = Logger::WARN
         @git ||= begin
-          ::Git.open('.', :log => log)
-        rescue
-          ui.error 'You are not currently in a git repository. Please ensure you are in a git repo, a repo subdirectory, or remove the git plugin from your KnifeSpork configuration!'
+          cwd = FileUtils.pwd()
+          if is_submodule?(cwd)
+            cwd = get_parent_dir(cwd)  
+          end 
+          ::Git.open(cwd, :log => log)
+        rescue Exception => e  
+          ui.error "You are not currently in a git repository #{cwd}. Please ensure you are in a git repo, a repo subdirectory, or remove the git plugin from your KnifeSpork configuration!"
           exit(0)
         end
       end
@@ -105,21 +119,23 @@ module KnifeSpork
           end
         end
       end
-
-      # Commit changes, if any
-      def git_commit
+      
+      def git_commit(filepath, msg)
         begin
-          git.add('.')
-          `git ls-files --deleted`.chomp.split("\n").each{ |f| git.remove(f) }
-          git.commit_all "[KnifeSpork] Bumping cookbooks:\n#{cookbooks.collect{|c| "  #{c.name}@#{c.version}"}.join("\n")}"
-        rescue ::Git::GitExecuteError; end
+          if is_repo?(filepath)
+            ui.msg "Git: Committing changes..."
+            git.commit_all msg
+          end
+        rescue ::Git::GitExecuteError; 
+        end
       end
 
-      def git_push(tags = false)
+      def git_push(branch)
         begin
-          git.push remote, branch, tags
+            ui.msg "Git: Pushing to #{branch}"
+            git.push "origin", branch
         rescue ::Git::GitExecuteError => e
-          ui.error "Could not push to remote #{remote}/#{branch}. Does it exist?"
+          ui.error "Could not push to master: #{e.message}"
         end
       end
 
