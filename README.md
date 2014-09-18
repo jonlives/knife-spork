@@ -80,6 +80,7 @@ plugins:
   git:
     enabled: true
     auto_push: true
+    branch: some_branch
   irccat:
     server: irccat.mydomain.com
     port: 12345
@@ -281,7 +282,7 @@ Spork Promote
 -------------
 This function lets you easily set a version constraint in an environment or group of environments for a particular cookbook. By default it will set the version constraint to whatever the local version of the specified cookbook is. Optionally, you can include a `--version` option which will set the version constraint for the specified cookbook to whatever version number you provide. You might want to use this if, for example, you pushed a version constraint for a cookbook version you don't want your nodes to use anymore, so you want to "roll back" the environment to a previous version. You can also specify the `--remote` option if you'd like to automatically upload your changed local environment file to the server. 
 
-If enabled, the `auto_push` configuration in the git plugin will automatically push to master changes to the environment file to github. A different branch could be configured aside from master with the `branch` option. 
+If enabled, the `auto_push` configuration in the git plugin will automatically push to master changes to the environment file to github. A different branch could be configured aside from master when the `branch` option is specified in the spork configuration. 
 
 If you don't specify an environment or environment group, the default_environments config directive will be used if set.
 
