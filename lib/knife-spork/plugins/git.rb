@@ -121,7 +121,7 @@ module KnifeSpork
         begin
           if is_repo?(filepath)
             ui.msg "Git: Committing changes..."
-            git.commit_all msg
+            git.commit msg
           end
         rescue ::Git::GitExecuteError; 
         end
