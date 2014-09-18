@@ -63,10 +63,7 @@ module KnifeSpork
         log.level = Logger::WARN
         @git ||= begin
           cwd = FileUtils.pwd()
-          if is_submodule?(cwd)
-            cwd = get_parent_dir(cwd)  
-          end 
-          ::Git.open(cwd, :log => log)
+          ::Git.open(get_parent_dir(cwd) , :log => log)
         rescue Exception => e  
           ui.error "You are not currently in a git repository #{cwd}. Please ensure you are in a git repo, a repo subdirectory, or remove the git plugin from your KnifeSpork configuration!"
           exit(0)
