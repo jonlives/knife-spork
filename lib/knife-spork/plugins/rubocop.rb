@@ -32,7 +32,7 @@ module KnifeSpork
 
           options = [ cookbook_path ]
 
-          cli = ::Rubocop::CLI.new
+          cli = defined?(RuboCop) ? ::RuboCop::CLI.new : ::Rubocop::CLI.new
           result = cli.run(options)
 
           unless result  == 0
