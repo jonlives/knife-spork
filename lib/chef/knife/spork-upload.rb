@@ -84,7 +84,7 @@ module KnifeSpork
         begin
           check_dependencies(cookbook)
           if name_args.include?(cookbook.name.to_s)
-            uploader = Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path)
+            uploader = Chef::CookbookUploader.new(cookbook, opts=::Chef::Config)
             begin
               if uploader.respond_to?(:upload_cookbooks)
                 # Chef >= 10.14.0
