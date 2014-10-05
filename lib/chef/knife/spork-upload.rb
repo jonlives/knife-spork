@@ -84,7 +84,7 @@ module KnifeSpork
         begin
           check_dependencies(cookbook)
           if name_args.include?(cookbook.name.to_s)
-            if Gem::Version.new(Chef::VERSION) > Gem::Version.new('12.0.0')
+            if Gem::Version.new(Chef::VERSION).release >= Gem::Version.new('12.0.0')
               uploader = Chef::CookbookUploader.new(cookbook)
             else
               uploader = Chef::CookbookUploader.new(cookbook, ::Chef::Config.cookbook_path)
