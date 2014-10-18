@@ -59,8 +59,6 @@ module KnifeSpork
           environments = @name_args[0].split(",").map{ |env| load_specified_environment_group(env) }
           [ environments.flatten, @name_args[1] ]
         elsif @name_args.size == 1
-          puts "test"
-          puts default_environments
           [ [default_environments].flatten, @name_args[0] ]
         end
       end
