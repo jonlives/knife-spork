@@ -7,7 +7,9 @@ module KnifeSpork
       hook = options[:hook].to_sym
 
       #Load each of the drop-in plugins specified in the custom plugin path
-      Dir[File.expand_path("#{options[:config][:custom_plugin_path]}/*.rb")].each { |f| require f }
+      if (options[:config][:custom_plugin_path] !=nil)
+        Dir[File.expand_path("#{options[:config][:custom_plugin_path]}/*.rb")].each { |f| require f }
+      end
 
       klasses.each do |klass|
         plugin = klass.new(options)
