@@ -25,8 +25,13 @@ module KnifeSpork
 
     let(:stdout_io) { StringIO.new }
     let(:stderr_io) { StringIO.new }
-    let(:default_cookbook_path) do
-      File.expand_path('cookbooks', fixtures_path)
+
+    before(:all) do
+      copy_test_data
+    end
+
+    after(:all) do
+      cleanup_test_data
     end
 
     subject(:knife) do
