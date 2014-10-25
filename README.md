@@ -2,6 +2,7 @@ KnifeSpork
 ===========
 KnifeSpork is a workflow plugin for `Chef::Knife` which helps multiple developers work on the same Chef Server and repository without treading on each other's toes. This plugin was designed around the workflow we have here at Etsy, where several people are working on the Chef repository and Chef Server simultaneously. It contains several functions, documented below:
 
+[![Build Status](https://travis-ci.org/jonlives/knife-spork.svg)](https://travis-ci.org/jonlives/knife-spork)
 [![Gem Version](https://badge.fury.io/rb/knife-spork.png)](http://badge.fury.io/rb/knife-spork)
 
 Installation
