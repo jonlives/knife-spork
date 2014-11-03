@@ -228,7 +228,11 @@ module KnifeSpork
       end
 
       def load_environment_from_file(environment_name)
-        environment_loader.object_from_file("#{environment_path}/#{environment_name}.json")
+        begin
+          environment_loader.object_from_file("#{environment_path}/#{environment_name}.json")
+        rescue Yajl::ParseError => e
+          raise "#{environment_name} environment file has syntactically incorrect json.\n #{e.to_s}" 
+        end
       end
 
       def load_remote_environment(environment_name)
