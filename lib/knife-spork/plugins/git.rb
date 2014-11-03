@@ -44,7 +44,7 @@ module KnifeSpork
         environments.each do |environment|
           git_add(environment_path,"#{environment}.json")
         end
-        unless config.auto_push.nil? 
+        if config.auto_push
           branch =  if not config.branch.nil?
                       config[:branch] 
                     else 
