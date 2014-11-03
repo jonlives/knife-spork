@@ -9,7 +9,7 @@ module KnifeSpork
       def perform
         safe_require 'foodcritic'
 
-        if Gem::Specification.find_all_by_name("foodcritic", "~> 3.0.0").empty?
+        if Gem::Specification.find_all_by_name("foodcritic", ">= 3.0.0").empty?
           ui.fatal "The knife-spork foodcritic plugin requires foodcritic >= 3.0.0. Please install a more recent foodcritic version."
           exit 1
         end
