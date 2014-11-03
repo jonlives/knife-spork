@@ -1,3 +1,20 @@
+## 1.4.2(3rd November, 2014)
+
+Features:
+
+    - Improve error messages when uploading invalid JSON (Thanks to @jeunito https://github.com/jonlives/knife-spork/pull/151)
+    - Allow an optional comma delimited set of environments to be passed to spork promote (Thanks to @jeunito https://github.com/jonlives/knife-spork/pull/148)
+    - Add support for rubocop >= 0.23.0 in RuboCop plugin (Thanks to @dwradcliffe https://github.com/jonlives/knife-spork/pull/147)
+    - Relax foodcritic version requirement from ~> 3.0.0 to >= 3.0.0 (Thanks to @dwradcliffe https://github.com/jonlives/knife-spork/pull/146)
+    - Slack plugin now supports adding images in messages (Thanks to @ctrlok https://github.com/jonlives/knife-spork/pull/144)
+    - Git plugin can now optionally commit and push on changes (Thanks to @jeunito https://github.com/jonlives/knife-spork/pull/124)
+    
+Bugfixes:
+
+    - Fix custom plugin loading on Window (Thanks to @carpnick https://github.com/jonlives/knife-spork/pull/150)
+    - Fix config loading in CookbookUploader under Chef 12 (Thanks to @jordane https://github.com/jonlives/knife-spork/pull/149)
+    - Do not attempt to load Berksfile if not present (Thanks to @redondos https://github.com/jonlives/knife-spork/pull/142)
+    
 ## 1.4.1 (21st August, 2014)
 
 Bugfixes:
