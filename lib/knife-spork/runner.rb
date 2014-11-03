@@ -176,6 +176,7 @@ module KnifeSpork
 
       def load_from_berkshelf(name)
         return unless defined?(::Berkshelf)
+        return unless ::File.exist?(self.config[:berksfile])
         berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
         lockfile = ::Berkshelf::Lockfile.new(berksfile)
 
