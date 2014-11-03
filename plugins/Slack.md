@@ -45,3 +45,8 @@ The teamname of the slack account. ex. https://TEAMNAME.slack.com
 The username to post as.
 
 - Type: `String`
+
+#### icon_url
+The url for icon. ex. https://example.com/image.jpg, default: nil
+
+- Type: `String`

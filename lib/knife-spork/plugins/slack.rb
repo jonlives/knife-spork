@@ -100,7 +100,7 @@ module KnifeSpork
       def slack(message)
         safe_require 'slack-notifier'
         begin
-          notifier = ::Slack::Notifier.new( config.teamname, config.api_token, channel: channel, username: username)
+          notifier = ::Slack::Notifier.new( config.teamname, config.api_token, channel: channel, username: username, icon_url: config.icon_url)
           notifier.ping message 
         rescue Exception => e
           ui.error 'Something went wrong sending to Slack.'
