@@ -54,10 +54,10 @@ module KnifeSpork
 
       def load_environments_and_cookbook
         ensure_environment_and_cookbook_provided!
-
+       
         if @name_args.size == 2
-          environments = load_specified_environment_group(@name_args[0])
-          [ environments, @name_args[1] ]
+          environments = @name_args[0].split(",").map{ |env| load_specified_environment_group(env) }
+          [ environments.flatten, @name_args[1] ]
         elsif @name_args.size == 1
           [ [default_environments].flatten, @name_args[0] ]
         end
