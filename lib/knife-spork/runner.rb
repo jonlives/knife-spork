@@ -36,7 +36,7 @@ module KnifeSpork
 
         environments = [ @environments || @environment ].flatten.compact.collect{|environment| environment.is_a?(::Chef::Environment) ? environment : load_environment_from_file(environment)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environment_diffs = @environment_diffs
-
+        
         KnifeSpork::Plugins.run(
           :config => spork_config,
           :hook => hook.to_sym,
