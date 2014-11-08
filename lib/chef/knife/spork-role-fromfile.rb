@@ -40,6 +40,16 @@ module KnifeSpork
     def role_from_file
       rff = Chef::Knife::RoleFromFile.new
       rff.name_args = @name_args
+      ## Check if file names match role names 
+      @name_args.each do |arg|
+          file_name = arg.split("/").last
+          role = rff.loader.load_from("roles", file_name)
+          file_name = file_name.gsub(".json","").gsub(".rb", "")
+          if file_name != role.name
+              ui.error("Role name in file #{role.name} does not match file name #{file_name}")
+              exit 1
+          end
+      end
       rff.run
     end
   end
