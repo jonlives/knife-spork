@@ -56,6 +56,20 @@ module KnifeSpork
         end
       end
 
+      def before_environmentfromfile
+        git_pull(environment_path)
+      end
+
+      def after_environmentfromfile
+        if config.auto_push
+          if @options[:args][:git_message].nil? == false
+            git_add(environment_path, object_name)
+            git_commit(environment_path, @options[:args][:git_message])
+            git_push(branch)
+          end
+        end         
+      end
+
       private
       def git
         safe_require 'git'
