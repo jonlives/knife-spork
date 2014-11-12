@@ -25,7 +25,7 @@ module KnifeSpork
         @spork_config
       end
 
-      def run_plugins(hook, args = {})
+      def run_plugins(hook)
         cookbooks = [ @cookbooks || @cookbook ].flatten.compact.collect{|cookbook| cookbook.is_a?(::Chef::CookbookVersion) ? cookbook : load_cookbook(cookbook)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
 
         # Affects promote only:
@@ -49,7 +49,7 @@ module KnifeSpork
           :object_secondary_name => @object_secondary_name,
           :object_difference => @object_difference,
           :ui => ui,
-          :args => args
+          :args => @args.nil?? {} : @args
         )
       end
 
