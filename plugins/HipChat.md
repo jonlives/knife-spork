@@ -28,6 +28,7 @@ plugins:
       - Web Operations
     notify: true
     color: yellow
+    gist: /usr/bin/gist
 ```
 
 #### server_url
@@ -60,3 +61,9 @@ The color of the message.
 
 - Type: `String`
 - Acceptable Values: `[yellow, red, green, purple, random]`
+
+#### gist
+Optional path to gist binary installed by https://rubygems.org/gems/gist
+
+- Type: `String`
+
