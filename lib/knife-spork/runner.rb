@@ -231,7 +231,7 @@ module KnifeSpork
       def load_environment_from_file(environment_name)
         begin
           environment_loader.object_from_file("#{environment_path}/#{environment_name}.json")
-        rescue Yajl::ParseError => e
+        rescue FFI_Yajl::ParseError => e
           raise "#{environment_name} environment file has syntactically incorrect json.\n #{e.to_s}" 
         end
       end
