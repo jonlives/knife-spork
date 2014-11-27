@@ -10,24 +10,23 @@ module KnifeSpork
     TYPE_INDEX = { :major => 0, :minor => 1, :patch => 2, :manual => 3 }.freeze
 
     option :cookbook_path,
-           :short => '-o PATH:PATH',
-           :long => '--cookbook-path PATH:PATH',
-           :description => 'A colon-separated path to look for cookbooks in',
-           :proc => lambda { |o| o.split(':') }
+      :short => '-o PATH:PATH',
+      :long => '--cookbook-path PATH:PATH',
+      :description => 'A colon-separated path to look for cookbooks in',
+      :proc => lambda { |o| o.split(':') }
 
-    if defined?(::Berkshelf)
-      option :berksfile,
-        :short => '-b',
-        :long => 'berksfile',
-        :description => 'Path to a Berksfile to operate off of',
-        :default => File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME)
+    option :berksfile,
+      :short => '-b',
+      :long => 'berksfile',
+      :description => 'Path to a Berksfile to operate off of',
+      :default => nil,
+      :proc => lambda { |o| o || File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME) }
 
-      option :skip_dependencies,
-        :short => '-s',
-        :long => '--skip-dependencies',
-        :description => 'Berksfile skips resolving source cookbook dependencies',
-        :default => true
-    end
+    option :skip_dependencies,
+      :short => '-s',
+      :long => '--skip-dependencies',
+      :description => 'Berksfile skips resolving source cookbook dependencies',
+      :default => true
 
     banner 'knife spork bump COOKBOOK [major|minor|patch|manual]'
 
