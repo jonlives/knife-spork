@@ -44,6 +44,7 @@ module KnifeSpork
           :environments => environments,
           :environment_diffs => environment_diffs,
           :environment_path => environment_path,
+          :role_path => role_path,
           :cookbook_path => cookbook_path,
           :object_name => @object_name,
           :object_secondary_name => @object_secondary_name,
