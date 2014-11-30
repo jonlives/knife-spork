@@ -71,6 +71,22 @@ module KnifeSpork
           end
         end         
       end
+
+      def before_nodefromfile
+        git_pull(node_path)
+      end
+
+      def after_nodefromfile
+        if config.auto_push
+          if @options[:args][:git_message].nil? == false
+            git_add(node_path, "#{object_name}.json")
+            git_commit(node_path, @options[:args][:git_message])
+            git_push(branch)
+          else
+            raise "Git message (-m) required since git auto_push is enabled"
+          end
+        end         
+      end
       
       def before_rolefromfile
         git_pull(role_path)

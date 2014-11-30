@@ -71,6 +71,10 @@ module KnifeSpork
         @options[:role_path]
       end
 
+      def node_path
+        @options[:node_path]
+      end
+
       def cookbook_path
         @options[:cookbook_path]
       end

@@ -9,6 +9,10 @@ module KnifeSpork
 
     banner 'knife spork node from file FILE (options)'
 
+    option :message,
+           :short => '-m',
+           :long => '--message git_message',
+           :description => 'Git commit message if auto_push is enabled'
 
     def run
       self.class.send(:include, KnifeSpork::Runner)
@@ -32,6 +36,7 @@ module KnifeSpork
       node_fromfile
       post_node = load_node(@object_name.gsub(".json",""))
       @object_difference = json_diff(pre_node,post_node).to_s
+      @args = { :git_message => config[:message] } 
       run_plugins(:after_nodefromfile)
     end
 
