@@ -158,7 +158,7 @@ module KnifeSpork
       end
 
       def node_path
-        spork_config[:role_path] || cookbook_path.gsub("/cookbooks","/nodes")
+        spork_config[:node_path] || cookbook_path.gsub("/cookbooks","/nodes")
       end
 
       def all_cookbooks
