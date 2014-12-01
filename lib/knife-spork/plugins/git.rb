@@ -88,6 +88,14 @@ module KnifeSpork
         config.bump_tag || false
       end
 
+      def bump_commit
+        config.bump_commit || false
+      end
+
+      def bump_tag
+        config.bump_tag || false
+      end
+
       private
       def git
         safe_require 'git'

@@ -32,6 +32,16 @@ module KnifeSpork
            :long => '--bump_comment',
            :description => 'Bump will prompt for a Change comment, which will be appended to CHANGELOG.md along with the new version # and username',
            :default => nil
+    
+    option :bump_commit,
+           :long => '--bump_commit',
+           :description => 'Bump will create a git commit once version has been bumped',
+           :default => false
+           
+    option :bump_tag,
+           :long => '--bump_tag',
+           :description => 'Bump will create a git tag using the new version #',
+	   :default => false 
 
     if defined?(::Berkshelf)
       option :berksfile,
@@ -47,7 +57,7 @@ module KnifeSpork
         :default => true
     end
 
-    banner 'knife spork bump COOKBOOK [major|minor|patch|manual] [--bump_comment]'
+    banner 'knife spork bump COOKBOOK [major|minor|patch|manual] [--bump_comment] [--bump_tag]'
 
     def run
       self.class.send(:include, KnifeSpork::Runner)
@@ -110,14 +120,14 @@ module KnifeSpork
       if config[:bump_comment]
         changelog_file =  "#{@cookbook.root_dir}/CHANGELOG.md"
         ui.info "Enter Change Log comment, then press Ctrl-D:  "
-        change_comment = $stdin.read
+        @change_comment = $stdin.read
         File.open(changelog_file, 'a') { |cl|
           cl.write("\n#{new_version}\n")
           cl.write("---------\n")
-          cl.write("#{ENV['USER']} - #{change_comment}\n")
+          cl.write("#{ENV['USER']} - #{@change_comment}\n")
         }
       end
-
+      
       ui.info "Successfully bumped #{@cookbook.name} to v#{new_version}!"
     end
 
