@@ -46,6 +46,7 @@ module KnifeSpork
           :environment_path => environment_path,
           :role_path => role_path,
           :node_path => node_path,
+          :databag_path => databag_path,
           :cookbook_path => cookbook_path,
           :object_name => @object_name,
           :object_secondary_name => @object_secondary_name,
@@ -159,6 +160,10 @@ module KnifeSpork
 
       def node_path
         spork_config[:node_path] || cookbook_path.gsub("/cookbooks","/nodes")
+      end
+
+      def databag_path
+        spork_config[:databag_path] || cookbook_path.gsub("/cookbooks","/data_bags")
       end
 
       def all_cookbooks

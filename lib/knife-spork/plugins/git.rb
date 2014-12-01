@@ -72,6 +72,22 @@ module KnifeSpork
         end         
       end
 
+      def before_databagfromfile
+        git_pull(databag_path)
+      end
+
+      def after_databagfromfile
+        if config.auto_push
+          if @options[:args][:git_message].nil? == false
+            git_add("#{databag_path}/#{object_name}", object_secondary_name)
+            git_commit(databag_path, @options[:args][:git_message])
+            git_push(branch)
+          else
+            raise "Git message (-m) required since git auto_push is enabled"
+          end
+        end         
+      end
+
       def before_nodefromfile
         git_pull(node_path)
       end
