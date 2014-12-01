@@ -85,6 +85,8 @@ plugins:
     enabled: true
     auto_push: true
     branch: some_branch
+    bump_tag: false
+    bump_commit: false
   irccat:
     server: irccat.mydomain.com
     port: 12345
@@ -137,6 +139,7 @@ The `skip_berkshelf` directive is a temporary flag added in [#138](https://githu
 
 #### Bump Comment
 The 'bump_comment` directive tells spork to always prompt the user for a comment reguarding the changes to this version of the cookbook. This comment will be appended to the CHANGELOG.md file along with the new version # and the user name.  This can also be done with the "--bump_comment" on the command line.
+NOTE:  See bump_tag & bump_commit under the Git plug-in
 
 #### JSON Options
 The `json_options` directive allows you to tell spork to pass options to [pretty_generate](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/json/rdoc/JSON.html#method-i-pretty_generate) to control the format of the resulting json

@@ -38,6 +38,29 @@ module KnifeSpork
         cookbooks.each do |cookbook|
           git_add(cookbook_path_for(cookbook),"metadata.rb")
           git_add(cookbook_path_for(cookbook),"CHANGELOG.md")
+          metadata_file = "#{cookbook.root_dir}/metadata.rb"
+          new_version = File.read(metadata_file).split(/\n/).select{ |x| x =~ /(version\s+['"])[0-9\.]+(['"])/ }[0].split(/\s+/)[1].gsub"\'",""
+          top_level = `cd #{cookbook_path_for(cookbook)} && git rev-parse --show-toplevel 2>&1`.chomp
+	  Dir.chdir(top_level)
+	  if config.bump_tag
+	    ui.info "Creating Git tag as #{cookbook.name}@#{new_version}"
+	    git_tag("#{cookbook.name}@#{new_version}")
+  	  end
+  	  if config.bump_commit
+            ui.info "Creating Git commit"
+	    if config[:bump_comment]
+              change_file = "#{cookbook.root_dir}/CHANGELOG.md"
+              last_comment_line = 0
+              File.foreach(change_file).with_index { |line, line_num| 
+                last_comment_line = line_num if line == "---------\n"
+              }
+              file = File.open change_file
+              change_comment=[*file][last_comment_line + 1]
+	      git_commit(change_comment)
+	    else
+	      git_commit("Bumping #{cookbook.name} to #{new_version}")
+	    end
+          end
         end
       end
 
@@ -55,6 +78,14 @@ module KnifeSpork
           git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
           git_push(branch)
         end
+      end
+
+      def bump_commit
+        config.bump_commit || false
+      end
+
+      def bump_tag
+        config.bump_tag || false
       end
 
       private
