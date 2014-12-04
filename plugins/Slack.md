@@ -20,14 +20,14 @@ Configuration
 ```yaml
 plugins:
   slack:
-    api_token: ABC123
+    webhook_url: https://hooks.slack.com/services/AABBCC
     channel: "#operations"
     teamname: myteam
     username: knife
 ```
 
 #### api_token
-Your Slack API token.
+Your Slack Webhook URL.
 
 - Type: `String`
 
@@ -36,10 +36,6 @@ The channel to post to.
 
 - Type: `String`
 
-#### teamname
-The teamname of the slack account. ex. https://TEAMNAME.slack.com
-
-- Type: `String`
 
 #### username
 The username to post as.
