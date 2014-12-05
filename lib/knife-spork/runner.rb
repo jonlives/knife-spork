@@ -3,6 +3,8 @@ require 'diffy'
 require 'json'
 
 require 'chef/cookbook_loader'
+require 'chef/environment'
+require 'chef/data_bag_item'
 require 'chef/knife/core/object_loader'
 require 'knife-spork/plugins'
 
