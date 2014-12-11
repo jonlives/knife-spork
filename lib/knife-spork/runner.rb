@@ -38,7 +38,7 @@ module KnifeSpork
 
         environments = [ @environments || @environment ].flatten.compact.collect{|environment| environment.is_a?(::Chef::Environment) ? environment : load_environment_from_file(environment)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environment_diffs = @environment_diffs
-        
+
         KnifeSpork::Plugins.run(
           :config => spork_config,
           :hook => hook.to_sym,
@@ -56,7 +56,7 @@ module KnifeSpork
 
       def load_environments_and_cookbook
         ensure_environment_and_cookbook_provided!
-       
+
         if @name_args.size == 2
           environments = @name_args[0].split(",").map{ |env| load_specified_environment_group(env) }
           [ environments.flatten, @name_args[1] ]
@@ -192,19 +192,24 @@ module KnifeSpork
       def load_from_berkshelf(name)
         return unless defined?(::Berkshelf)
         return unless ::File.exist?(self.config[:berksfile])
+
         berksfile = ::Berkshelf::Berksfile.from_file(self.config[:berksfile])
-        lockfile = ::Berkshelf::Lockfile.new(berksfile)
+        lockfile = ::Berkshelf::Lockfile.from_berksfile(berksfile)
 
+        resolver = ::Berkshelf::Resolver.new(
+          berksfile,
+          lockfile.find(name)
+        )
         raise Berkshelf::BerkshelfError, "LockFileNotFound" unless File.exists?(lockfile.filepath)
-
-        cookbook = Berkshelf.ui.mute {
-          self.config[:skip_dependencies] ||= false
-          berksfile.resolve(lockfile.find(name), {skip_dependencies: self.config[:skip_dependencies]})[:solution].first
+        dependency = Berkshelf.ui.mute {
+          resolver.resolve.first
         }
-
         #convert Berkshelf::CachedCookbook to Chef::CookbookVersion
-        ::Chef::CookbookLoader.new(File.dirname(cookbook.path))[name]
-
+        cookbook_loader = Chef::Cookbook::CookbookVersionLoader.new(dependency.cached_cookbook.path)
+        cookbook_loader.load_cookbooks
+        cookbook_version = cookbook_loader.cookbook_version
+        cookbook_version.name = cookbook_version.metadata.name #correct name
+        cookbook_version
       end
 
       # @todo #opensource
