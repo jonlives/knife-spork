@@ -1,4 +1,7 @@
 require 'chef/knife'
+begin
+  require 'berkshelf'
+rescue LoadError; end
 
 module KnifeSpork
   class SporkCheck < Chef::Knife
@@ -27,7 +30,7 @@ module KnifeSpork
     if defined?(::Berkshelf)
       option :berksfile,
         :short => '-b',
-        :long => 'berksfile',
+        :long => '--berksfile BERKSFILE',
         :description => 'Path to a Berksfile to operate off of',
         :default => File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME)
 
