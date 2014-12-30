@@ -1,3 +1,4 @@
+name             "example"
 maintainer       "Jon Cowie"
 maintainer_email "jonlives@gmail.com"
 license          "All rights reserved"
