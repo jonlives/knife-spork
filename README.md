@@ -54,6 +54,7 @@ role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
 skip_berkshelf: false
+bump_config: true
 json_options:
   indent: "    "
 plugins:
@@ -124,6 +125,9 @@ The `always_promote_remote` directive allows you to tell spork promote to always
 
 #### Skip Berkshelf
 The `skip_berkshelf` directive is a temporary flag added in [#138](https://github.com/jonlives/knife-spork/issues/138) to allow Berkshelf functionality to be optionally bypassed until Berkshelf 3 support has been added to knife-spork per [#85](https://github.com/jonlives/knife-spork/issues/85). It simply removed the :Berkshelf constant from the namespace used by knife-spork.
+
+#### Bump Comment
+The 'bump_comment` directive tells spork to always prompt the user for a comment reguarding the changes to this version of the cookbook. This comment will be appended to the CHANGELOG.md file along with the new version # and the user name.  This can also be done with the "--bump_comment" on the command line.
 
 #### JSON Options
 The `json_options` directive allows you to tell spork to pass options to [pretty_generate](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/json/rdoc/JSON.html#method-i-pretty_generate) to control the format of the resulting json
@@ -240,17 +244,27 @@ Everything looks good!
 
 Spork Bump
 ----------
-This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` file. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
+This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` & `CHANGELOG.md` files. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
+
+Spork Bump can also be configured promt the user for a comment reguarding thier change.  This comment will be appended to the CHANGELOG.md file along with the new version, and the current username.  This is done either by using the '--bump_comment' option on the command line or by setting the bump_comment: directive to true.
 
 #### Usage
 ```bash
-knife spork bump COOKBOOK [major | minor | patch | manual x.x.x]
+knife spork bump COOKBOOK [major | minor | patch | manual x.x.x] [--bump_commment]
 ````
 
 #### Example (No patch level specified - defaulting to patch)
 ```text
-$ knife spork bump apache2
+$ knife spork bump apache2 --bump_comment
+Enter Change Log comment, then press Ctrl-D:
+"Bug #111 fixed."
 Successfully bumped apache2 to v2.0.4!
+```
+``` CHANGELOG.md will be appended with the following:
+
+2.0.4
+------
+<user> - Bug #111 fixed.
 ```
 
 #### Example (Bumping patch level)
