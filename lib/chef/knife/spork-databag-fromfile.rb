@@ -25,12 +25,17 @@ module KnifeSpork
            :long  => "--all",
            :description => "Upload all data bags"
 
+    option :message,
+           :short => '-m',
+           :long => '--message git_message',
+           :description => 'Git commit message if auto_push is enabled'
+
     def run
       self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
 
       @object_name = @name_args.first
-
+     
       if config[:all] == true
         test = Chef::Knife::DataBagFromFile.new
         test.config[:verbosity] = 3
@@ -64,6 +69,7 @@ module KnifeSpork
             databag_from_file
             post_databag = load_databag_item(@object_name, @object_secondary_name.gsub(".json",""))
             @object_difference = json_diff(pre_databag,post_databag).to_s
+            @args = { :git_message => config[:message] } 
             run_plugins(:after_databagfromfile)
         end
       end

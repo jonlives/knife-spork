@@ -56,6 +56,70 @@ module KnifeSpork
         end
       end
 
+      def before_environmentfromfile
+        git_pull(environment_path)
+      end
+
+      def after_environmentfromfile
+        if config.auto_push
+          if @options[:args][:git_message].nil? == false
+            git_add(environment_path, object_name)
+            git_commit(environment_path, @options[:args][:git_message])
+            git_push(branch)
+          else
+            raise "Git message (-m) required since git auto_push is enabled"
+          end
+        end         
+      end
+
+      def before_databagfromfile
+        git_pull(databag_path)
+      end
+
+      def after_databagfromfile
+        if config.auto_push
+          if @options[:args][:git_message].nil? == false
+            git_add("#{databag_path}/#{object_name}", object_secondary_name)
+            git_commit(databag_path, @options[:args][:git_message])
+            git_push(branch)
+          else
+            raise "Git message (-m) required since git auto_push is enabled"
+          end
+        end         
+      end
+
+      def before_nodefromfile
+        git_pull(node_path)
+      end
+
+      def after_nodefromfile
+        if config.auto_push
+          if @options[:args][:git_message].nil? == false
+            git_add(node_path, "#{object_name}.json")
+            git_commit(node_path, @options[:args][:git_message])
+            git_push(branch)
+          else
+            raise "Git message (-m) required since git auto_push is enabled"
+          end
+        end         
+      end
+      
+      def before_rolefromfile
+        git_pull(role_path)
+      end
+
+      def after_rolefromfile
+        if config.auto_push
+          if @options[:args][:git_message].nil? == false
+            git_add(role_path, object_name)
+            git_commit(role_path, @options[:args][:git_message])
+            git_push(branch)
+          else
+            raise "Git message (-m) required since git auto_push is enabled"
+          end
+        end         
+      end
+
       private
       def git
         safe_require 'git'

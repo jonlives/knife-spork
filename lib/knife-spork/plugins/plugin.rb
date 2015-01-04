@@ -67,6 +67,18 @@ module KnifeSpork
         @options[:environment_path]
       end
 
+      def role_path
+        @options[:role_path]
+      end
+
+      def node_path
+        @options[:node_path]
+      end
+      
+      def databag_path
+        @options[:databag_path]
+      end
+
       def cookbook_path
         @options[:cookbook_path]
       end
