@@ -16,7 +16,7 @@ module KnifeSpork
               cookbook: cookbook.name,
               version: cookbook.version
             }
-            @conn.write_point(config.series, data)
+            conn.write_point(config.series, data)
           rescue Exception => e
             ui.error 'Could not write data to influxdb'
             ui.error e.to_s
