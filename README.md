@@ -54,6 +54,7 @@ role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
 skip_berkshelf: false
+role_match_file_name: true
 json_options:
   indent: "    "
 plugins:
@@ -140,6 +141,9 @@ The `environment_path` allows you to specify the path to where you store your ch
 
 #### Role Path
 The `role_path` allows you to specify the path to where you store your chef role json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "roles"
+
+#### Role Match File Name
+The `role_match_file_name` flag allows you to check whether the file name that is used to upload a role matches the role name as well. If the parameter is specified, or flag `--match-filename` is set, spork will not let you upload a role from a file unless the name matches the rolename.
 
 #### Custom Plugin Path
 The `custom_plugin_path` allows you to specify an additional directory from which to load knife-spork plugins. If this parameter is not specified or the path set does not exist, only the default plugins shipped with knife-spork will be loaded (if enabled in config)
