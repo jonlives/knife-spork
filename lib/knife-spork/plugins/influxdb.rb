@@ -1,5 +1,4 @@
 require 'knife-spork/plugins/plugin'
-require 'influxdb'
 
 module KnifeSpork
   module Plugins
@@ -8,6 +7,7 @@ module KnifeSpork
       hooks :after_upload
 
       def perform
+        safe_require 'influxdb'
         conn = InfluxDB::Client.new(config.database, host: config.host, port: config.port, username: config.username, password: config.password, use_ssl: config.ssl)
         environments.each do |environment|
           begin
