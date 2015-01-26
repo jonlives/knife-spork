@@ -24,6 +24,12 @@ module KnifeSpork
       :description => 'Save the environment to the chef server in addition to the local JSON file',
       :default => nil
 
+    option :cookbook_path,
+         :short => '-o PATH:PATH',
+         :long => '--cookbook-path PATH:PATH',
+         :description => 'A colon-separated path to look for cookbooks in',
+         :proc => lambda { |o| o.split(':') }
+
     if defined?(::Berkshelf)
       option :berksfile,
         :short => '-b',
