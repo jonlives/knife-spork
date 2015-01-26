@@ -1,7 +1,6 @@
 require 'app_conf'
 require 'diffy'
 require 'json'
-require 'yajl'
 
 require 'chef/cookbook_loader'
 require 'chef/environment'
