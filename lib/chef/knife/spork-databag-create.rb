@@ -31,11 +31,12 @@ module KnifeSpork
       end
 
       @object_name = @name_args.first
+      @object_secondary_name = @name_args.last
 
       run_plugins(:before_databagcreate)
       pre_databag = {}
       databag_create
-      post_databag = load_databag(@object_name)
+      post_databag = load_databag_item(@object_name, @object_secondary_name)
       @object_difference = json_diff(pre_databag,post_databag).to_s
       run_plugins(:after_databagcreate)
     end
