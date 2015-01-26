@@ -90,6 +90,13 @@ plugins:
   graphite:
     server: graphite.mydomain.com
     port: 2003
+  influxdb:
+    database: deployments
+    username: deploy
+    password: deploy
+    series: deployments
+    host: influx.example.com
+    port: 8086
   eventinator:
     url: http://eventinator.mydomain.com/events/oneshot
   slack:
