@@ -302,7 +302,7 @@ module KnifeSpork
         # to be bypassed until #85 has been completed and Berkshelf 3 support added
         if spork_config.skip_berkshelf
           ui.warn "Unloading Berkshelf as skip_berkshelf option found in config"
-          Object.send(:remove_const, :Berkshelf)
+          Object.send(:remove_const, :Berkshelf) if defined?(::Berkshelf)
         end
       end
     end
