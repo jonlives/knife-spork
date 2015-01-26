@@ -11,6 +11,13 @@ module KnifeSpork
 
     banner 'knife spork role from file FILENAME (options)'
 
+    option :match_filename,
+        :long => '--match-filename',
+        :short => '-f',
+        :description => 'Ensure that the filename matches the name specified in the role (true|false).',
+        :boolean => true,
+        :default => false
+
     def run
       self.class.send(:include, KnifeSpork::Runner)
       self.config = Chef::Config.merge!(config)
@@ -40,6 +47,18 @@ module KnifeSpork
     def role_from_file
       rff = Chef::Knife::RoleFromFile.new
       rff.name_args = @name_args
+      if (config[:match_filename] || spork_config[:role_match_file_name])
+        ## Check if file names match role names 
+        @name_args.each do |arg|
+            file_name = arg.split("/").last
+            role = rff.loader.load_from("roles", file_name)
+            file_name = file_name.gsub(".json","").gsub(".rb", "")
+            if file_name != role.name
+                ui.error("Role name in file #{role.name} does not match file name #{file_name}")
+                exit 1
+            end
+        end
+      end
       rff.run
     end
   end
