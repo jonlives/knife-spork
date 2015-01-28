@@ -50,6 +50,7 @@ environment_groups:
 version_change_threshold: 2
 preserve_constraint_operators: true
 environment_path: "/home/me/environments"
+save_environment_locally_on_create: false
 role_path: "/home/me/roles"
 custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
@@ -137,7 +138,11 @@ The `skip_berkshelf` directive is a temporary flag added in [#138](https://githu
 The `json_options` directive allows you to tell spork to pass options to [pretty_generate](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/json/rdoc/JSON.html#method-i-pretty_generate) to control the format of the resulting json
 
 #### Environment Path
-The `environment_path` allows you to specify the path to where you store your chef environment json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
+The `environment_path` directive allows you to specify the path to where you store your chef environment json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
+
+#### Save Environment on Create
+The `save_environment_on_create` directive allows you to have the ```knife spork environment create``` command save a copy of the new environment to your Chef repository. This will default to saving environment files in the location specified by the ```environment_path``` directive. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "environments"
+
 
 #### Role Path
 The `role_path` allows you to specify the path to where you store your chef role json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "roles"

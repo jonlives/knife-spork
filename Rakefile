@@ -21,8 +21,8 @@ task :preseed_test_environment do
   @server = ChefZero::Server.new(port: 4000)
   @server.start_background
   puts "Uploading test data"
-  `knife cookbook upload example -c spec/unit/fixtures/knife.rb`
-  `knife environment from file spec/unit/fixtures/environments/example.json -c spec/unit/fixtures/knife.rb`
+  system("knife cookbook upload example -c spec/unit/fixtures/knife.rb")
+  system("knife environment from file spec/unit/fixtures/environments/example.json -c spec/unit/fixtures/knife.rb")
 end
 
 task :cleanup_test_environment do
