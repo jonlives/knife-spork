@@ -27,6 +27,17 @@ module KnifeSpork
       @object_name = @name_args.first
 
       run_plugins(:before_environmentcreate)
+
+      # Check if environment already exists
+      begin
+        check_environment = load_environment(@object_name)
+        if check_environment
+          ui.confirm("It looks like the environment #{@object_name} already exists. Are you sure you want to overwrite it")
+        end
+      rescue Net::HTTPServerException
+      end
+
+
       pre_environment = {}
       environment_create
       post_environment = load_environment(@object_name)
