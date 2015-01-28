@@ -41,6 +41,12 @@ module KnifeSpork
       pre_environment = {}
       environment_create
       post_environment = load_environment(@object_name)
+
+      if spork_config[:save_environment_locally_on_create]
+        ui.msg "Saving environment changes to #{@object_name}.json"
+        save_environment_changes(@object_name, pretty_print_json(post_environment))
+      end
+
       @object_difference = json_diff(pre_environment,post_environment).to_s
       run_plugins(:after_environmentcreate)
     end

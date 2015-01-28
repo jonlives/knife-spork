@@ -157,19 +157,6 @@ module KnifeSpork
       local_environment.save
     end
 
-    def save_environment_changes(environment, json)
-      if spork_config[:environment_path]
-        environments_path = spork_config[:environment_path]
-      else
-        split_cb_path = cookbook_path.split("/")
-        environments_path = (split_cb_path[0..-2] << split_cb_path[-1].gsub("cookbooks","environments")).join("/")
-      end
-
-      environment_path = File.expand_path( File.join(environments_path, "#{environment}.json") )
-
-      File.open(environment_path, 'w'){ |f| f.puts(json) }
-    end
-
     def promote(environment, cookbook_names)
       cookbook_names = [cookbook_names].flatten
 
