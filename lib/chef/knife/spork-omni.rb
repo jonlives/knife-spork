@@ -1,13 +1,13 @@
 require 'chef/knife'
-begin
-  require 'berkshelf'
-rescue LoadError; end
 
 module KnifeSpork
   class SporkOmni < Chef::Knife
 
     deps do
       require 'knife-spork/runner'
+      begin
+        require 'berkshelf'
+      rescue LoadError; end
     end
 
     banner 'knife spork omni COOKBOOK (options)'
@@ -40,13 +40,12 @@ module KnifeSpork
            :description => 'Make omni finish with promote --remote instead of a local promote',
            :default => nil
 
-    if defined?(::Berkshelf)
-      option :berksfile,
-             :short => '-b',
-             :long => '--berksfile BERKSFILE',
-             :description => 'Path to a Berksfile to operate from',
-             :default => File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME)
-    end
+    option :berksfile,
+           :short => '-b',
+           :long => '--berksfile BERKSFILE',
+           :description => 'Path to a Berksfile to operate from',
+           :default => nil,
+           :proc => lambda { |o| o || File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME) }
 
     def run
       self.class.send(:include, KnifeSpork::Runner)

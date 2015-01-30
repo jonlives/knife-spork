@@ -1,7 +1,4 @@
 require 'chef/knife'
-begin
-  require 'berkshelf'
-rescue LoadError; end
 
 module KnifeSpork
   class SporkPromote < Chef::Knife
@@ -9,6 +6,9 @@ module KnifeSpork
     deps do
       require 'chef/exceptions'
       require 'knife-spork/runner'
+      begin
+        require 'berkshelf'
+      rescue LoadError; end
     end
 
     banner 'knife spork promote ENVIRONMENT COOKBOOK (options)'
@@ -24,13 +24,12 @@ module KnifeSpork
       :description => 'Save the environment to the chef server in addition to the local JSON file',
       :default => nil
 
-    if defined?(::Berkshelf)
-      option :berksfile,
-        :short => '-b',
-        :long => '--berksfile BERKSFILE',
-        :description => 'Path to a Berksfile to operate off of',
-        :default => File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME)
-    end
+    option :berksfile,
+      :short => '-b',
+      :long => '--berksfile BERKSFILE',
+      :description => 'Path to a Berksfile to operate off of',
+      :default => nil,
+      :proc => lambda { |o| o || File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME) }
 
     def run
       self.class.send(:include, KnifeSpork::Runner)
