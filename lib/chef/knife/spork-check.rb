@@ -15,28 +15,27 @@ module KnifeSpork
       :description => 'Show all uploaded versions of the cookbook'
 
     option :fail,
-       :long => "--fail",
-       :description => "If the check fails exit with non-zero exit code"
+      :long => "--fail",
+      :description => "If the check fails exit with non-zero exit code"
 
     option :cookbook_path,
-           :short => '-o PATH:PATH',
-           :long => '--cookbook-path PATH:PATH',
-           :description => 'A colon-separated path to look for cookbooks in',
-           :proc => lambda { |o| o.split(':') }
+      :short => '-o PATH:PATH',
+      :long => '--cookbook-path PATH:PATH',
+      :description => 'A colon-separated path to look for cookbooks in',
+      :proc => lambda { |o| o.split(':') }
 
-    if defined?(::Berkshelf)
-      option :berksfile,
-        :short => '-b',
-        :long => 'berksfile',
-        :description => 'Path to a Berksfile to operate off of',
-        :default => File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME)
+    option :berksfile,
+      :short => '-b',
+      :long => 'berksfile',
+      :description => 'Path to a Berksfile to operate off of',
+      :default => nil,
+      :proc => lambda { |o| o || File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME) }
 
-      option :skip_dependencies,
-        :short => '-s',
-        :long => '--skip-dependencies',
-        :description => 'Berksfile skips resolving source cookbook dependencies',
-        :default => true
-    end
+    option :skip_dependencies,
+      :short => '-s',
+      :long => '--skip-dependencies',
+      :description => 'Berksfile skips resolving source cookbook dependencies',
+      :default => true
 
     def run
       self.class.send(:include, KnifeSpork::Runner)
@@ -54,7 +53,7 @@ module KnifeSpork
 
       #First load so plugins etc know what to work with
       initial_load
-      
+
       run_plugins(:before_check)
 
       #Reload cookbook in case a VCS plugin found updates
@@ -152,7 +151,7 @@ module KnifeSpork
         rest.get_rest(api_endpoint).to_hash['frozen?']
       end
     end
-    
+
     def fail_and_exit(message, options={})
      	ui.fatal message
      	show_usage if options[:show_usage]

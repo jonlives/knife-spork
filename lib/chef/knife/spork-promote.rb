@@ -1,7 +1,4 @@
 require 'chef/knife'
-begin
-  require 'berkshelf'
-rescue LoadError; end
 
 module KnifeSpork
   class SporkPromote < Chef::Knife
@@ -9,6 +6,9 @@ module KnifeSpork
     deps do
       require 'chef/exceptions'
       require 'knife-spork/runner'
+      begin
+        require 'berkshelf'
+      rescue LoadError; end
     end
 
     banner 'knife spork promote ENVIRONMENT COOKBOOK (options)'
