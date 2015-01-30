@@ -1,3 +1,27 @@
+## 1.5.0(26th January, 2015)
+
+Features:
+
+    - InfluxDB Plugin added (Thanks to @vic3lord https://github.com/jonlives/knife-spork/pull/167)
+    - Add gist & diff behavior to the Hipchat plugin (Thanks to @danieleva https://github.com/jonlives/knife-spork/pull/153)
+    - Optional config flag to enforce that role files share the same name as the role they contain (Thanks to @nishansubedi https://github.com/jonlives/knife-spork/pull/152)
+    - Add optional --cookbook-path flag to Spork Promote (Thanks to @bcandrea https://github.com/jonlives/knife-spork/pull/169)
+    - Add --cookbook-path option to spork promote command (Thanks to @bcandrea https://github.com/jonlives/knife-spork/pull/169)
+    - Add verification check to environment create commadn when environment already exists (https://github.com/jonlives/knife-spork/issues/171)
+    - Add save_environment_locally_on_create option to have environment create command save a local copy of the environment file (https://github.com/jonlives/knife-spork/issues/172)
+    - Lazily load Berkshelf to improve overall knife performance (Thanks to @lamont-granquist https://github.com/jonlives/knife-spork/pull/158)
+
+Bugfixes:
+
+    - Add cookbook name metadata field to test cookbook (Thanks to @jdmundrawala https://github.com/jonlives/knife-spork/pull/162)
+    - Add missing require statements to fix specs running against Chef 12 (Thanks to @jdmunrawala https://github.com/jonlives/knife-spork/pull/163)
+    - Fix issues with the slack plugin (Thanks to @therobot https://github.com/jonlives/knife-spork/pull/160)
+    - Fix issue with knife spork omni and skip_berkshelf option when Berkshelf not installed (Thanks to @ctrlok https://github.com/jonlives/knife-spork/pull/168)
+    - Fix yajl error on missing environment files (Thanks to @oker1 https://github.com/jonlives/knife-spork/pull/165)
+    - Fix for changed constant name from Yaj to FFI_Yajl in Chef 12 (Thanks to @jeunito https://github.com/jonlives/knife-spork/pull/154)
+    - Fix Spork DataBag Create to handle specifying a data bag item name too (https://github.com/jonlives/knife-spork/issues/156)
+
+
 ## 1.4.2(3rd November, 2014)
 
 Features:
@@ -14,7 +38,7 @@ Bugfixes:
     - Fix custom plugin loading on Window (Thanks to @carpnick https://github.com/jonlives/knife-spork/pull/150)
     - Fix config loading in CookbookUploader under Chef 12 (Thanks to @jordane https://github.com/jonlives/knife-spork/pull/149)
     - Do not attempt to load Berksfile if not present (Thanks to @redondos https://github.com/jonlives/knife-spork/pull/142)
-    
+
 ## 1.4.1 (21st August, 2014)
 
 Bugfixes:
