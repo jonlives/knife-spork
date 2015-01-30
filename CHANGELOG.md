@@ -1,4 +1,4 @@
-## 1.5.0(26th January, 2015)
+## 1.5.0(30th January, 2015)
 
 Features:
 
