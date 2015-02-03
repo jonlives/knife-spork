@@ -64,8 +64,6 @@ module KnifeSpork
       self.config = Chef::Config.merge!(config)
       config[:cookbook_path] ||= Chef::Config[:cookbook_path]
       config[:bump_comment] ||= spork_config.bump_comment
-      config[:bump_tag] ||= spork_config.bump_tag
-      config[:bump_commit] ||= spork_config.bump_commit
 
       if @name_args.empty?
         show_usage
@@ -109,14 +107,6 @@ module KnifeSpork
       new_contents = File.read(metadata_file).gsub(/(version\s+['"])[0-9\.]+(['"])/, "\\1#{new_version}\\2")
       File.open(metadata_file, 'w'){ |f| f.write(new_contents) }
 
-      if config[:bump_tag]
-        ui.info "Bump Tag is enabled"
-      end
- 
-      if config[:bump_commit]
-        ui.info "Bump Commit is enabled"
-      end
-        
       if config[:bump_comment]
         changelog_file =  "#{@cookbook.root_dir}/CHANGELOG.md"
         ui.info "Enter Change Log comment, then press Ctrl-D:  "

@@ -56,9 +56,9 @@ module KnifeSpork
               }
               file = File.open change_file
               change_comment=[*file][last_comment_line + 1]
-	      git_commit(change_comment)
+	      git_commit('.', "[Knife-Spork] #{change_comment}")
 	    else
-	      git_commit("Bumping #{cookbook.name} to #{new_version}")
+	      git_commit('.',"[Knife-Spork] Bumping #{cookbook.name} to #{new_version}")
 	    end
           end
         end
@@ -74,18 +74,9 @@ module KnifeSpork
                     else 
                       "master"
                     end
-
           git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
           git_push(branch)
         end
-      end
-
-      def bump_commit
-        config.bump_commit || false
-      end
-
-      def bump_tag
-        config.bump_tag || false
       end
 
       def bump_commit

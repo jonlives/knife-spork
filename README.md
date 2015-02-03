@@ -56,7 +56,7 @@ custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
 skip_berkshelf: false
 role_match_file_name: true
-bump_config: true
+bump_comment: true
 json_options:
   indent: "    "
 plugins:
@@ -87,6 +87,7 @@ plugins:
     branch: some_branch
     bump_tag: false
     bump_commit: false
+    bump_comment: false
   irccat:
     server: irccat.mydomain.com
     port: 12345
@@ -138,8 +139,8 @@ The `always_promote_remote` directive allows you to tell spork promote to always
 The `skip_berkshelf` directive is a temporary flag added in [#138](https://github.com/jonlives/knife-spork/issues/138) to allow Berkshelf functionality to be optionally bypassed until Berkshelf 3 support has been added to knife-spork per [#85](https://github.com/jonlives/knife-spork/issues/85). It simply removed the :Berkshelf constant from the namespace used by knife-spork.
 
 #### Bump Comment
-The 'bump_comment` directive tells spork to always prompt the user for a comment reguarding the changes to this version of the cookbook. This comment will be appended to the CHANGELOG.md file along with the new version # and the user name.  This can also be done with the "--bump_comment" on the command line.
-NOTE:  See bump_tag & bump_commit under the Git plug-in
+The 'bump_comment` directive tells spork to prompt the user for a comment reguarding the changes to this version of the cookbook. This comment will be appended to the CHANGELOG.md file along with the new version # and the user name.  This can also be done with the "--bump_comment" on the command line.
+NOTE:  The bump_comment & bump_commit directives under the Git plug-in, allow spork to take this comment and use it as a git commit message.
 
 #### JSON Options
 The `json_options` directive allows you to tell spork to pass options to [pretty_generate](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/json/rdoc/JSON.html#method-i-pretty_generate) to control the format of the resulting json
@@ -266,6 +267,7 @@ Spork Bump
 This function lets you easily version your cookbooks without having to manually edit the cookbook's `metadata.rb` & `CHANGELOG.md` files. You can either specify the version level you'd like to bump (`major`, `minor`, or `patch`), or you can manually specify a version number. This might be used if, for example, you want to jump several version numbers in one go and don't want to have to run knife bump once for each number. If no bump level is specified, a patch level bump will be performed.
 
 Spork Bump can also be configured promt the user for a comment reguarding thier change.  This comment will be appended to the CHANGELOG.md file along with the new version, and the current username.  This is done either by using the '--bump_comment' option on the command line or by setting the bump_comment: directive to true.
+NOTE:  The bump_comment & bump_commit directives under the Git plug-in, allow spork to take this comment and use it as a git commit message.
 
 #### Usage
 ```bash
