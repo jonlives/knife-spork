@@ -12,9 +12,11 @@ module KnifeSpork
       end
 
       def after_promote_remote
-        diff = environment_diffs[environment.name]
-        env_gist = env_gist(environment, diff) if config.gist
-        hipchat "#{organization}#{current_user} promoted the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")} to #{environments.collect{ |e| "#{e.name}" }.join(", ")} #{env_gist}"
+	environments.each do |environment|
+         diff = environment_diffs[environment.name]
+         env_gist = env_gist(environment, diff) if config.gist
+         hipchat "#{organization}#{current_user} promoted the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")} to #{environments.collect{ |e| "#{e.name}" }.join(", ")} #{env_gist}"
+	end
       end
 
       def after_environmentfromfile
