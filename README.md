@@ -502,3 +502,13 @@ knife spork environment delete
 knife spork environment edit
 knife spork environment from file
 ```
+
+Troubleshooting
+---------------
+If you get an error when running `knife spork <command>` and the message shown when running with the `-VV` flag contains:
+```ruby
+undefined method `gsub' for #<Pathname:0x00000002d3a6b0> (NoMethodError)
+```
+...then you are probably using `Librarian::Chef.install_path()` in your `knife.rb` file.
+
+To fix this you need to call `.to_s` on the install path, i.e. ``Librarian::Chef.install_path().to_s`.
