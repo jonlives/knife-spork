@@ -9,22 +9,26 @@ module KnifeSpork
 
       # Role Git wrappers
       def before_rolecreate
-        if !File.directory?(role_path)
-          ui.error "Role path #{role_path} does not exist"
-          exit 1
-        end
-        git_pull(role_path)
-        if File.exist?(File.join(role_path, object_name + '.json'))
-          ui.error 'Role already exists in local git, aborting creation'
-          exit 1
+        if config.auto_push
+          if !File.directory?(role_path)
+            ui.error "Role path #{role_path} does not exist"
+            exit 1
+          end
+          git_pull(role_path)
+          if File.exist?(File.join(role_path, object_name + '.json'))
+            ui.error 'Role already exists in local git, aborting creation'
+            exit 1
+          end
         end
       end
       def after_rolecreate
-        if !File.directory?(role_path)
-          ui.error "Role path #{role_path} does not exist"
-          exit 1
+        if config.auto_push
+          if !File.directory?(role_path)
+            ui.error "Role path #{role_path} does not exist"
+            exit 1
+          end
+          save_role(object_name) unless object_difference == ''
         end
-        save_role(object_name) unless object_difference == ''
       end
 
       def before_bump
