@@ -106,7 +106,7 @@ module KnifeSpork
       def git_pull(path)
         if is_repo?(path)
           ui.msg "Git: Pulling latest changes from #{path}"
-          output = IO.popen("git pull 2>&1")
+          output = IO.popen("cd #{path} && git pull 2>&1")
           Process.wait
           exit_code = $?
           if !exit_code.exitstatus ==  0
