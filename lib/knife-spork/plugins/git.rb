@@ -7,6 +7,26 @@ module KnifeSpork
 
       def perform; end
 
+      # Role Git wrappers
+      def before_rolecreate
+        if !File.directory?(role_path)
+          ui.error "Role path #{role_path} does not exist"
+          exit 1
+        end
+        git_pull(role_path)
+        if File.exist?(File.join(role_path, object_name + '.json'))
+          ui.error 'Role already exists in local git, aborting creation'
+          exit 1
+        end
+      end
+      def after_rolecreate
+        if !File.directory?(role_path)
+          ui.error "Role path #{role_path} does not exist"
+          exit 1
+        end
+        save_role(object_name) unless object_difference == ''
+      end
+
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
@@ -54,6 +74,15 @@ module KnifeSpork
           git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
           git_push(branch)
         end
+      end
+
+      def save_role(role)
+        json = JSON.pretty_generate(Chef::Role.load(role))
+        role_file = File.expand_path( File.join(role_path, "#{role}.json") )
+        File.open(role_file, 'w'){ |f| f.puts(json) }
+        git_add(role_path, "#{role}.json")
+        git_commit(role_path, "[ROLE] Updated #{role}")
+        git_push(branch) if config.auto_push
       end
 
       private
