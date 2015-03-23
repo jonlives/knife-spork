@@ -21,6 +21,9 @@ module KnifeSpork
           end
         end
       end
+      def before_roledelete
+        git_pull(role_path)
+      end
       def after_rolecreate
         if config.auto_push
           if !File.directory?(role_path)
@@ -29,6 +32,9 @@ module KnifeSpork
           end
           save_role(object_name) unless object_difference == ''
         end
+      end
+      def after_roledelete
+        delete_role(object_name)
       end
 
       def before_bump
@@ -87,6 +93,13 @@ module KnifeSpork
         git_add(role_path, "#{role}.json")
         git_commit(role_path, "[ROLE] Updated #{role}")
         git_push(branch) if config.auto_push
+      end
+      def delete_role(role)
+        git_rm(role_path, "#{role}.json")
+        if config.auto_push
+          git_commit(role_path, "[ROLE] Deleted #{role}")
+          git_push(branch)
+        end
       end
 
       private
@@ -166,6 +179,19 @@ module KnifeSpork
             git.push "origin", branch
         rescue ::Git::GitExecuteError => e
           ui.error "Could not push to master: #{e.message}"
+        end
+      end
+
+      def git_rm(filepath, filename)
+        if is_repo?(filepath)
+          ui.msg "Git rm'ing #{filepath}/#{filename}"
+          output = IO.popen("cd #{filepath} && git rm #{filename}")
+          Process.wait
+          exit_code = $?
+          if !exit_code.exitstatus ==  0
+            ui.error "#{output.read()}\n"
+            exit 1
+          end
         end
       end
 
