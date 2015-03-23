@@ -37,6 +37,26 @@ module KnifeSpork
         delete_role(object_name)
       end
 
+      # Environmental Git wrappers
+      def before_environmentcreate
+        if config.auto_push
+          if !File.directory?(environment_path)
+            ui.error "Environment path #{environment_path} does not exist"
+            exit 1
+          end
+          git_pull(environment_path)
+          if File.exist?(File.join(environment_path, object_name + '.json'))
+            ui.error 'Environment already exists in local git, aborting creation'
+            exit 1
+          end
+        end
+      end
+      def after_environmentcreate
+        if config.auto_push
+          save_environment(object_name) unless object_difference == ''
+        end
+      end
+
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
@@ -100,6 +120,15 @@ module KnifeSpork
           git_commit(role_path, "[ROLE] Deleted #{role}")
           git_push(branch)
         end
+      end
+
+      def save_environment(environment)
+        json = JSON.pretty_generate(Chef::Environment.load(environment))
+        environment_file = File.expand_path( File.join(environment_path, "#{environment}.json") )
+        File.open(environment_file, 'w'){ |f| f.puts(json) }
+        git_add(environment_path, "#{environment}.json")
+        git_commit(environment_path, "[ENV] Updated #{environment}")
+        git_push(branch) if config.auto_push
       end
 
       private
