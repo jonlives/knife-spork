@@ -7,6 +7,36 @@ module KnifeSpork
 
       def perform; end
 
+      # Role Git wrappers
+      def before_rolecreate
+        if config.auto_push
+          if !File.directory?(role_path)
+            ui.error "Role path #{role_path} does not exist"
+            exit 1
+          end
+          git_pull(role_path)
+          if File.exist?(File.join(role_path, object_name + '.json'))
+            ui.error 'Role already exists in local git, aborting creation'
+            exit 1
+          end
+        end
+      end
+      def before_roledelete
+        git_pull(role_path)
+      end
+      def after_rolecreate
+        if config.auto_push
+          if !File.directory?(role_path)
+            ui.error "Role path #{role_path} does not exist"
+            exit 1
+          end
+          save_role(object_name) unless object_difference == ''
+        end
+      end
+      def after_roledelete
+        delete_role(object_name)
+      end
+
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
@@ -56,6 +86,22 @@ module KnifeSpork
         end
       end
 
+      def save_role(role)
+        json = JSON.pretty_generate(Chef::Role.load(role))
+        role_file = File.expand_path( File.join(role_path, "#{role}.json") )
+        File.open(role_file, 'w'){ |f| f.puts(json) }
+        git_add(role_path, "#{role}.json")
+        git_commit(role_path, "[ROLE] Updated #{role}")
+        git_push(branch) if config.auto_push
+      end
+      def delete_role(role)
+        git_rm(role_path, "#{role}.json")
+        if config.auto_push
+          git_commit(role_path, "[ROLE] Deleted #{role}")
+          git_push(branch)
+        end
+      end
+
       private
       def git
         safe_require 'git'
@@ -77,7 +123,7 @@ module KnifeSpork
       def git_pull(path)
         if is_repo?(path)
           ui.msg "Git: Pulling latest changes from #{path}"
-          output = IO.popen("git pull 2>&1")
+          output = IO.popen("cd #{path} && git pull 2>&1")
           Process.wait
           exit_code = $?
           if !exit_code.exitstatus ==  0
@@ -133,6 +179,19 @@ module KnifeSpork
             git.push "origin", branch
         rescue ::Git::GitExecuteError => e
           ui.error "Could not push to master: #{e.message}"
+        end
+      end
+
+      def git_rm(filepath, filename)
+        if is_repo?(filepath)
+          ui.msg "Git rm'ing #{filepath}/#{filename}"
+          output = IO.popen("cd #{filepath} && git rm #{filename}")
+          Process.wait
+          exit_code = $?
+          if !exit_code.exitstatus ==  0
+            ui.error "#{output.read()}\n"
+            exit 1
+          end
         end
       end
 
