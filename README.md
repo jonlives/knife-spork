@@ -104,9 +104,8 @@ plugins:
   eventinator:
     url: http://eventinator.mydomain.com/events/oneshot
   slack:
-    api_token: abc123
+    webhook_url: https://hooks.slack.com/services/ABCD/efgh
     channel: "#sysops"
-    teamname: myteam
     username: knife
     icon_url: http://example.com/image.jpg
   rubocop:
