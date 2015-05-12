@@ -44,6 +44,7 @@ module KnifeSpork
         environments.each do |environment|
           diff = environment_diffs[environment.name]
           env_gist = env_gist(environment, diff) if config.gist
+          display_gist(env_gist) if env_gist
           irccat(template(:promote) % {
             :organization => organization,
             :current_user => current_user,
@@ -56,6 +57,7 @@ module KnifeSpork
 
       def after_environmentfromfile
         environment_gist = object_gist("environment", object_name, object_difference) if config.gist  and !object_difference.empty?
+        display_gist(environment_gist) if environment_gist
         irccat(template(:environmentfromfile) % {
             :organization => organization,
             :current_user => current_user,
@@ -66,6 +68,7 @@ module KnifeSpork
 
       def after_environmentedit
         environment_gist = object_gist("environment", object_name, object_difference) if config.gist  and !object_difference.empty?
+        display_gist(environment_gist) if environment_gist
         irccat(template(:environmentedit) % {
             :organization => organization,
             :current_user => current_user,
@@ -76,6 +79,7 @@ module KnifeSpork
 
       def after_environmentcreate
         environment_gist = object_gist("environment", object_name, object_difference) if config.gist  and !object_difference.empty?
+        display_gist(environment_gist) if environment_gist
         irccat(template(:environmentcreate) % {
             :organization => organization,
             :current_user => current_user,
@@ -86,6 +90,7 @@ module KnifeSpork
 
       def after_environmentdelete
         environment_gist = object_gist("environment", object_name, object_difference) if config.gist  and !object_difference.empty?
+        display_gist(environment_gist) if environment_gist
         irccat(template(:environmentdelete) % {
             :organization => organization,
             :current_user => current_user,
@@ -96,6 +101,7 @@ module KnifeSpork
 
       def after_rolefromfile
         role_gist = object_gist("role", object_name, object_difference) if config.gist  and !object_difference.empty?
+        display_gist(role_gist) if role_gist
         irccat(template(:rolefromfile) % {
             :organization => organization,
             :current_user => current_user,
@@ -106,6 +112,7 @@ module KnifeSpork
 
       def after_roleedit
         role_gist = object_gist("role", object_name, object_difference) if config.gist  and !object_difference.empty?
+        display_gist(role_gist) if role_gist
         irccat(template(:roleedit) % {
             :organization => organization,
             :current_user => current_user,
@@ -116,6 +123,7 @@ module KnifeSpork
 
       def after_rolecreate
         role_gist = object_gist("role", object_name, object_difference) if config.gist  and !object_difference.empty?
+        display_gist(role_gist) if role_gist
         irccat(template(:rolecreate) % {
             :organization => organization,
             :current_user => current_user,
@@ -126,6 +134,7 @@ module KnifeSpork
 
       def after_roledelete
         role_gist = object_gist("role", object_name, object_difference) if config.gist  and !object_difference.empty?
+        display_gist(role_gist) if role_gist
         irccat(template(:roledelete) % {
             :organization => organization,
             :current_user => current_user,
@@ -136,6 +145,7 @@ module KnifeSpork
 
       def after_databagedit
         databag_gist = object_gist("databag item", "#{object_name}:#{object_secondary_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(databag_gist) if databag_gist
         irccat(template(:databagedit) % {
             :organization => organization,
             :current_user => current_user,
@@ -147,6 +157,7 @@ module KnifeSpork
 
       def after_databagdelete
         databag_gist = object_gist("databag item", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(databag_gist) if databag_gist
         irccat(template(:databagdelete) % {
             :organization => organization,
             :current_user => current_user,
@@ -157,6 +168,7 @@ module KnifeSpork
 
       def after_databagitemdelete
         databag_gist = object_gist("databag item", "#{object_name}:#{object_secondary_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(databag_gist) if databag_gist
         irccat(template(:databagitemdelete) % {
             :organization => organization,
             :current_user => current_user,
@@ -168,6 +180,7 @@ module KnifeSpork
 
       def after_databagcreate
         databag_gist = object_gist("databag", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(databag_gist) if databag_gist
         irccat(template(:databagcreate) % {
             :organization => organization,
             :current_user => current_user,
@@ -178,6 +191,7 @@ module KnifeSpork
 
       def after_databagfromfile
         databag_gist = object_gist("databag", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(databag_gist) if databag_gist
         irccat(template(:databagfromfile) % {
             :organization => organization,
             :current_user => current_user,
@@ -189,6 +203,7 @@ module KnifeSpork
 
       def after_nodeedit
         node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(node_gist) if node_gist
         irccat(template(:nodeedit) % {
             :organization => organization,
             :current_user => current_user,
@@ -199,6 +214,7 @@ module KnifeSpork
 
       def after_nodedelete
         node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(node_gist) if node_gist
         irccat(template(:nodedelete) % {
             :organization => organization,
             :current_user => current_user,
@@ -209,6 +225,7 @@ module KnifeSpork
 
       def after_nodecreate
         node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(node_gist) if node_gist
         irccat(template(:nodecreate) % {
             :organization => organization,
             :current_user => current_user,
@@ -219,6 +236,7 @@ module KnifeSpork
 
       def after_nodefromfile
         node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(node_gist) if node_gist
         irccat(template(:nodefromfile) % {
             :organization => organization,
             :current_user => current_user,
@@ -229,6 +247,7 @@ module KnifeSpork
 
       def after_noderunlistadd
         node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(node_gist) if node_gist
         irccat(template(:noderunlistadd) % {
             :organization => organization,
             :current_user => current_user,
@@ -240,6 +259,7 @@ module KnifeSpork
 
       def after_noderunlistremove
         node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(node_gist) if node_gist
         irccat(template(:noderunlistremove) % {
             :organization => organization,
             :current_user => current_user,
@@ -251,6 +271,7 @@ module KnifeSpork
 
       def after_noderunlistset
         node_gist = object_gist("node", "#{object_name}", object_difference) if config.gist  and !object_difference.empty?
+        display_gist(node_gist) if node_gist
         irccat(template(:noderunlistset) % {
             :organization => organization,
             :current_user => current_user,
@@ -279,6 +300,10 @@ module KnifeSpork
       def env_gist(environment, diff)
         msg = "Environment #{environment} uploaded at #{Time.now.getutc} by #{current_user}\n\nConstraints updated on server in this version:\n\n#{diff.collect { |k, v| "#{k}: #{v}\n" }.join}"
         %x[ echo "#{msg}" | #{config.gist}]
+      end
+
+      def display_gist(gist)
+        ui.info "Gist generated at #{gist}"
       end
 
       def object_gist(object_type, object_name, object_diff)
