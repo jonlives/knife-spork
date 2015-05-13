@@ -26,7 +26,7 @@ module KnifeSpork
 
       if spork_config.role_safe_delete
         query = Chef::Search::Query.new
-        nodes = query.search('node', "roles:#{@object_name}").first0
+        nodes = query.search('node', "roles:#{@object_name}").first
         if nodes.size > 0
           ui.fatal("#{nodes.size} nodes have been found which still contain the role #{@object_name} in their runlists. Please remove this role from all runlists before deleting it.")
           exit(1)
