@@ -5,6 +5,7 @@ module KnifeSpork
 
     deps do
       require 'knife-spork/runner'
+      require 'chef/search/query'
     end
 
     banner 'knife spork role delete ROLENAME (options)'
@@ -22,6 +23,16 @@ module KnifeSpork
       @object_name = @name_args.first
 
       run_plugins(:before_roledelete)
+
+      if spork_config.role_safe_delete
+        query = Chef::Search::Query.new
+        nodes = query.search('node', "roles:#{@object_name}").first0
+        if nodes.size > 0
+          ui.fatal("#{nodes.size} nodes have been found which still contain the role #{@object_name} in their runlists. Please remove this role from all runlists before deleting it.")
+          exit(1)
+        end
+      end
+
       pre_role = load_role(@object_name)
       role_delete
       post_role = {}

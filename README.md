@@ -56,6 +56,7 @@ custom_plugin_path: "/home/me/spork-plugins"
 always_promote_remote: true
 skip_berkshelf: false
 role_match_file_name: true
+role_safe_delete: true
 stdout_diffs
 json_options:
   indent: "    "
@@ -147,6 +148,9 @@ The `save_environment_on_create` directive allows you to have the ```knife spork
 
 #### Role Path
 The `role_path` allows you to specify the path to where you store your chef role json files. If this parameter is not specified, spork will default to using the first element of your cookbook_path, replacing the word "cookbooks" with "roles"
+
+#### Role Safe Delete
+The `role_safe_delete` flag will, when you use the spork ```knife spork role delete``` command, check to see if any nodes currently have that role in their runlist and exit with an error message if any are found.
 
 #### Role Match File Name
 The `role_match_file_name` flag allows you to check whether the file name that is used to upload a role matches the role name as well. If the parameter is specified, or flag `--match-filename` is set, spork will not let you upload a role from a file unless the name matches the rolename.
