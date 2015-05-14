@@ -15,34 +15,11 @@ module KnifeSpork
       :description => 'A colon-separated path to look for cookbooks in',
       :proc => lambda { |o| o.split(':') }
 
-    option :berksfile,
-      :short => '-b',
-      :long => 'berksfile',
-      :description => 'Path to a Berksfile to operate off of',
-      :default => nil,
-      :proc => lambda { |o| o || File.join(Dir.pwd, ::Berkshelf::DEFAULT_FILENAME) }
-
-    option :skip_dependencies,
-      :short => '-s',
-      :long => '--skip-dependencies',
-      :description => 'Berksfile skips resolving source cookbook dependencies',
-      :default => true
-
     option :bump_comment,
            :long => '--bump_comment',
            :description => 'Bump will prompt for a Change comment, which will be appended to CHANGELOG.md along with the new version # and username',
            :default => nil
     
-    option :bump_commit,
-           :long => '--bump_commit',
-           :description => 'Bump will create a git commit once version has been bumped',
-           :default => false
-           
-    option :bump_tag,
-           :long => '--bump_tag',
-           :description => 'Bump will create a git tag using the new version #',
-	   :default => false 
-
     if defined?(::Berkshelf)
       option :berksfile,
         :short => '-b',
@@ -57,7 +34,7 @@ module KnifeSpork
         :default => true
     end
 
-    banner 'knife spork bump COOKBOOK [major|minor|patch|manual] [--bump_comment] [--bump_tag]'
+    banner 'knife spork bump COOKBOOK [major|minor|patch|manual] [--bump_comment]'
 
     def run
       self.class.send(:include, KnifeSpork::Runner)
