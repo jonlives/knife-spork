@@ -21,9 +21,6 @@ module KnifeSpork
           end
         end
       end
-      def before_roledelete
-        git_pull(role_path)
-      end
       def after_rolecreate
         if config.auto_push
           if !File.directory?(role_path)
@@ -32,6 +29,9 @@ module KnifeSpork
           end
           save_role(object_name) unless object_difference == ''
         end
+      end
+      def before_roledelete
+        git_pull(role_path)
       end
       def after_roledelete
         delete_role(object_name)
