@@ -1,3 +1,10 @@
+## 1.5.1(26th February, 2015)
+
+Bugfixes:
+
+    - Fix 'undefined local variable' error in Hipchat plugin (Thanks to @danieleva https://github.com/jonlives/knife-spork/pull/177)
+
+
 ## 1.5.0(30th January, 2015)
 
 Features:
