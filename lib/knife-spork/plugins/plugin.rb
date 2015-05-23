@@ -72,7 +72,7 @@ module KnifeSpork
       end
 
       def role_path
-        config.role_path.nil? ? "#{cookbook_path}/../roles" : config[:role_path]
+        File.expand_path(config.role_path.nil? ? "#{cookbook_path}/../roles" : config[:role_path])
       end
 
       def object_name
