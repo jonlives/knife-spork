@@ -30,6 +30,16 @@ module KnifeSpork
           save_role(object_name) unless object_difference == ''
         end
       end
+      def before_roleedit
+        git_pull(role_path)
+        if !File.exist?(File.join(role_path, object_name + '.json'))
+          ui.error 'Role does not exist in git, please create it first with spork'
+          exit 1
+        end
+      end
+      def after_roleedit
+        save_role(object_name) unless object_difference == ''
+      end
       def before_roledelete
         git_pull(role_path)
       end
