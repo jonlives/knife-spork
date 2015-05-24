@@ -31,14 +31,18 @@ module KnifeSpork
         end
       end
       def before_roleedit
-        git_pull(role_path)
-        if !File.exist?(File.join(role_path, object_name + '.json'))
-          ui.error 'Role does not exist in git, please create it first with spork'
-          exit 1
+        if config.auto_push
+          git_pull(role_path)
+          if !File.exist?(File.join(role_path, object_name + '.json'))
+            ui.error 'Role does not exist in git, please create it first with spork'
+            exit 1
+          end
         end
       end
       def after_roleedit
-        save_role(object_name) unless object_difference == ''
+        if config.auto_push
+          save_role(object_name) unless object_difference == ''
+        end
       end
       def before_roledelete
         git_pull(role_path)
@@ -122,7 +126,7 @@ module KnifeSpork
         File.open(role_file, 'w'){ |f| f.puts(json) }
         git_add(role_path, "#{role}.json")
         git_commit(role_path, "[ROLE] Updated #{role}")
-        git_push(branch) if config.auto_push
+        git_push(branch)
       end
       def delete_role(role)
         git_rm(role_path, "#{role}.json")
