@@ -74,6 +74,20 @@ module KnifeSpork
           save_environment(object_name) unless object_difference == ''
         end
       end
+      def before_environmentedit
+        if config.auto_push
+          git_pull(environment_path)
+          if !File.exist?(File.join(environment_path, object_name + '.json'))
+            ui.error 'Environment does not exist in git, please create it first with spork'
+            exit 1
+          end
+        end
+      end
+      def after_environmentedit
+        if config.auto_push
+          save_environment(object_name) unless object_difference == ''
+        end
+      end
 
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
