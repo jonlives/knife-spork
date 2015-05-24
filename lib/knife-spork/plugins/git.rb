@@ -45,10 +45,14 @@ module KnifeSpork
         end
       end
       def before_roledelete
-        git_pull(role_path)
+        if config.auto_push
+          git_pull(role_path)
+        end
       end
       def after_roledelete
-        delete_role(object_name)
+        if config.auto_push
+          delete_role(object_name)
+        end
       end
 
       # Environmental Git wrappers
