@@ -88,6 +88,16 @@ module KnifeSpork
           save_environment(object_name) unless object_difference == ''
         end
       end
+      def before_environmentdelete
+        if config.auto_push
+          git_pull(environment_path)
+        end
+      end
+      def after_environmentdelete
+        if config.auto_push
+          delete_environment(object_name)
+        end
+      end
 
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
@@ -160,6 +170,11 @@ module KnifeSpork
         File.open(environment_file, 'w'){ |f| f.puts(json) }
         git_add(environment_path, "#{environment}.json")
         git_commit(environment_path, "[ENV] Updated #{environment}")
+        git_push(branch) if config.auto_push
+      end
+      def delete_environment(environment)
+        git_rm(environment_path, "#{environment}.json")
+        git_commit(environment_path, "[ENV] Deleted #{environment}")
         git_push(branch) if config.auto_push
       end
 
