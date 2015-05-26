@@ -99,6 +99,22 @@ module KnifeSpork
         end
       end
 
+      # Node Git wrappers
+      def before_nodecreate
+        if config.auto_push
+          git_pull(node_path)
+          if File.exist?(File.join(node_path, object_name + '.json'))
+            ui.error 'Node already exists in local git, aborting creation'
+            exit 1
+          end
+        end
+      end
+      def after_nodecreate
+        if config.auto_push
+          save_node(object_name) unless object_difference == ''
+        end
+      end
+
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
@@ -146,6 +162,15 @@ module KnifeSpork
           git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
           git_push(branch)
         end
+      end
+    
+      def save_node(node)
+        json = JSON.pretty_generate(Chef::Node.load(node))
+        node_file = File.expand_path( File.join(node_path, "#{node}.json") )
+        File.open(node_file, 'w'){ |f| f.puts(json) }
+        git_add(node_path, "#{node}.json")
+        git_commit(node_path, "[NODE] Updated #{node}")
+        git_push(branch) if config.auto_push
       end
 
       def save_role(role)
