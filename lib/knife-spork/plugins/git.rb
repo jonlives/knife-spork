@@ -128,7 +128,17 @@ module KnifeSpork
           save_node(object_name) unless object_difference == ''
         end
       end
-
+      def before_nodedelete
+        if config.auto_push
+          git_pull(node_path)
+        end
+      end
+      def after_nodedelete
+        if config.auto_push
+          delete_node(object_name)
+        end
+      end
+ 
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
@@ -184,6 +194,11 @@ module KnifeSpork
         File.open(node_file, 'w'){ |f| f.puts(json) }
         git_add(node_path, "#{node}.json")
         git_commit(node_path, "[NODE] Updated #{node}")
+        git_push(branch) if config.auto_push
+      end
+      def delete_node(node)
+        git_rm(node_path, "#{node}.json")
+        git_commit(node_path, "[NODE] Deleted #{node}")
         git_push(branch) if config.auto_push
       end
 
