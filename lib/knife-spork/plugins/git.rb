@@ -114,6 +114,20 @@ module KnifeSpork
           save_node(object_name) unless object_difference == ''
         end
       end
+      def before_nodeedit
+        if config.auto_push
+          git_pull(node_path)
+          if !File.exist?(File.join(node_path, object_name + '.json'))
+            ui.error 'Node does not exist in git, please bootstrap one first'
+            exit 1
+          end
+        end
+      end
+      def after_nodeedit
+        if config.auto_push
+          save_node(object_name) unless object_difference == ''
+        end
+      end
 
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
