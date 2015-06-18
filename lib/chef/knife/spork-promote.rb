@@ -61,6 +61,7 @@ module KnifeSpork
       @environments, @cookbook = load_environments_and_cookbook
 
       check_cookbook_uploaded(@cookbook)
+      check_cookbook_latest(@cookbook)
 
       @environments.each do |e|
         environment = load_environment_from_file(e)
@@ -180,6 +181,16 @@ module KnifeSpork
       rescue Net::HTTPServerException => e
         ui.error "#{cookbook_name}@#{version} does not exist on Chef Server! Upload the cookbook first by running:\n\n\tknife spork upload #{cookbook_name}\n\n"
         exit(1)
+      end
+    end
+
+    def check_cookbook_latest(cookbook_name)
+      validate_version!(config[:version])
+      version = config[:version] || load_cookbook(cookbook_name).version
+      cb_latest = Chef::CookbookVersion.load(cookbook_name).metadata.version
+      # ui.msg "server: #{cb_latest} -- local: #{version}"
+      if cb_latest > version
+        ui.confirm "Ther is a later verison of #{cookbook_name} on the chef server.  Continue?"
       end
     end
   end
