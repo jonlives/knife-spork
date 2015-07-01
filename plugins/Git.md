@@ -47,7 +47,7 @@ The git branch to push/pull to/from.
 - Default: `master`
 
 #### auto_push
-An optional true / false parameter indicating whether or not changes should be automatically comitted and pushed to Git
+An optional true / false parameter indicating whether or not subcommands manipulating environment, role, node, databag files should be automatically comitted and pushed to Git
 
 - Type: `Boolean`
 - Default: `false`
