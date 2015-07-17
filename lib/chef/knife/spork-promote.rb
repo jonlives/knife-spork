@@ -117,6 +117,7 @@ module KnifeSpork
       version_change_threshold = spork_config.version_change_threshold || 2
       env_constraints_diff = constraints_diff(@environment_diffs["#{environment}"]).select{|k,v| v > version_change_threshold}
 
+
       if env_constraints_diff.size !=0 then
         ui.warn 'You\'re about to promote a significant version number change to 1 or more cookbooks:'
         ui.warn @environment_diffs["#{environment}"].select{|k,v|env_constraints_diff.has_key?(k)}.collect{|k,v| "\t#{k}: #{v}"}.join("\n")
@@ -154,7 +155,17 @@ module KnifeSpork
         end
       end
 
-      local_environment.save
+      # these are the cookbooks that have higher versions on remote
+      remote_changed = constraints_diff(@environment_diffs["#{environment}"]).select{|k,v| v < 0}
+      new_local_environment = local_environment.dup
+      remote_changed.each do |k,v|
+        new_local_environment.cookbook_versions[k] = remote_environment.cookbook_versions[k]
+      end
+      new_environment_json = pretty_print_json(new_local_environment.to_hash)
+      save_environment_changes(environment, new_environment_json)
+
+      # this new local environment consists of any cookbooks with higher revisions on remote than local
+      new_local_environment.save
     end
 
     def promote(environment, cookbook_names)
