@@ -30,6 +30,12 @@ module KnifeSpork
       self.config = Chef::Config.merge!(config)
 
       @object_name = @name_args.first
+      # This should be the data bag name. If it isn't, some poor soul forgot the data bag name.
+      # Check to see if there are any more arguments, and if not, warn about usage.
+      if @name_args.drop(1).size == 0
+        print "USAGE: #{banner}"
+        exit(1)
+      end
 
       if config[:all] == true
         test = Chef::Knife::DataBagFromFile.new
