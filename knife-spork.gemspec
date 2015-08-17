@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec', '>= 3.1.0'
   gem.add_development_dependency 'chef-zero', '>= 3.2'
-  gem.add_runtime_dependency 'chef', '>= 11.0.0'
+  gem.add_runtime_dependency 'chef', '>= 12.0.0'
   gem.add_runtime_dependency 'git', '>= 1.2.5'
   gem.add_runtime_dependency 'app_conf', '>= 0.4.0'
   gem.add_runtime_dependency 'diffy', '>= 3.0.1'
