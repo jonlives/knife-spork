@@ -21,7 +21,9 @@ or install the gem manually:
 gem install knife-spork
 ```
 
-**Please note**: As of version 1.3.0, knife-spork depends on version 11.0.0 or greater of the chef gem. If you're still using Chef 10, please continue to use knife-spork 1.2.x
+knife-spork is also included in the [Chef Devlopment Kit](https://downloads.chef.io/chef-dk/).
+
+**Please note**: As of version 1.6.0, knife-spork requires Ruby 2.1.1 or greater and Chef version 12.0.0 or greater. If you're still using < Ruby 2.0 or Chef 11, please continue to use knife-spork 1.5.x
 Spork Configuration
 -------------------
 Out of the box, knife spork will work with no configuration. However, you can optionally enable several features to enhance its functionality.
