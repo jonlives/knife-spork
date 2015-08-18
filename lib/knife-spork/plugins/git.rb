@@ -7,6 +7,138 @@ module KnifeSpork
 
       def perform; end
 
+      # Role Git wrappers
+      def before_rolecreate
+        if config.auto_push
+          if !File.directory?(role_path)
+            ui.error "Role path #{role_path} does not exist"
+            exit 1
+          end
+          git_pull(role_path)
+          if File.exist?(File.join(role_path, object_name + '.json'))
+            ui.error 'Role already exists in local git, aborting creation'
+            exit 1
+          end
+        end
+      end
+      def after_rolecreate
+        if config.auto_push
+          if !File.directory?(role_path)
+            ui.error "Role path #{role_path} does not exist"
+            exit 1
+          end
+          save_role(object_name) unless object_difference == ''
+        end
+      end
+      def before_roleedit
+        if config.auto_push
+          git_pull(role_path)
+          if !File.exist?(File.join(role_path, object_name + '.json'))
+            ui.error 'Role does not exist in git, please create it first with spork'
+            exit 1
+          end
+        end
+      end
+      def after_roleedit
+        if config.auto_push
+          save_role(object_name) unless object_difference == ''
+        end
+      end
+      def before_roledelete
+        if config.auto_push
+          git_pull(role_path)
+        end
+      end
+      def after_roledelete
+        if config.auto_push
+          delete_role(object_name)
+        end
+      end
+
+      # Environmental Git wrappers
+      def before_environmentcreate
+        if config.auto_push
+          if !File.directory?(environment_path)
+            ui.error "Environment path #{environment_path} does not exist"
+            exit 1
+          end
+          git_pull(environment_path)
+          if File.exist?(File.join(environment_path, object_name + '.json'))
+            ui.error 'Environment already exists in local git, aborting creation'
+            exit 1
+          end
+        end
+      end
+      def after_environmentcreate
+        if config.auto_push
+          save_environment(object_name) unless object_difference == ''
+        end
+      end
+      def before_environmentedit
+        if config.auto_push
+          git_pull(environment_path)
+          if !File.exist?(File.join(environment_path, object_name + '.json'))
+            ui.error 'Environment does not exist in git, please create it first with spork'
+            exit 1
+          end
+        end
+      end
+      def after_environmentedit
+        if config.auto_push
+          save_environment(object_name) unless object_difference == ''
+        end
+      end
+      def before_environmentdelete
+        if config.auto_push
+          git_pull(environment_path)
+        end
+      end
+      def after_environmentdelete
+        if config.auto_push
+          delete_environment(object_name)
+        end
+      end
+
+      # Node Git wrappers
+      def before_nodecreate
+        if config.auto_push
+          git_pull(node_path)
+          if File.exist?(File.join(node_path, object_name + '.json'))
+            ui.error 'Node already exists in local git, aborting creation'
+            exit 1
+          end
+        end
+      end
+      def after_nodecreate
+        if config.auto_push
+          save_node(object_name) unless object_difference == ''
+        end
+      end
+      def before_nodeedit
+        if config.auto_push
+          git_pull(node_path)
+          if !File.exist?(File.join(node_path, object_name + '.json'))
+            ui.error 'Node does not exist in git, please bootstrap one first'
+            exit 1
+          end
+        end
+      end
+      def after_nodeedit
+        if config.auto_push
+          save_node(object_name) unless object_difference == ''
+        end
+      end
+      def before_nodedelete
+        if config.auto_push
+          git_pull(node_path)
+        end
+      end
+      def after_nodedelete
+        if config.auto_push
+          delete_node(object_name)
+        end
+      end
+ 
       def before_bump
         git_pull(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
         git_pull_submodules(environment_path) unless cookbook_path.include?(environment_path.gsub"/environments","")
@@ -55,6 +187,50 @@ module KnifeSpork
           git_push(branch)
         end
       end
+    
+      def save_node(node)
+        json = JSON.pretty_generate(Chef::Node.load(node))
+        node_file = File.expand_path( File.join(node_path, "#{node}.json") )
+        File.open(node_file, 'w'){ |f| f.puts(json) }
+        git_add(node_path, "#{node}.json")
+        git_commit(node_path, "[NODE] Updated #{node}")
+        git_push(branch) if config.auto_push
+      end
+      def delete_node(node)
+        git_rm(node_path, "#{node}.json")
+        git_commit(node_path, "[NODE] Deleted #{node}")
+        git_push(branch) if config.auto_push
+      end
+
+      def save_role(role)
+        json = JSON.pretty_generate(Chef::Role.load(role))
+        role_file = File.expand_path( File.join(role_path, "#{role}.json") )
+        File.open(role_file, 'w'){ |f| f.puts(json) }
+        git_add(role_path, "#{role}.json")
+        git_commit(role_path, "[ROLE] Updated #{role}")
+        git_push(branch)
+      end
+      def delete_role(role)
+        git_rm(role_path, "#{role}.json")
+        if config.auto_push
+          git_commit(role_path, "[ROLE] Deleted #{role}")
+          git_push(branch)
+        end
+      end
+
+      def save_environment(environment)
+        json = JSON.pretty_generate(Chef::Environment.load(environment))
+        environment_file = File.expand_path( File.join(environment_path, "#{environment}.json") )
+        File.open(environment_file, 'w'){ |f| f.puts(json) }
+        git_add(environment_path, "#{environment}.json")
+        git_commit(environment_path, "[ENV] Updated #{environment}")
+        git_push(branch) if config.auto_push
+      end
+      def delete_environment(environment)
+        git_rm(environment_path, "#{environment}.json")
+        git_commit(environment_path, "[ENV] Deleted #{environment}")
+        git_push(branch) if config.auto_push
+      end
 
       private
       def git
@@ -77,7 +253,7 @@ module KnifeSpork
       def git_pull(path)
         if is_repo?(path)
           ui.msg "Git: Pulling latest changes from #{path}"
-          output = IO.popen("git pull 2>&1")
+          output = IO.popen("cd #{path} && git pull 2>&1")
           Process.wait
           exit_code = $?
           if !exit_code.exitstatus ==  0
@@ -133,6 +309,19 @@ module KnifeSpork
             git.push "origin", branch
         rescue ::Git::GitExecuteError => e
           ui.error "Could not push to master: #{e.message}"
+        end
+      end
+
+      def git_rm(filepath, filename)
+        if is_repo?(filepath)
+          ui.msg "Git rm'ing #{filepath}/#{filename}"
+          output = IO.popen("cd #{filepath} && git rm #{filename}")
+          Process.wait
+          exit_code = $?
+          if !exit_code.exitstatus ==  0
+            ui.error "#{output.read()}\n"
+            exit 1
+          end
         end
       end
 
