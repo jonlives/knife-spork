@@ -1,3 +1,9 @@
+## 1.6.1(18th August, 2015)
+
+Bugfixes:
+
+    - Fix bug in automatic bump command when cookbook name is single quoted in metadata.rb
+    
 ## 1.6.0(18th August, 2015)
 
 Features:

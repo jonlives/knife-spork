@@ -38,7 +38,7 @@ module KnifeSpork
       cookbook_name = ""
 
       if @name_args.empty? && File.exists?("#{Dir.pwd}/metadata.rb")
-        cookbook_name = File.read("#{Dir.pwd}/metadata.rb").split("\n").select{|l|l.start_with?("name")}.first.split.last.gsub("\"","")
+        cookbook_name = File.read("#{Dir.pwd}/metadata.rb").split("\n").select{|l|l.start_with?("name")}.first.split.last.gsub("\"","").gsub("'","")
         ui.info "Cookbook name omitted, but metadata.rb for cookbook #{cookbook_name} found - bumping that."
       elsif @name_args.empty?
         show_usage
