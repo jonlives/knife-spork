@@ -1,3 +1,19 @@
+## 1.6.0(18th August, 2015)
+
+Features:
+
+    - Optionally print a link to a gist of change diffs on the command line in addition to in plugin notifications (https://github.com/jonlives/knife-spork/issues/183
+    - Display a warning when deleting a role currently in use by nodes on the Chef server (https://github.com/jonlives/knife-spork/issues/184)
+    - Spork bump will now bump in the current directory if no cookbook name is specified and metadata.rb is found (https://github.com/jonlives/knife-spork/issues/186)
+    - Spork promote now prompts for confirmation if a newer version of a cookbook exists on the server than the one being promoted (Thanks to @chazzle https://github.com/jonlives/knife-spork/pull/188)
+    - Significantly refactored git plugin, now supporting optional automatic commit & push (Thanks to @jeunito https://github.com/jonlives/knife-spork/pull/187)
+    
+
+Bugfixes:
+
+    - Correct parameter errors in Slack plugin README.md (Thanks to BarthV https://github.com/jonlives/knife-spork/pull/185)
+    - Spork data bag from file now shows an error if data bag name is missed off (Thanks to @kdaniels https://github.com/jonlives/knife-spork/pull/190)
+    
 ## 1.5.1(26th February, 2015)
 
 Bugfixes:
