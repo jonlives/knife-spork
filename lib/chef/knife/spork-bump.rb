@@ -35,10 +35,17 @@ module KnifeSpork
       self.config = Chef::Config.merge!(config)
       config[:cookbook_path] ||= Chef::Config[:cookbook_path]
 
-      if @name_args.empty?
+      cookbook_name = ""
+
+      if @name_args.empty? && File.exists?("#{Dir.pwd}/metadata.rb")
+        cookbook_name = File.read("#{Dir.pwd}/metadata.rb").split("\n").select{|l|l.start_with?("name")}.first.split.last.gsub("\"","")
+        ui.info "Cookbook name omitted, but metadata.rb for cookbook #{cookbook_name} found - bumping that."
+      elsif @name_args.empty?
         show_usage
         ui.error("You must specify at least a cookbook name")
         exit 1
+      else
+        cookbook_name = name_args.first
       end
 
       # Temporary fix for #138 to allow Berkshelf functionality
@@ -46,12 +53,12 @@ module KnifeSpork
       unload_berkshelf_if_specified
 
       #First load so plugins etc know what to work with
-      @cookbook = load_cookbook(name_args.first)
+      @cookbook = load_cookbook(cookbook_name)
 
       run_plugins(:before_bump)
 
       #Reload cookbook in case a VCS plugin found updates
-      @cookbook = load_cookbook(name_args.first)
+      @cookbook = load_cookbook(cookbook_name)
       bump
       run_plugins(:after_bump)
     end
