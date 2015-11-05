@@ -31,7 +31,7 @@ module KnifeSpork
           if review.failed?
             ui.error "Foodcritic failed!"
             review.to_s.split("\n").each{ |r| ui.error r.to_s }
-            exit(1) if config.epic_fail
+            exit(1) if epic_fail?
           else
             ui.info "Passed!"
           end
