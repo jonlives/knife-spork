@@ -50,10 +50,10 @@ module KnifeSpork
       if (config[:match_filename] || spork_config[:role_match_file_name])
         ## Check if file names match role names 
         @name_args.each do |arg|
+            role = rff.loader.load_from("roles", arg)
             file_name = arg.split("/").last
-            role = rff.loader.load_from("roles", file_name)
-            file_name = file_name.gsub(".json","").gsub(".rb", "")
-            if file_name != role.name
+            role_name = file_name.gsub(".json","").gsub(".rb", "")
+            if role_name != role.name
                 ui.error("Role name in file #{role.name} does not match file name #{file_name}")
                 exit 1
             end
