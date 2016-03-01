@@ -190,7 +190,7 @@ module KnifeSpork
       cb_latest = Chef::CookbookVersion.load(cookbook_name).metadata.version
       # ui.msg "server: #{cb_latest} -- local: #{version}"
       if cb_latest > version
-        ui.confirm "There is a later verison of #{cookbook_name} on the chef server.  Would you still like to promote version #{version}?"
+        ui.confirm "There is a later version of #{cookbook_name} on the chef server.  Would you still like to promote version #{version}"
       end
     end
   end
