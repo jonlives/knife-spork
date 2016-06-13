@@ -33,6 +33,7 @@ KnifeSpork will look for a configuration file in the following locations, in asc
 - `config/spork-config.yml`
 - `/etc/spork-config.yml`
 - `~/.chef/spork-config.yml`
+- `.chef/spork-config.yml`
 
 Anything set in the configuration file in your home directory for example, will override options set in your Chef repository or `/etc`.
 

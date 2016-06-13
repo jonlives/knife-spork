@@ -17,7 +17,7 @@ module KnifeSpork
         return @spork_config unless @spork_config.nil?
 
         @spork_config = AppConf.new
-        load_paths = [ File.expand_path("#{cookbook_path.gsub('cookbooks','')}/config/spork-config.yml"), File.expand_path('config/spork-config.yml'), '/etc/spork-config.yml', File.expand_path('~/.chef/spork-config.yml') ]
+        load_paths = [ File.expand_path("#{cookbook_path.gsub('cookbooks','')}/config/spork-config.yml"), File.expand_path('config/spork-config.yml'), '/etc/spork-config.yml', File.expand_path('~/.chef/spork-config.yml'), File.expand_path("#{cookbook_path.gsub('cookbooks','')}/.chef/spork-config.yml") ]
         load_paths.each do |load_path|
           if File.exists?(load_path)
             @spork_config.load(load_path)
