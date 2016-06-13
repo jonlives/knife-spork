@@ -1,3 +1,13 @@
+## 1.6.2(13th June, 2016)
+
+Features:
+
+    - Search for spork config file in .chef directory under current working dir (Thansk to jgoulah https://github.com/jonlives/knife-spork/pull/203)
+
+Bugfixes:
+
+    - Typo fix in documentation (Thanks to @gregkare https://github.com/jonlives/knife-spork/pull/199)
+
 ## 1.6.1(18th August, 2015)
 
 Bugfixes:
