@@ -11,6 +11,10 @@ module KnifeSpork
         jabber "#{organization}#{current_user} uploaded the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")}"
       end
 
+      def after_delete
+        jabber "#{organization}#{current_user} deleted the following cookbooks: #{misc_output}"
+      end
+
       def after_promote_remote
         jabber "#{organization}#{current_user} promoted the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")} to #{environments.collect{ |e| "#{e.name}" }.join(", ")}"
       end

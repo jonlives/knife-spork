@@ -24,6 +24,18 @@ module KnifeSpork
         end
       end
 
+      def after_delete
+        event_data = {
+          :tag => 'knife',
+          :username => current_user,
+          :status => "#{organization}#{current_user} deleted the following cookbooks: #{misc_output}",
+          :metadata => {
+            :deleted_cookbooks => misc_output
+          }.to_json
+        }
+        eventinate(event_data)
+      end
+
       def after_promote_remote
         environments.each do |environment|
           cookbooks.each do |cookbook|

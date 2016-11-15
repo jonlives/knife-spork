@@ -11,6 +11,10 @@ module KnifeSpork
         hipchat "#{organization}#{current_user} uploaded the following cookbooks:\n#{cookbooks.collect{ |c| "  #{c.name}@#{c.version}" }.join("\n")}"
       end
 
+      def after_delete
+        hipchat "#{organization}#{current_user} deleted the following cookbooks: #{misc_output}"
+      end
+
       def after_promote_remote
 	      environments.each do |environment|
           diff = environment_diffs[environment.name]

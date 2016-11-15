@@ -91,6 +91,10 @@ module KnifeSpork
         @options[:object_difference]
       end
 
+      def misc_output
+        @options[:misc_output]
+      end
+
       def ui
         @options[:ui]
       end
