@@ -1,8 +1,15 @@
+## 1.6.3(12th December, 2016)
+
+Features:
+
+    - Added commands to delete cookbooks (Thanks to kdaniels https://github.com/jonlives/knife-spork/pull/205)
+
+
 ## 1.6.2(13th June, 2016)
 
 Features:
 
-    - Search for spork config file in .chef directory under current working dir (Thansk to jgoulah https://github.com/jonlives/knife-spork/pull/203)
+    - Search for spork config file in .chef directory under current working dir (Thanks to jgoulah https://github.com/jonlives/knife-spork/pull/203)
 
 Bugfixes:
 

@@ -16,6 +16,14 @@ EOH
         end
       end
 
+      def after_delete
+        campfire do |rooms|
+          rooms.paste <<-EOH
+"#{organization}#{current_user} deleted the following cookbooks: #{misc_output}"
+EOH
+        end
+      end
+
       def after_promote_remote
         campfire do |rooms|
           rooms.paste <<-EOH

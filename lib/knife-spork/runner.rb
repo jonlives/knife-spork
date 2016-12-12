@@ -50,6 +50,7 @@ module KnifeSpork
           :object_name => @object_name,
           :object_secondary_name => @object_secondary_name,
           :object_difference => @object_difference,
+          :misc_output => @misc_output,
           :ui => ui
         )
       end

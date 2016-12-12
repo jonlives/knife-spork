@@ -7,6 +7,7 @@ module KnifeSpork
 
       TEMPLATES = {
         :upload  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded #TEAL%{cookbooks}#NORMAL',
+        :delete => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} deleted the following cookbooks: #TEAL%{misc_output}#NORMAL',
         :promote => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} promoted #TEAL%{cookbooks}#NORMAL to %{environment} %{gist}',
         :environmentfromfile  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} uploaded environment #TEAL%{object_name}#NORMAL %{gist}',
         :environmentedit  => '#BOLD#PURPLECHEF:#NORMAL %{organization}%{current_user} edited environment #TEAL%{object_name}#NORMAL %{gist}',
@@ -37,6 +38,14 @@ module KnifeSpork
           :organization => organization,
           :current_user => current_user,
           :cookbooks    => cookbooks.collect { |c| "#{c.name}@#{c.version}" }.join(", ")
+        })
+      end
+
+      def after_delete
+        irccat(template(:delete) % {
+          :organization => organization,
+          :current_user => current_user,
+          :misc_output => misc_output 
         })
       end
 

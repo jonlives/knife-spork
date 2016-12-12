@@ -13,6 +13,12 @@ module KnifeSpork
         EOH
       end
 
+      def after_delete
+        grove <<-EOH
+#{organization}#{current_user} deleted the following cookbooks: #{misc_output}
+        EOH
+      end
+
       def after_promote_remote
         grove <<-EOH
 #{current_user} promoted #{cookbooks.collect{|c| "#{c.name}@#{c.version}"}.join(', ')} on #{environments.collect{|e| "#{e.name}"}.join(', ')}
