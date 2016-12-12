@@ -337,6 +337,24 @@ Saving changes to my_environment.json
 Promotion complete. Don't forget to upload your changed my_environment to Chef Server
 ```
 
+Spork Delete
+------------
+This function works mostly the same as normal `knife cookbook delete COOKBOOK` including options to delete all versions and delete without interactive confirmation.
+
+#### Usage
+```bash
+knife spork delete COOKBOOK
+```
+#### Example
+```text
+$ knife spork delete apache2 -a
+WARNING: Deleting cookbook apache2...
+Do you really want to delete all versions of apache2? (Y/N) Y
+Deleted cookbook[apache2][2.0.2]
+Successfully deleted cookbook apache2 ALL versions from the Chef server
+Cookbooks deleted from Chef server: apache2: ALL versions
+```
+
 Spork Omni
 -------------
 Omni lets you combine one of the most common combinations of spork commands (bump, upload & promote or promote --remote) - into one handy shortcut.
