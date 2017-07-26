@@ -7,7 +7,11 @@ module KnifeSpork
       hooks :after_check, :before_upload
 
       def perform
-        safe_require 'rubocop'
+        if config.use_cookstyle
+          safe_require 'cookstyle'
+        else
+          safe_require 'rubocop'
+        end
         safe_require 'rubocop/cli'
         safe_require 'rubocop/config_store'
 

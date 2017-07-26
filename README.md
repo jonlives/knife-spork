@@ -118,6 +118,7 @@ plugins:
     out_file: <file>
     sev_level: <C|W|E>
     lint: false
+    use_cookstyle: true
 ```
 
 #### Default Environments
