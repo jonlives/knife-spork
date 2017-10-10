@@ -1,8 +1,10 @@
 $:.push File.expand_path('../lib', __FILE__)
 
+require "knife-spork/version"
+
 Gem::Specification.new do |gem|
   gem.name          = 'knife-spork'
-  gem.version       = '1.6.3'
+  gem.version       = KnifeSpork::Version::VERSION
   gem.authors       = ["Jon Cowie", "Katherine Daniels"]
   gem.email         = ['jonlives@gmail.com', 'kdaniels@etsy.com']
   gem.homepage      = 'https://github.com/jonlives/knife-spork'
