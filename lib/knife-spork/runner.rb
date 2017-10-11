@@ -110,7 +110,9 @@ module KnifeSpork
       end
 
       def save_environment_changes(environment, json)
-        if spork_config[:environment_path]
+        if @config[:environment_path]
+          environments_path = @config[:environment_path]
+        elsif spork_config[:environment_path]
           environments_path = spork_config[:environment_path]
         else
           split_cb_path = cookbook_path.split("/")
