@@ -122,23 +122,30 @@ module KnifeSpork
 
     # Ensures that all the cookbooks dependencies are either already on the server or being uploaded in this pass
     def check_dependencies(cookbook)
+      negotiate_protocol_version
       cookbook.metadata.dependencies.each do |cookbook_name, version|
-        unless server_side_cookbooks(cookbook_name, version)
+        unless server_has_version(cookbook_name, version)
           ui.error "#{cookbook.name} depends on #{cookbook_name} (#{version}), which is not currently being uploaded and cannot be found on the server!"
           exit(1)
         end
       end
     end
 
-    def server_side_cookbooks(cookbook_name, version)
+    def server_has_version(cookbook_name, version)
+      hash = server_side_cookbooks[cookbook_name]
+      hash && hash['versions'] && hash['versions'].any?{ |v| Chef::VersionConstraint.new(version).include?(v['version']) }
+    end
+
+    def server_side_cookbooks
       if Chef::CookbookVersion.respond_to?(:list_all_versions)
         @server_side_cookbooks ||= Chef::CookbookVersion.list_all_versions
       else
         @server_side_cookbooks ||= Chef::CookbookVersion.list
       end
+    end
 
-      hash = @server_side_cookbooks[cookbook_name]
-      hash && hash['versions'] && hash['versions'].any?{ |v| Chef::VersionConstraint.new(version).include?(v['version']) }
+    def negotiate_protocol_version
+      server_side_cookbooks
     end
   end
 end
