@@ -1,6 +1,6 @@
 Rubocop
 ==========
-Automatically runs rubocop against your cookbooks on check and upload.
+Automatically runs rubocop (or [cookstyle](https://github.com/chef/cookstyle) - its chef-focused brother) against your cookbooks on check and upload.
 This is entirely based off of the Foodcritic plugin.
 
 Gem Requirements
@@ -9,6 +9,7 @@ This plugin requires the following gems:
 
 ```ruby
 gem 'rubocop'
+gem 'cookstyle' # if you wish to use cookstyle behaviour
 ```
 
 Hooks
@@ -27,6 +28,7 @@ plugins:
     out_file: <file>
     sev_level: <C|W|E>
     lint: false
+    use_cookstyle: true
 ```
 
 #### epic_fail:
@@ -64,6 +66,12 @@ Set the severity level at which Rubocop will fail (see rubocop --help for more).
 - Default: `false`
 - Rubocop command line equivilant: "--lint"
 Only run linting rules.
+
+#### use_cookstyle:
+- Type: `Boolean`
+- Default: `false`
+- Rubocop command line equivilant: none, use `cookstyle` command instead of `rubocop` command
+Cookstyle is a set of rubocop configurations that are specific to cookbooks.
 
 #### Example
 ``` ruby
