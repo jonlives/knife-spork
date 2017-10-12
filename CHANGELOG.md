@@ -1,3 +1,17 @@
+## 1.7.0 (12th October 2017)
+
+Features:
+
+    - Rubocop plugin now supports cookstyle (thanks to timurb https://github.com/jonlives/knife-spork/pull/211)
+    - Spork info will now dump config as yml (Thanks to jeunito https://github.com/jonlives/knife-spork/pull/215)
+    - Spork promote will now prefer the environment path passed in on the command line (Thanks to shoekstra https://github.com/jonlives/knife-spork/pull/216)
+    - Add knife spork version command (Thanks to jeunito https://github.com/jonlives/knife-spork/pull/217)
+    
+Bugfixes:
+
+    - Fix error with Chef server when uploading cookbook with no deps (Thanks to timurb https://github.com/jonlives/knife-spork/pull/210)
+    - Fix unclear error when trying to promote a non-existant cookbook (Thanks to timurb https://github.com/jonlives/knife-spork/pull/213)
+
 ## 1.6.3(12th December, 2016)
 
 Features:
