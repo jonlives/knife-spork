@@ -1,3 +1,10 @@
+## 1.7.1 (17th November 2017)
+    
+Bugfixes:
+
+    - Fixes to gemspec fields
+
+
 ## 1.7.0 (12th October 2017)
 
 Features:
