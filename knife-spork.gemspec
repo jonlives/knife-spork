@@ -5,8 +5,8 @@ require "knife-spork/version"
 Gem::Specification.new do |gem|
   gem.name          = 'knife-spork'
   gem.version       = KnifeSpork::Version::VERSION
-  gem.authors       = ["Jon Cowie", "Katherine Daniels"]
-  gem.email         = ['jonlives@gmail.com', 'kdaniels@etsy.com']
+  gem.authors       = ["Jon Cowie", "Ryn Daniels"]
+  gem.email         = ['jonlives@gmail.com', 'code@ryn.works']
   gem.homepage      = 'https://github.com/jonlives/knife-spork'
   gem.licenses      = ['GPL']
   gem.summary       = "A workflow plugin to help many devs work with the same chef repo/server"
