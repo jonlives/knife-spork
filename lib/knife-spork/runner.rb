@@ -110,7 +110,9 @@ module KnifeSpork
       end
 
       def save_environment_changes(environment, json)
-        if @config[:environment_path]
+        if spork_config[:environment_path]
+          environments_path = spork_config[:environment_path]
+        elsif @config[:environment_path]
           # environment_path can be an Array or String. If Array, let's just
           # take the first value as we have done in other similar circumstances
           environments_path = if @config[:environment_path].is_a? Array
@@ -118,9 +120,6 @@ module KnifeSpork
                               else
                                 @config[:environment_path]
                               end
-
-        elsif spork_config[:environment_path]
-          environments_path = spork_config[:environment_path]
         else
           split_cb_path = cookbook_path.split("/")
           environments_path = (split_cb_path[0..-2] << split_cb_path[-1].gsub("cookbooks","environments")).join("/")
