@@ -1,3 +1,10 @@
+## 1.7.2 (3rd August 2018)
+    
+Bugfixes:
+
+    - Fix issues handling an array of environment paths. (Thanks to miroswan https://github.com/jonlives/knife-spork/pull/223)
+
+
 ## 1.7.1 (17th November 2017)
     
 Bugfixes:
