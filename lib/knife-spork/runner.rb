@@ -38,7 +38,7 @@ module KnifeSpork
 
         environments = [ @environments || @environment ].flatten.compact.collect{|environment| environment.is_a?(::Chef::Environment) ? environment : load_environment_from_file(environment)}.sort{|a,b| a.name.to_s <=> b.name.to_s}
         environment_diffs = @environment_diffs
-        
+
         KnifeSpork::Plugins.run(
           :config => spork_config,
           :hook => hook.to_sym,
@@ -57,7 +57,7 @@ module KnifeSpork
 
       def load_environments_and_cookbook
         ensure_environment_and_cookbook_provided!
-       
+
         if @name_args.size == 2
           environments = @name_args[0].split(",").map{ |env| load_specified_environment_group(env) }
           [ environments.flatten, @name_args[1] ]
@@ -111,7 +111,14 @@ module KnifeSpork
 
       def save_environment_changes(environment, json)
         if @config[:environment_path]
-          environments_path = @config[:environment_path]
+          # environment_path can be an Array or String. If Array, let's just
+          # take the first value as we have done in other similar circumstances
+          environments_path = if @config[:environment_path].is_a? Array
+                                @config[:environment_path].first
+                              else
+                                @config[:environment_path]
+                              end
+
         elsif spork_config[:environment_path]
           environments_path = spork_config[:environment_path]
         else
@@ -250,7 +257,7 @@ module KnifeSpork
         begin
           environment_loader.object_from_file("#{environment_path}/#{environment_name}.json")
         rescue FFI_Yajl::ParseError => e
-          raise "#{environment_name} environment file has syntactically incorrect json.\n #{e.to_s}" 
+          raise "#{environment_name} environment file has syntactically incorrect json.\n #{e.to_s}"
         end
       end
 
