@@ -5,6 +5,11 @@ KnifeSpork is a workflow plugin for `Chef::Knife` which helps multiple developer
 [![Build Status](https://travis-ci.org/jonlives/knife-spork.svg)](https://travis-ci.org/jonlives/knife-spork)
 [![Gem Version](https://badge.fury.io/rb/knife-spork.png)](http://badge.fury.io/rb/knife-spork)
 
+Maintenance Status Warning
+--------------------------
+
+Knife-Spork is not being particularly actively maintained at this time as the primary author does not currently use it day-to-day. Pull requests and issues might therefore take a while to be actioned - please feel free to reach out if you run into something you consider an urgent blocker.
+
 Installation
 ------------
 
