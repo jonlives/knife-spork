@@ -12,9 +12,7 @@ Gem::Specification.new do |gem|
   gem.summary       = "A workflow plugin to help many devs work with the same chef repo/server"
   gem.description   = "KnifeSpork is a workflow plugin for Chef::Knife which helps multiple developers work on the same Chef Server and repository without treading on each other's toes. This plugin was designed around the workflow used at Etsy, where several people are working on the Chef repository and Chef Server simultaneously."
 
-  gem.files         = `git ls-files`.split($\)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.files         = %w{LICENSE} + Dir.glob("lib/**/*")
   gem.name          = "knife-spork"
   gem.require_paths = ["lib"]
 
