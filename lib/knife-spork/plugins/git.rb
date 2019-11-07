@@ -177,12 +177,6 @@ module KnifeSpork
           git_add(environment_path,"#{environment}.json")
         end
         if config.auto_push
-          branch =  if not config.branch.nil?
-                      config[:branch] 
-                    else 
-                      "master"
-                    end
-
           git_commit(environment_path, "promote #{cookbooks.collect{ |c| "#{c.name}@#{c.version}" }.join(",")} to #{environments.join(",")}")
           git_push(branch)
         end
@@ -380,7 +374,7 @@ module KnifeSpork
       end
 
       def branch
-        config.branch || 'master'
+        config.branch || `git rev-parse --abbrev-ref HEAD`
       end
 
       def tag_name
