@@ -374,7 +374,7 @@ module KnifeSpork
       end
 
       def branch
-        config.branch || `git rev-parse --abbrev-ref HEAD`
+        config.branch || `git rev-parse --abbrev-ref HEAD`.chomp
       end
 
       def tag_name
