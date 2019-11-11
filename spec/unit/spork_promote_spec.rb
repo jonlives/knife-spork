@@ -71,7 +71,9 @@ module KnifeSpork
         knife.instance_variable_set(:@environments, ["example"])
         knife.instance_variable_set(:@cookbook, "example")
         knife.send(:save_environment_changes_remote, "example")
+        File.read(environment_file).should include "\"example2\": \"= 0.0.2\""
       end
     end
+
   end
 end

@@ -22,7 +22,8 @@ task :preseed_test_environment do
   @server.start_background
   puts "Uploading test data"
   system("knife cookbook upload example -c spec/unit/fixtures/knife.rb")
-  system("knife environment from file spec/unit/fixtures/environments/example.json -c spec/unit/fixtures/knife.rb")
+  # example-remote is the state we want the chef server to be in
+  system("knife environment from file spec/unit/fixtures/environments/example-remote.json -c spec/unit/fixtures/knife.rb")
 end
 
 task :cleanup_test_environment do
@@ -33,3 +34,4 @@ task :cleanup_test_environment do
 end
 
 task :default => [:preseed_test_environment, :test, :cleanup_test_environment]
+
