@@ -1,9 +1,12 @@
 ## Unreleased
 
+
+## 1.7.3 (28th February 2020)
+
 Features:
 
-    - Added `--fail-if-frozen` flag to `knife spork check` to only fail when local version matches a frozen version
-
+    - Added `--fail-if-frozen` flag to `knife spork check` to only fail when local version matches a frozen version (Thanks to shoekstra https://github.com/jonlives/knife-spork/pull/228)
+    - Allow git plugin to push to current branch (Thanks to zmaupin https://github.com/jonlives/knife-spork/pull/229)
 
 ## 1.7.2 (3rd August 2018)
     
