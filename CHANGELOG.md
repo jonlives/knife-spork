@@ -1,3 +1,10 @@
+## Unreleased
+
+Features:
+
+    - Added `--fail-if-frozen` flag to `knife spork check` to only fail when local version matches a frozen version
+
+
 ## 1.7.2 (3rd August 2018)
     
 Bugfixes:

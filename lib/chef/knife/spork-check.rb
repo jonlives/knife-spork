@@ -18,6 +18,10 @@ module KnifeSpork
       :long => "--fail",
       :description => "If the check fails exit with non-zero exit code"
 
+    option :fail_if_frozen,
+      :long => "--fail-if-frozen",
+      :description => "If the check fails exit with non-zero exit code when cookbook is frozen"
+
     option :cookbook_path,
       :short => '-o PATH:PATH',
       :long => '--cookbook-path PATH:PATH',
@@ -85,7 +89,7 @@ module KnifeSpork
           if frozen?(remote_version)
             message = "Your local version (#{local_version}) is frozen on the remote server. You'll need to bump before you can upload."
             message_autobump = "Your local version (#{local_version}) is frozen on the remote server. Autobumping so you can upload."
-            if config[:fail]
+            if config[:fail] || config[:fail_if_frozen]
               fail_and_exit("#{message}")
             else
               answer = nil
@@ -104,7 +108,7 @@ module KnifeSpork
               end
             end
           else
-            message =  "The version #{local_version} exists on the server and is not frozen. Uploading will overwrite!"
+            message = "The version #{local_version} exists on the server and is not frozen. Uploading will overwrite!"
             config[:fail] ? fail_and_exit("#{message}") : ui.error("#{message}")
           end
 
